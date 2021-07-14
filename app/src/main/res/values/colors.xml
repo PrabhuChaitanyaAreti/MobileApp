@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="app_green">#51ac00</color>
-    <color name="missed_punch_color">#0000FF</color>
-    <color name="in_correct_punch_color">#8d1b81</color>
-    <color name="un_detected_punch_color">#FF4081</color>
+    <color name="missed_punch_color">@android:color/holo_red_dark</color>
+    <color name="in_correct_punch_color">@android:color/holo_red_dark</color>
+    <color name="un_detected_punch_color">@android:color/darker_gray</color>
 </resources>

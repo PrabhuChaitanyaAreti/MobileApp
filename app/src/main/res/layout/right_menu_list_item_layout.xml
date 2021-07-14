@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/punchId"
+        android:textStyle="bold"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.25" />
+
+    <TextView
+        android:id="@+id/imageScroll"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:textStyle="bold"
+        android:src="@drawable/splashscreen"
+        android:text="-"
+        app:layout_constraintBottom_toBottomOf="@+id/punchId"
+        app:layout_constraintStart_toEndOf="@+id/punchId"
+        app:layout_constraintTop_toTopOf="@+id/punchId"
+        app:layout_constraintWidth_percent="0.2" >
+    </TextView>
+    <TextView
+        android:id="@+id/punchType"
+        android:textStyle="bold"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="@+id/imageScroll"
+        app:layout_constraintStart_toEndOf="@+id/imageScroll"
+        app:layout_constraintTop_toTopOf="@+id/imageScroll"
+        app:layout_constraintWidth_percent="0.55" />
+</androidx.constraintlayout.widget.ConstraintLayout>

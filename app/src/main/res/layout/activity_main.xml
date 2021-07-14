@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MaskingActivity">
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/ivPunchColor"
+        android:id="@+id/leftMenuRecycler"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -14,13 +14,13 @@
         app:layout_constraintWidth_percent="0.25" />
 
     <HorizontalScrollView
-        android:id="@+id/scrollViewImage"
+        android:id="@+id/imageScroll"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:src="@drawable/splashscreen"
-        app:layout_constraintBottom_toBottomOf="@+id/ivPunchColor"
-        app:layout_constraintStart_toEndOf="@+id/ivPunchColor"
-        app:layout_constraintTop_toTopOf="@+id/ivPunchColor"
+        app:layout_constraintBottom_toBottomOf="@+id/leftMenuRecycler"
+        app:layout_constraintStart_toEndOf="@+id/leftMenuRecycler"
+        app:layout_constraintTop_toTopOf="@+id/leftMenuRecycler"
         app:layout_constraintWidth_percent="0.55" >
         <ScrollView
             android:layout_width="match_parent"
@@ -34,12 +34,12 @@
         </ScrollView>
     </HorizontalScrollView>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/toggleMenu"
+        android:id="@+id/rightMenuRecycler"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="@+id/scrollViewImage"
-        app:layout_constraintStart_toEndOf="@+id/scrollViewImage"
-        app:layout_constraintTop_toTopOf="@+id/scrollViewImage"
+        app:layout_constraintBottom_toBottomOf="@+id/imageScroll"
+        app:layout_constraintStart_toEndOf="@+id/imageScroll"
+        app:layout_constraintTop_toTopOf="@+id/imageScroll"
         app:layout_constraintWidth_percent="0.2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
