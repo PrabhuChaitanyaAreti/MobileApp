@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">GoodManKotlin</string>
+
+    <string name="btn_take_picture">Take Picture</string>
+    <string name="btn_retake_picture">Retake Picture</string>
+    <string name="btn_submit">Submit</string>
+    <string name="file_provider_authority">com.vsoft.goodmankotlin</string>
+    <string name="btn_send_to_edge">Submit</string>
+    <string name="capture">Capture</string>
 </resources>
