@@ -18,11 +18,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.vsoft.goodmankotlin.adapter.LeftMenuAdapter
 import com.vsoft.goodmankotlin.adapter.RightMenuAdapter
+import com.vsoft.goodmankotlin.callBack.RightMenuItemClickListener
 import com.vsoft.goodmankotlin.model.*
 import java.io.InputStream
 
 
-class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
+class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemClickListener {
     private lateinit var regionArrayList: ArrayList<Region>
     private lateinit var groundTruthImage:ImageView
     private lateinit var leftSideMenu:RecyclerView
@@ -40,6 +41,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
     private lateinit var uniqueMissedShapes:ArrayList<Unique_results>
     private lateinit var uniqueUndetectedShapes:ArrayList<Unique_results>
     private lateinit var uniqueIncorrectShapes:ArrayList<Unique_results>
+    private lateinit var uniqueRightMenuShapes:ArrayList<Unique_results>
     private lateinit var leftMenu:ArrayList<LeftMenuDataModel>
     private lateinit var shapesToBeDisplayed:ArrayList<Shapes>
     private lateinit var uniqueDiesDisplayed:ArrayList<Unique_results>
@@ -102,7 +104,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
         uniqueUndetectedShapes= arrayListOf()
         shapes.addAll(punchResponse.getGt()?.shapes!!.toCollection(ArrayList()))
         uniqueShapes.addAll(punchResponse.unique_results)
-        if(shapes?.size!!>0){
+        if(shapes?.size>0){
             if(shapes.size==uniqueResults.size) {
                 for (i in shapes.indices) {
                     if(uniqueResults[i].correct==false && (uniqueResults[i].ground_truth.equals("NoPunch",false) && uniqueResults[i].prediction.equals("Punch",false))){
@@ -126,7 +128,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
             }
         }
         updateCountInRecyclerView(shapes.size,missedShapes.size,incorrectShapes.size,undetectedShapes.size)
-        loadRightSideMenu(incorrectShapes,missedShapes)
+        loadRightSideMenu(incorrectShapes,undetectedShapes)
         drawMask()
     }
      fun drawMask(){
@@ -251,6 +253,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
         leftSideMenu.adapter?.notifyDataSetChanged()
     }
     private fun loadRightSideMenu(incorrectShapes: ArrayList<Shapes>, missedShapes: ArrayList<Shapes>) {
+        uniqueRightMenuShapes= ArrayList()
         //adding a layoutManager
         rightSideMenu.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         //incorrectPunchesRecyclerView.addItemDecoration(new DividerItemDecoration(incorrectPunchesRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
@@ -262,27 +265,28 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
         )
         //creating an arraylist to store users using the data class user
         val rightMenu = ArrayList<RightMenuDataModel>()
-        if(incorrectShapes.isNotEmpty() && missedShapes.isNotEmpty()) {
+        if(incorrectShapes.isNotEmpty() || missedShapes.isNotEmpty()) {
             if (incorrectShapes.isNotEmpty()) {
                 for (i in incorrectShapes) {
                     val rightMenuDataModel = RightMenuDataModel("Incorrect Punch", i.label_id!!)
                     rightMenu.add(rightMenuDataModel)
                 }
+                uniqueRightMenuShapes.addAll(uniqueIncorrectShapes)
             }
             if (missedShapes.isNotEmpty()) {
                 for (i in missedShapes) {
                     val rightMenuDataModel = RightMenuDataModel("Missed Punch", i.label_id!!)
                     rightMenu.add(rightMenuDataModel)
                 }
+                uniqueRightMenuShapes.addAll(uniqueUndetectedShapes)
             }
             //creating our adapter
-            val adapter = RightMenuAdapter(rightMenu,rightSideMenu)
+            val adapter = RightMenuAdapter(rightMenu,this)
             //now adding the adapter to recyclerview
             rightSideMenu.adapter = adapter
         }else{
             rightSideMenu.visibility=View.GONE
         }
-
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -307,10 +311,10 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
     override fun onTouch(v: View?, motionEvent: MotionEvent?): Boolean {
         when (motionEvent?.action) {
             MotionEvent.ACTION_DOWN ->{
-                var point = Point(motionEvent?.x!!.toInt() , motionEvent.y.toInt())
+                var point = Point(motionEvent?.x.toInt() , motionEvent.y.toInt())
             for ((clickedPos, r) in regionArrayList.withIndex()) {
                 if (r.contains(point.x, point.y)) {
-                    displayClickedDieDetails(shapesToBeDisplayed,uniqueDiesDisplayed, clickedPos)
+                    displayClickedDieDetails(uniqueDiesDisplayed, clickedPos)
                     break
                 }
             }
@@ -320,17 +324,15 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
         return true
     }
 
-    private fun displayClickedDieDetails(shapesToBeDisplayed: ArrayList<Shapes>,uniqueDiesDisplayed:ArrayList<Unique_results>, clickedPos: Int) {
-        println("Clicked at:"+shapesToBeDisplayed[clickedPos].label_id)
-        val shapeClicked=shapesToBeDisplayed[clickedPos]
+    private fun displayClickedDieDetails(uniqueDiesDisplayed:ArrayList<Unique_results>, clickedPos: Int) {
         val inflater = layoutInflater
         val dialogView: View = inflater.inflate(R.layout.die_detail_dialog, null)
 
         dialogShowInfo = Dialog(this)
         dialogShowInfo.setContentView(dialogView)
         dialogShowInfo.setCancelable(false)
-        val iv_captured_die = dialogView.findViewById<ImageView>(R.id.iv_captured_die)
-        val iv_original_die = dialogView.findViewById<ImageView>(R.id.iv_original_die)
+        val ivCapturedDie = dialogView.findViewById<ImageView>(R.id.iv_captured_die)
+        val ivOriginalDie = dialogView.findViewById<ImageView>(R.id.iv_original_die)
         val accept: Button = dialogView.findViewById(R.id.btn_accept)
         val reject: Button = dialogView.findViewById(R.id.btn_reject)
         val labelId: TextView = dialogView.findViewById(R.id.labelId)
@@ -339,7 +341,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
         val instructions: TextView = dialogView.findViewById(R.id.instructions)
         val llFeedBack: LinearLayout =dialogView.findViewById(R.id.llFeedBack)
         labelId.text =
-            Html.fromHtml("<b>Label : </b>" + shapeClicked.label_id)
+            Html.fromHtml("<b>Label : </b>" + uniqueDiesDisplayed[clickedPos].label_id)
         groundTruth.text = Html.fromHtml(
             "<b>Ground Truth : </b>" + uniqueDiesDisplayed[clickedPos].ground_truth
         )
@@ -350,9 +352,9 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
         var capturedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
         var originalBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
         if(capturedBitmap!=null)
-        iv_captured_die.setImageBitmap(capturedBitmap)
+        ivCapturedDie.setImageBitmap(capturedBitmap)
         if(originalBitmap!=null)
-        iv_original_die.setImageBitmap(originalBitmap)
+        ivOriginalDie.setImageBitmap(originalBitmap)
         if (uniqueDiesDisplayed[clickedPos].correct==false && uniqueDiesDisplayed[clickedPos].prediction!!.trim()
                 .equals("Punch",true) && uniqueDiesDisplayed[clickedPos].ground_truth!!.trim()
                 .equals("NoPunch",true)
@@ -392,5 +394,10 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener {
     }
      fun dismissListener(v: View?){
         dialogShowInfo.dismiss()
+    }
+
+    override fun rightMenuItemClick(position: Int) {
+        println("Clicked on:$position")
+        displayClickedDieDetails(uniqueRightMenuShapes,position)
     }
 }
