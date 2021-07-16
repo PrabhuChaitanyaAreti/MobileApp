@@ -21,20 +21,21 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.vsoft.goodmankotlin.utils.BatteryUtil
-import com.vsoft.goodmankotlin.utils.CameraPreview
+import com.vsoft.goodmankotlin.model.PunchResponse
+import com.vsoft.goodmankotlin.utils.*
 import com.vsoft.goodmankotlin.utils.CameraPreview.Companion.getOptimalPreviewSize
-import com.vsoft.goodmankotlin.utils.CameraUtils
-import com.vsoft.goodmankotlin.utils.NetworkUtils
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -63,7 +64,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
 
     private var imagePath = ""
 
-    private val cameraSizesArray: Array<String>
+   // private val cameraSizesArray: Array<String> = TODO()
     private var progressDialog: ProgressDialog? = null
 
     /**
@@ -137,7 +138,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         alertDialog = builder.create()
         if (!this@CameraActivity.isFinishing()) {
             try {
-                alertDialog.show()
+                alertDialog!!.show()
             } catch (e: BadTokenException) {
                 Log.e("BadTokenException", e.toString())
             }
@@ -161,14 +162,17 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
             "device width and height " +CameraActivity.screenWidth + "x" +CameraActivity.screenHeight
         )
         mCamera = Camera.open()
-        val parameters = mCamera.getParameters()
+        val parameters = mCamera!!.getParameters()
         val mSupportedPreviewSizes = parameters
             .supportedPreviewSizes
         val previewSize: Camera.Size? = getOptimalPreviewSize(
             mSupportedPreviewSizes, screenWidth, screenHeight)
-        Log.d("TAG", "previewSize width and height " + previewSize.width + "x" + previewSize.height)
-        parameters.setPreviewSize(previewSize.width, previewSize.height)
-        parameters.setPictureSize(previewSize.width, previewSize.height)
+        if (previewSize != null) {
+            Log.d("TAG", "previewSize width and height " + previewSize.width + "x" + previewSize.height)
+            parameters.setPreviewSize(previewSize.width, previewSize.height)
+            parameters.setPictureSize(previewSize.width, previewSize.height)
+        }
+
         //  parameters.setZoom(Camera.Parameters.FOCUS_DISTANCE_OPTIMAL_INDEX);
         val focusModes = parameters.supportedFocusModes
         if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
@@ -176,24 +180,24 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
             parameters.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
         }
-        mCamera.setParameters(parameters)
+        mCamera!!.setParameters(parameters)
         cameraPreview = findViewById(R.id.cPreview)
         mPreview = CameraPreview(myContext, mCamera)
-        cameraPreview.addView(mPreview)
+        cameraPreview!!.addView(mPreview)
         capture = findViewById(R.id.btnCam)
         btnSendEdge = findViewById(R.id.btnSendEdge)
-        btnSendEdge.setOnClickListener(this)
-        capture.setOnClickListener(this)
-        imgSettings.setOnClickListener(this)
-        imgCapture.setOnClickListener(this)
-        btnSendEdge.setVisibility(View.GONE)
-        imgCapture.setVisibility(View.GONE)
-        imgSettings.setVisibility(View.GONE)
-        imgPreview.setVisibility(View.GONE)
+        btnSendEdge!!.setOnClickListener(this)
+        capture!!.setOnClickListener(this)
+        imgSettings!!.setOnClickListener(this)
+        imgCapture!!.setOnClickListener(this)
+        btnSendEdge!!.setVisibility(View.GONE)
+        imgCapture!!.setVisibility(View.GONE)
+        imgSettings!!.setVisibility(View.GONE)
+        imgPreview!!.setVisibility(View.GONE)
         mPicture = getPictureCallback()
-        mPreview.refreshCamera(mCamera)
-        mCamera.startPreview()
-        val size = mCamera.getParameters().previewSize
+        mPreview!!.refreshCamera(mCamera)
+        mCamera!!.startPreview()
+        val size = mCamera!!.getParameters().previewSize
         Log.d("TAG", "oncreate getPreviewSize   " + size.width + "x" + size.height)
     }
 
@@ -207,7 +211,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO
             )
-            .withListener(object : MultiplePermissionsListener() {
+            .withListener(object : MultiplePermissionsListener {
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
@@ -245,45 +249,45 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
     override fun onClick(view: View) {
         if (view === capture) {
             if (Counter != null) {
-                Counter.cancel()
+                Counter!!.cancel()
                 Counter = null
             }
             Log.d("TAG", "capture onClick ")
             if (mCamera != null) {
-                val size = mCamera.getParameters().previewSize
+                val size = mCamera!!.getParameters().previewSize
                 Log.d("TAG", "oncreate getPreviewSize   " + size.width + "x" + size.height)
                 mPicture = getPictureCallback()
-                mCamera.takePicture(null, null, mPicture)
+                mCamera!!.takePicture(null, null, mPicture)
             }
         } else if (view === imgSettings) {
             if (Counter != null) {
-                Counter.cancel()
+                Counter!!.cancel()
                 Counter = null
             }
-            showDialog()
+            //showDialog()
         } else if (view === imgCapture) {
             reCapture()
         } else if (view === btnSendEdge) {
             if (Counter != null) {
-                Counter.cancel()
+                Counter!!.cancel()
                 Counter = null
             }
             Log.d("TAG", "btnSendEdge onClick imagePath::: $imagePath")
             progressDialog = ProgressDialog(this)
-            progressDialog.setCancelable(false)
-            progressDialog.setMessage("Please wait .. Processing image may take some time.")
+            progressDialog!!.setCancelable(false)
+            progressDialog!!.setMessage("Please wait .. Processing image may take some time.")
             if (NetworkUtils.isNetworkAvailable(this)) {
-                Handler().post { progressDialog.show() }
+                Handler().post { progressDialog!!.show() }
                 val file = File(imagePath) // initialize file here
                 val filePart: MultipartBody.Part = MultipartBody.Part.createFormData(
                     "file",
                     file.name,
                     RequestBody.create(MediaType.parse("image/*"), file)
                 )
-                val call: Call<PunchResponse> =
-                    RetrofitClient.getInstance().getMyApi().uploadDyeImage(filePart)
-                call.enqueue(object : Callback<PunchResponse?>() {
-                    fun onResponse(
+                val call: Call<PunchResponse?>? =
+                    RetrofitClient.getInstance()!!.getMyApi()!!.uploadDyeImage(filePart)
+                call!!.enqueue(object : Callback<PunchResponse?> {
+                    override fun onResponse(
                         call: Call<PunchResponse?>?,
                         response: Response<PunchResponse?>
                     ) {
@@ -302,16 +306,16 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                                 val json: String = gson.toJson(response.body())
                                 myEdit.putString("response", json)
                                 myEdit.apply()
-                                if (progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss()
+                                if (progressDialog != null && progressDialog!!.isShowing()) progressDialog!!.dismiss()
                                 val intent = Intent(
                                     this@CameraActivity,
-                                    HamburgerMenuActivity::class.java
+                                    MaskingActivity::class.java
                                 )
                                 startActivity(intent)
                                 finish()
                             } else {
-                                if (progressDialog.isShowing()) {
-                                    progressDialog.dismiss()
+                                if (progressDialog!!.isShowing()) {
+                                    progressDialog!!.dismiss()
                                 }
                                 DialogUtils.showNormalAlert(
                                     this@CameraActivity,
@@ -321,16 +325,16 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
-                            if (progressDialog.isShowing()) {
-                                progressDialog.dismiss()
+                            if (progressDialog!!.isShowing()) {
+                                progressDialog!!.dismiss()
                             }
                         }
                     }
 
-                    fun onFailure(call: Call<PunchResponse?>?, t: Throwable) {
+                    override fun onFailure(call: Call<PunchResponse?>?, t: Throwable) {
                         DialogUtils.showNormalAlert(this@CameraActivity, "Alert!!", "" + t)
-                        if (progressDialog.isShowing()) {
-                            progressDialog.dismiss()
+                        if (progressDialog!!.isShowing()) {
+                            progressDialog!!.dismiss()
                         }
                     }
                 })
@@ -350,7 +354,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
             .setMessage("Are you sure to want to go ReCapture?")
             .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
                 if (Counter != null) {
-                    Counter.cancel()
+                    Counter!!.cancel()
                     Counter = null
                 }
                 backgroundTimer()
@@ -368,7 +372,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
             .setNegativeButton("No", DialogInterface.OnClickListener { dialog, which -> }).show()
     }
 
-    fun showDialog() {
+   /* fun showDialog() {
         val inflater = layoutInflater
         val alertLayout: View = inflater.inflate(R.layout.camera_settings_dialog_new, null)
         val spResolution1 = alertLayout.findViewById<Spinner>(R.id.spResolution)
@@ -404,7 +408,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                 "spinner ok click Integer.parseInt(separated[1]) " + separated[1].toInt()
             )
             if (Counter != null) {
-                Counter.cancel()
+                Counter!!.cancel()
                 Counter = null
             }
             backgroundTimer()
@@ -413,7 +417,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         }
         val dialog = alert.create()
         dialog.show()
-    }
+    }*/
 
     override fun onResume() {
         super.onResume()
@@ -426,7 +430,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         //when on Pause, release camera in order to be used from other applications
         releaseCamera()
         if (Counter != null) {
-            Counter.cancel()
+            Counter!!.cancel()
             Counter = null
         }
     }
@@ -435,9 +439,9 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         Log.d("TAG", "releaseCamera: ")
         // stop and release camera
         if (mCamera != null) {
-            mCamera.stopPreview()
-            mCamera.setPreviewCallback(null)
-            mCamera.release()
+            mCamera!!.stopPreview()
+            mCamera!!.setPreviewCallback(null)
+            mCamera!!.release()
             mCamera = null
         }
     }
@@ -504,7 +508,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
 
             override fun onFinish() {
                 if (Counter != null) {
-                    Counter.cancel()
+                    Counter!!.cancel()
                     Counter = null
                 }
                 val builder = AlertDialog.Builder(this@CameraActivity)
@@ -521,7 +525,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                         alertDialog!!.dismiss()
                     }
                     if (Counter != null) {
-                        Counter.cancel()
+                        Counter!!.cancel()
                         Counter = null
                     }
                     backgroundTimer()
@@ -541,13 +545,13 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                 alertDialog = builder.create()
                 if (!this@CameraActivity.isFinishing()) {
                     try {
-                        alertDialog.show()
+                        alertDialog!!.show()
                     } catch (e: BadTokenException) {
                         Log.e("BadTokenException", e.toString())
                     }
                 }
             }
         }
-        Counter.start()
+        Counter!!.start()
     }
 }

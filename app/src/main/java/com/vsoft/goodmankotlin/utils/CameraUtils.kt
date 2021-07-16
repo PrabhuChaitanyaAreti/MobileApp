@@ -12,6 +12,7 @@ import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+import com.vsoft.goodmankotlin.BuildConfig
 import java.io.File
 import java.util.*
 
