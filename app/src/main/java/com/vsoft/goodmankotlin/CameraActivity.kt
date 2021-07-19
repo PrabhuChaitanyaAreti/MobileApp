@@ -205,7 +205,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
      * Requesting permissions using Dexter library
      */
     private fun requestCameraPermission() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
             .withPermissions(
                 Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
