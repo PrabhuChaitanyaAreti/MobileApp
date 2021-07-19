@@ -9,6 +9,7 @@
     tools:context=".MaskingActivity">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/leftMenuRecycler"
+        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.25" />
@@ -31,6 +32,7 @@
     </HorizontalScrollView>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rightMenuRecycler"
+        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.2" />

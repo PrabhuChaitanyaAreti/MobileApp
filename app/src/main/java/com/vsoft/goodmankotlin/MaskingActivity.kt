@@ -10,6 +10,7 @@ import android.util.Base64
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -21,7 +22,11 @@ import com.vsoft.goodmankotlin.adapter.RightMenuAdapter
 import com.vsoft.goodmankotlin.interfaces.RightMenuItemClickCallBack
 import com.vsoft.goodmankotlin.model.*
 import java.io.InputStream
+
+
 class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemClickCallBack {
+    private lateinit var ivCapturedDie: ImageView
+    private lateinit var ivOriginalDie: ImageView
     private lateinit var regionArrayList: ArrayList<Region>
     private lateinit var groundTruthImage:ImageView
     private lateinit var leftSideMenu:RecyclerView
@@ -47,6 +52,8 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
     private lateinit var optionsMenu:Menu
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.hamburg_menu_icon);// set drawable icon
+        supportActionBar?.setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_main)
         init()
     }
@@ -296,7 +303,6 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         menuInflater.inflate(R.menu.right_menu, menu)
         return true
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.rightMenu -> {
@@ -304,6 +310,14 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
                     rightSideMenu.visibility=View.VISIBLE
                 }else{
                     rightSideMenu.visibility=View.GONE
+                }
+                true
+            }
+            android.R.id.home -> {
+                if(leftSideMenu.visibility!= View.VISIBLE){
+                    leftSideMenu.visibility=View.VISIBLE
+                }else{
+                    leftSideMenu.visibility=View.GONE
                 }
                 true
             }
@@ -331,13 +345,13 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
 
     private fun displayClickedDieDetails(uniqueDiesDisplayed:Unique_results) {
         val inflater = layoutInflater
-        val dialogView: View = inflater.inflate(R.layout.die_detail_dialog, null)
-
+        val dialogView: View = inflater.inflate(R.layout.die_detail_dialog, null, false)
+        //mLinearLayout = view.findViewById(R.id.legend_dialog_fragment_linearlayout) as LinearLayout
         dialogShowInfo = Dialog(this)
         dialogShowInfo.setContentView(dialogView)
         dialogShowInfo.setCancelable(false)
-        val ivCapturedDie = dialogView.findViewById<ImageView>(R.id.iv_captured_die)
-        val ivOriginalDie = dialogView.findViewById<ImageView>(R.id.iv_original_die)
+         ivCapturedDie = dialogView.findViewById<ImageView>(R.id.iv_captured_die)
+         ivOriginalDie = dialogView.findViewById<ImageView>(R.id.iv_original_die)
         val accept: Button = dialogView.findViewById(R.id.btn_accept)
         val reject: Button = dialogView.findViewById(R.id.btn_reject)
         val labelId: TextView = dialogView.findViewById(R.id.labelId)
@@ -355,10 +369,12 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
             Base64.decode(uniqueDiesDisplayed.base64_image_segment, Base64.DEFAULT)
         var capturedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
         var originalBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-        if(capturedBitmap!=null)
+        if(capturedBitmap!=null) {
             ivCapturedDie.setImageBitmap(capturedBitmap)
-        if(originalBitmap!=null)
+        }
+        if(originalBitmap!=null) {
             ivOriginalDie.setImageBitmap(originalBitmap)
+        }
         if (uniqueDiesDisplayed.correct==false && uniqueDiesDisplayed.prediction!!.trim()
                 .equals("Punch",true) && uniqueDiesDisplayed.ground_truth!!.trim()
                 .equals("NoPunch",true)
