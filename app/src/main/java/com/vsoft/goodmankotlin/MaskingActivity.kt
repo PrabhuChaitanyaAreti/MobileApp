@@ -18,12 +18,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.vsoft.goodmankotlin.adapter.LeftMenuAdapter
 import com.vsoft.goodmankotlin.adapter.RightMenuAdapter
-import com.vsoft.goodmankotlin.callBack.RightMenuItemClickListener
+import com.vsoft.goodmankotlin.interfaces.RightMenuItemClickCallBack
 import com.vsoft.goodmankotlin.model.*
 import java.io.InputStream
-
-
-class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemClickListener {
+class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemClickCallBack {
     private lateinit var regionArrayList: ArrayList<Region>
     private lateinit var groundTruthImage:ImageView
     private lateinit var leftSideMenu:RecyclerView
@@ -46,6 +44,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
     private lateinit var shapesToBeDisplayed:ArrayList<Shapes>
     private lateinit var uniqueDiesDisplayed:ArrayList<Unique_results>
     private lateinit var dialogShowInfo:Dialog
+    private lateinit var optionsMenu:Menu
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -65,7 +64,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
                 response = gson.fromJson(json, PunchResponse::class.java)
                 processData(response)
             }else{
-                val assetResponse: String? = readJSONFromAsset("response.json")
+                val assetResponse: String? = readJSONFromAsset("res.json")
                 val g = Gson()
                 response = g.fromJson(assetResponse, PunchResponse::class.java)
                 processData(response)
@@ -110,7 +109,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
                     if(uniqueResults[i].correct==false && (uniqueResults[i].ground_truth.equals("NoPunch",false) && uniqueResults[i].prediction.equals("Punch",false))){
                         //Incorrect Punches
                         incorrectShapes.add(shapes[i])
-                        uniqueCorrectShapes.add(uniqueResults[i])
+                        uniqueIncorrectShapes.add(uniqueResults[i])
                     }else if(uniqueResults[i].correct==false && (uniqueResults[i].ground_truth.equals("Punch",false) && uniqueResults[i].prediction.equals("NoPunch",false))){
                         //Missed Punches
                         missedShapes.add(shapes[i])
@@ -128,7 +127,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
             }
         }
         updateCountInRecyclerView(shapes.size,missedShapes.size,incorrectShapes.size,undetectedShapes.size)
-        loadRightSideMenu(incorrectShapes,undetectedShapes)
+        loadRightSideMenu(incorrectShapes,missedShapes)
         drawMask()
     }
      fun drawMask(){
@@ -264,32 +263,36 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
             )
         )
         //creating an arraylist to store users using the data class user
-        val rightMenu = ArrayList<RightMenuDataModel>()
+        val rightMenuItems = ArrayList<RightMenuDataModel>()
         if(incorrectShapes.isNotEmpty() || missedShapes.isNotEmpty()) {
             if (incorrectShapes.isNotEmpty()) {
                 for (i in incorrectShapes) {
                     val rightMenuDataModel = RightMenuDataModel("Incorrect Punch", i.label_id!!)
-                    rightMenu.add(rightMenuDataModel)
+                    rightMenuItems.add(rightMenuDataModel)
                 }
                 uniqueRightMenuShapes.addAll(uniqueIncorrectShapes)
             }
             if (missedShapes.isNotEmpty()) {
                 for (i in missedShapes) {
                     val rightMenuDataModel = RightMenuDataModel("Missed Punch", i.label_id!!)
-                    rightMenu.add(rightMenuDataModel)
+                    rightMenuItems.add(rightMenuDataModel)
                 }
-                uniqueRightMenuShapes.addAll(uniqueUndetectedShapes)
+                uniqueRightMenuShapes.addAll(uniqueMissedShapes)
             }
             //creating our adapter
-            val adapter = RightMenuAdapter(rightMenu,this)
+            val adapter = RightMenuAdapter(rightMenuItems,this)
             //now adding the adapter to recyclerview
             rightSideMenu.adapter = adapter
         }else{
+            val item: MenuItem = optionsMenu.findItem(R.id.rightMenu)
+            item.isVisible = false
+            rightSideMenu.adapter=null
             rightSideMenu.visibility=View.GONE
         }
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
+        optionsMenu=menu!!
         menuInflater.inflate(R.menu.right_menu, menu)
         return true
     }
@@ -314,7 +317,8 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
                 var point = Point(motionEvent?.x.toInt() , motionEvent.y.toInt())
             for ((clickedPos, r) in regionArrayList.withIndex()) {
                 if (r.contains(point.x, point.y)) {
-                    displayClickedDieDetails(uniqueDiesDisplayed, clickedPos)
+
+                    displayClickedDieDetails(uniqueDiesDisplayed[clickedPos])
                     break
                 }
             }
@@ -324,7 +328,8 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         return true
     }
 
-    private fun displayClickedDieDetails(uniqueDiesDisplayed:ArrayList<Unique_results>, clickedPos: Int) {
+
+    private fun displayClickedDieDetails(uniqueDiesDisplayed:Unique_results) {
         val inflater = layoutInflater
         val dialogView: View = inflater.inflate(R.layout.die_detail_dialog, null)
 
@@ -340,23 +345,22 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         val correct: TextView = dialogView.findViewById(R.id.correct)
         val instructions: TextView = dialogView.findViewById(R.id.instructions)
         val llFeedBack: LinearLayout =dialogView.findViewById(R.id.llFeedBack)
-        labelId.text =
-            Html.fromHtml("<b>Label : </b>" + uniqueDiesDisplayed[clickedPos].label_id)
+        labelId.text = Html.fromHtml("<b>Label : </b>" + uniqueDiesDisplayed.label_id)
         groundTruth.text = Html.fromHtml(
-            "<b>Ground Truth : </b>" + uniqueDiesDisplayed[clickedPos].ground_truth
+            "<b>Ground Truth : </b>" + uniqueDiesDisplayed.ground_truth
         )
         correct.text =
-            Html.fromHtml("<b>Correct : </b>" + uniqueDiesDisplayed[clickedPos].correct)
+            Html.fromHtml("<b>Correct : </b>" + uniqueDiesDisplayed.correct)
         val decodedString: ByteArray =
-            Base64.decode(uniqueDiesDisplayed[clickedPos].base64_image_segment, Base64.DEFAULT)
+            Base64.decode(uniqueDiesDisplayed.base64_image_segment, Base64.DEFAULT)
         var capturedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
         var originalBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
         if(capturedBitmap!=null)
-        ivCapturedDie.setImageBitmap(capturedBitmap)
+            ivCapturedDie.setImageBitmap(capturedBitmap)
         if(originalBitmap!=null)
-        ivOriginalDie.setImageBitmap(originalBitmap)
-        if (uniqueDiesDisplayed[clickedPos].correct==false && uniqueDiesDisplayed[clickedPos].prediction!!.trim()
-                .equals("Punch",true) && uniqueDiesDisplayed[clickedPos].ground_truth!!.trim()
+            ivOriginalDie.setImageBitmap(originalBitmap)
+        if (uniqueDiesDisplayed.correct==false && uniqueDiesDisplayed.prediction!!.trim()
+                .equals("Punch",true) && uniqueDiesDisplayed.ground_truth!!.trim()
                 .equals("NoPunch",true)
         ) {
             //Incorrect Punch
@@ -364,8 +368,8 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
             instructions.visibility = View.VISIBLE
             instructions.text =
                 Html.fromHtml("<b>Instructions :</b> Please remove the punch from the displayed die.")
-        } else if (uniqueDiesDisplayed[clickedPos].correct==false && uniqueDiesDisplayed[clickedPos].prediction!!.trim()
-                .equals("NoPunch",true) && uniqueDiesDisplayed[clickedPos].ground_truth!!
+        } else if (uniqueDiesDisplayed.correct==false && uniqueDiesDisplayed.prediction!!.trim()
+                .equals("NoPunch",true) && uniqueDiesDisplayed.ground_truth!!
                 .trim().equals("Punch",true)
         ) {
             //Missed Punch
@@ -378,9 +382,11 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
             instructions.visibility = View.GONE
         }
         accept.setOnClickListener {
+            updateJson(uniqueDiesDisplayed)
             dialogShowInfo.dismiss()
         }
         reject.setOnClickListener {
+            updateJson(uniqueDiesDisplayed)
             dialogShowInfo.dismiss()
         }
         val layoutParams = WindowManager.LayoutParams()
@@ -392,12 +398,20 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         windowAlDl?.attributes = layoutParams
         dialogShowInfo.show()
     }
-     fun dismissListener(v: View?){
+
+    private fun updateJson(uniqueResults: Unique_results) {
+                if (response != null) {
+                    uniqueResults.correct=true
+                    processData(response)
+
+                }
+    }
+
+    fun dismissListener(v: View?){
         dialogShowInfo.dismiss()
     }
 
-    override fun rightMenuItemClick(position: Int) {
-        println("Clicked on:$position")
-        displayClickedDieDetails(uniqueRightMenuShapes,position)
+    override fun onRightMenuItemClickCallBack(clickedPos: Int) {
+        displayClickedDieDetails(uniqueRightMenuShapes[clickedPos])
     }
 }

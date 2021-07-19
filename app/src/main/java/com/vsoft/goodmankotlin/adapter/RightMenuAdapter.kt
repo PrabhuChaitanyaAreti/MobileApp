@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.vsoft.goodmankotlin.R
-import com.vsoft.goodmankotlin.callBack.RightMenuItemClickListener
+import com.vsoft.goodmankotlin.interfaces.RightMenuItemClickCallBack
 import com.vsoft.goodmankotlin.model.RightMenuDataModel
 
-class RightMenuAdapter(private val rightMenuItemList: ArrayList<RightMenuDataModel>,private val recyclerItemClickListener: RightMenuItemClickListener) : RecyclerView.Adapter<RightMenuAdapter.ViewHolder>()  {
+class RightMenuAdapter(private val rightMenuItemList: ArrayList<RightMenuDataModel>, val rightMenuItemClickCallBack: RightMenuItemClickCallBack) : RecyclerView.Adapter<RightMenuAdapter.ViewHolder>()  {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RightMenuAdapter.ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.right_menu_list_item_layout, parent, false)
         return ViewHolder(v)
@@ -29,9 +29,9 @@ class RightMenuAdapter(private val rightMenuItemList: ArrayList<RightMenuDataMod
             val punchType  = itemView.findViewById(R.id.punchType) as TextView
             punchId.text = rightMenuDataItem.id
             punchType.text = rightMenuDataItem.title
-            itemView.setOnClickListener {
-                recyclerItemClickListener.rightMenuItemClick(adapterPosition)
-            }
+            itemView.setOnClickListener(View.OnClickListener {
+                rightMenuItemClickCallBack.onRightMenuItemClickCallBack(adapterPosition)
+            })
         }
     }
 }
