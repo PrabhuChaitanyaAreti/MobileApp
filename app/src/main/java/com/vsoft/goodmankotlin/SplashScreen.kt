@@ -13,7 +13,7 @@ class SplashScreen : AppCompatActivity() {
         Handler().postDelayed(Runnable
         // Using handler with postDelayed called runnable run method
         {
-            val i = Intent(this, CameraActivity::class.java)
+            val i = Intent(this, MaskingActivity::class.java)
             startActivity(i)
 
             // close this activity

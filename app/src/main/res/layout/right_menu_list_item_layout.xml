@@ -8,7 +8,7 @@
         android:id="@+id/punchId"
         android:textStyle="bold"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.25" />
@@ -16,7 +16,7 @@
     <TextView
         android:id="@+id/imageScroll"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:textStyle="bold"
         android:src="@drawable/splashscreen"
         android:text="-"
@@ -29,9 +29,8 @@
         android:id="@+id/punchType"
         android:textStyle="bold"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="@+id/imageScroll"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/imageScroll"
-        app:layout_constraintTop_toTopOf="@+id/imageScroll"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.55" />
 </androidx.constraintlayout.widget.ConstraintLayout>
