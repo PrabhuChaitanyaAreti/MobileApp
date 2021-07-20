@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:fillViewport="true"
+    android:animateLayoutChanges="true"
     android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -73,27 +74,30 @@
     <LinearLayout
         android:id="@+id/llFeedBack"
         android:layout_width="match_parent"
+        android:layout_marginBottom="10dp"
         android:layout_height="wrap_content" android:orientation="horizontal">
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_accept"
             android:layout_width="0dp"
+            android:backgroundTint="@color/app_green"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:textAllCaps="false"
+            android:padding="10dp"
             android:layout_weight="50"
-            android:gravity="center"
             android:text="Accept"
             android:textColor="@color/white" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_reject"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:backgroundTint="@color/red"
             android:layout_gravity="center"
             android:layout_weight="50"
+            android:padding="10dp"
             android:textAllCaps="false"
             android:layout_marginLeft="20dp"
-            android:gravity="center"
             android:text="Reject"
             android:textColor="@color/white" />
     </LinearLayout>

@@ -327,7 +327,9 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
 
     override fun onTouch(v: View?, motionEvent: MotionEvent?): Boolean {
         when (motionEvent?.action) {
-            MotionEvent.ACTION_DOWN ->{
+            MotionEvent.ACTION_UP ->{
+                rightSideMenu.visibility=View.GONE
+                leftSideMenu.visibility=View.GONE
                 var point = Point(motionEvent?.x.toInt() , motionEvent.y.toInt())
             for ((clickedPos, r) in regionArrayList.withIndex()) {
                 if (r.contains(point.x, point.y)) {
