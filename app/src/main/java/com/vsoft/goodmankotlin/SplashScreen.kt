@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.karumi.dexter.Dexter
@@ -19,33 +20,29 @@ class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-        Handler().postDelayed(Runnable
-        // Using handler with postDelayed called runnable run method
-        {
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Your Code
             if (CameraUtils.checkPermissions(applicationContext)) {
                 navigationScreen()
             } else {
                 requestCameraPermission()
             }
-
-        }, 1 * 1000
-        ) // wait for 5 seconds
-
+        }, 1*1000)
     }
 
     private fun navigationScreen() {
-        val i = Intent(this, VideoRecordingActivity::class.java)
+        finishAffinity()
+        val i = Intent(this, LoginActivity::class.java)
         startActivity(i)
-
         // close this activity
-        finish()
+        //finish()
     }
 
     /**
      * Requesting permissions using Dexter library
      */
     private fun requestCameraPermission() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
             .withPermissions(
                 Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
