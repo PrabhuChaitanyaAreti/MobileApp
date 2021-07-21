@@ -12,4 +12,9 @@
     <color name="missed_punch_color">@android:color/holo_red_dark</color>
     <color name="in_correct_punch_color">@android:color/holo_red_dark</color>
     <color name="un_detected_punch_color">@android:color/darker_gray</color>
+    <color name="transparent">#B70287D4</color>
+    <color name="transparent1">#00ffffff</color>
+    <color name="gray">#808080</color>
+    <color name="icons">#FFFFFF</color>
+
 </resources>

@@ -50,11 +50,11 @@
         <activity
             android:name=".VideoRecordingActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.GoodManKotlin"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <activity android:name=".VideoPreviewActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.GoodManKotlin"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".MaskingActivity"
             android:screenOrientation="userLandscape"

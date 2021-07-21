@@ -71,5 +71,10 @@
 
     <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem" />
 
+    <style name="SeekBar" parent="Theme.MaskingApplication.NoActionBar">
+        <item name="colorControlActivated">#E1287B</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="strokeWidth">5dp</item>
+    </style>
 
 </resources>
