@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
@@ -24,10 +25,7 @@ import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.vsoft.goodmankotlin.model.PunchResponse
-import com.vsoft.goodmankotlin.utils.CommonUtils
-import com.vsoft.goodmankotlin.utils.DialogUtils
-import com.vsoft.goodmankotlin.utils.NetworkUtils
-import com.vsoft.goodmankotlin.utils.RetrofitClient
+import com.vsoft.goodmankotlin.utils.*
 import kotlinx.android.synthetic.main.activity_video_preview.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -52,10 +50,18 @@ class VideoPreviewActivity : AppCompatActivity() {
     private var absPlayerInternal: SimpleExoPlayer? = null
 
     private var progressDialog: ProgressDialog? = null
+    private var alertDialog: android.app.AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_preview)
+
+        val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoPreviewActivity)
+
+        Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
+
+        if (batterLevel >= 15) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         path = intent.extras!!.getString("videoSavingFilePath")
         Log.d(TAG, "VideoPreviewActivity onCreate $path")
         videofilename = CommonUtils.getFileName(path!!)
@@ -255,8 +261,38 @@ class VideoPreviewActivity : AppCompatActivity() {
             override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {}
             override fun onSeekProcessed() {}
         })
+        } else {
+            batterLevelAlert()
+        }
     }
-
+    private fun batterLevelAlert() {
+        val builder = android.app.AlertDialog.Builder(this@VideoPreviewActivity)
+        builder.setCancelable(false)
+        builder.setTitle("Low Battery")
+        builder.setMessage("15% of battery remaining.Please piugin charger")
+        builder.setNeutralButton("Exit") { dialog, which ->
+            dialog.dismiss()
+            if (alertDialog!!.isShowing) {
+                alertDialog!!.dismiss()
+            }
+            dialog.dismiss()
+            try {
+                val previewIntent = Intent()
+                setResult(RESULT_CANCELED, previewIntent)
+                finish()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        alertDialog = builder.create()
+        if (!this@VideoPreviewActivity.isFinishing()) {
+            try {
+                alertDialog!!.show()
+            } catch (e: WindowManager.BadTokenException) {
+                Log.e("BadTokenException", e.toString())
+            }
+        }
+    }
     // display video progress
     fun setVideoProgress() {
         //get the video duration
