@@ -14,8 +14,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.VideoCapture
+import androidx.camera.core.impl.VideoCaptureConfig
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.vsoft.goodmankotlin.utils.BatteryUtil
 import kotlinx.android.synthetic.main.activity_video_record.*
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -52,6 +54,12 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
          videoRecordingFilePath = "${storageDirectory.absoluteFile}/${System.currentTimeMillis()}_video.mp4"
 
         Log.d(TAG, "onCreate videoRecordingFilePath  $videoRecordingFilePath")
+        val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoRecordingActivity)
+
+        Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
+
+        if (batterLevel >= 15) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (checkPermissions()) startCameraSession() else requestPermissions()
 
@@ -62,6 +70,37 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
         flashImgIcon.setOnClickListener(this)
         settingsImgIcon.setOnClickListener(this)
         videoRecordPlayPause.setOnClickListener(this)
+        } else {
+            batterLevelAlert()
+        }
+    }
+    private fun batterLevelAlert() {
+        val builder = android.app.AlertDialog.Builder(this@VideoRecordingActivity)
+        builder.setCancelable(false)
+        builder.setTitle("Low Battery")
+        builder.setMessage("15% of battery remaining.Please piugin charger")
+        builder.setNeutralButton("Exit") { dialog, which ->
+            dialog.dismiss()
+            if (alertDialog!!.isShowing) {
+                alertDialog!!.dismiss()
+            }
+            dialog.dismiss()
+            try {
+                val previewIntent = Intent()
+                setResult(RESULT_CANCELED, previewIntent)
+                finish()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        alertDialog = builder.create()
+        if (!this@VideoRecordingActivity.isFinishing()) {
+            try {
+                alertDialog!!.show()
+            } catch (e: WindowManager.BadTokenException) {
+                Log.e("BadTokenException", e.toString())
+            }
+        }
     }
     override fun onClick(v: View?) {
         if(v==videoOnlineImageButton){
@@ -150,9 +189,19 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
     @SuppressLint("MissingPermission")
     private fun startCameraSession() {
         /*
-               * Background timer initialize
-               */
+        * Background timer initialize
+        */
         backgroundTimer()
+      /*  val videoCaptureConfig = VideoCaptureConfig.Builder().apply {
+            setLensFacing(lensFacing)
+            setTargetAspectRatio(screenAspectRatio)
+            setTargetRotation(viewFinder.display.rotation)
+
+        }.build()
+
+       val videoCapture = VideoCapture(videoCaptureConfig)*/
+
+      //  camera_view.bindToLifecycle(this, preview, imageCapture, videoCapture)
         camera_view.bindToLifecycle(this)
     }
 
