@@ -12,4 +12,5 @@
     <color name="missed_punch_color">@android:color/holo_red_dark</color>
     <color name="in_correct_punch_color">@android:color/holo_red_dark</color>
     <color name="un_detected_punch_color">@android:color/darker_gray</color>
+    <color name="colorAccent">#FF4081</color>
 </resources>

@@ -33,6 +33,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true">
+        <activity android:name=".OperatorActivity" android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity android:name=".LoginActivity" android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".SplashScreen"
             android:screenOrientation="userLandscape"
@@ -50,15 +54,15 @@
         <activity
             android:name=".VideoRecordingActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.GoodManKotlin"/>
-
-        <activity android:name=".VideoPreviewActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".VideoPreviewActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.GoodManKotlin"/>
+            android:theme="@style/Theme.GoodManKotlin" />
         <activity
             android:name=".MaskingActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.GoodManKotlin"/>
+            android:theme="@style/Theme.GoodManKotlin" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
