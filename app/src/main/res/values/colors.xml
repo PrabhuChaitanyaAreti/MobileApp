@@ -17,4 +17,5 @@
     <color name="gray">#808080</color>
     <color name="icons">#FFFFFF</color>
 
+    <color name="colorAccent">#FF4081</color>
 </resources>

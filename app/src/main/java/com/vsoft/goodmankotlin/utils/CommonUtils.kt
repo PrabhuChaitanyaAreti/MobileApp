@@ -1,8 +1,11 @@
 package com.vsoft.goodmankotlin.utils
 
+import android.content.Context
+import android.hardware.Camera
+import androidx.appcompat.app.AlertDialog
 class CommonUtils {
     companion object {
-        fun getFileName(path: String): String? {
+        fun getFileName(path: String): String {
             var filename = ""
             val pathContents = path.split("[\\\\/]").toTypedArray()
             if (pathContents != null) {
@@ -38,6 +41,50 @@ class CommonUtils {
                 }
             }
             return filename
+        }
+
+        fun getOptimalPreviewSize(sizes: List<Camera.Size>?, w: Int, h: Int): Camera.Size? {
+            val ASPECT_TOLERANCE = 0.1
+            val targetRatio = h.toDouble() / w
+            if (sizes == null) return null
+            var optimalSize: Camera.Size? = null
+            var minDiff = Double.MAX_VALUE
+            for (size in sizes) {
+                val ratio = size.width.toDouble() / size.height
+                if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue
+                if (Math.abs(size.height - h) < minDiff) {
+                    optimalSize = size
+                    minDiff = Math.abs(size.height - h).toDouble()
+                }
+            }
+            if (optimalSize == null) {
+                minDiff = Double.MAX_VALUE
+                for (size in sizes) {
+                    if (Math.abs(size.height - h) < minDiff) {
+                        optimalSize = size
+                        minDiff = Math.abs(size.height - h).toDouble()
+                    }
+                }
+            }
+            return optimalSize
+        }
+
+        /**
+         * Alert dialog to navigate to app settings
+         * to enable necessary permissions
+         */
+        fun showPermissionsAlert(context: Context?) {
+            val builder = AlertDialog.Builder(
+                context!!
+            )
+            builder.setTitle("Permissions required!")
+                .setMessage("Camera needs few permissions to work properly. Grant them in settings.")
+                .setPositiveButton("GOTO SETTINGS") { dialog, which ->
+                    CameraUtils.openSettings(
+                        context
+                    )
+                }
+                .setNegativeButton("CANCEL") { dialog, which -> }.show()
         }
     }
 }
