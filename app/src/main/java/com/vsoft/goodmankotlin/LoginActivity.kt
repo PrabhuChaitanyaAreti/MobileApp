@@ -94,7 +94,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
     }
 
     private fun operatorSelectionScreenNavigation() {
-        val mainIntent = Intent(this@LoginActivity, OperatorActivity::class.java)
+        val mainIntent = Intent(this@LoginActivity, OperatorSelectActivityNew::class.java)
         startActivity(mainIntent)
     }
     private fun validationAlert(alertMessage: String) {
