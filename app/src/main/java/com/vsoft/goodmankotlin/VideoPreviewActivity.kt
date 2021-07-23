@@ -131,7 +131,7 @@ class VideoPreviewActivity : AppCompatActivity() {
             if (absPlayerInternal!!.isPlaying()) {
                 absPlayerInternal!!.stop()
             }
-            val intent = Intent(this@VideoPreviewActivity, VideoRecordingActivity::class.java)
+            val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
             startActivity(intent)
             finish()
         }

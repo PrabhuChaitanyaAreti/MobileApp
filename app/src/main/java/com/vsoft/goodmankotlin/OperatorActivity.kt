@@ -127,7 +127,7 @@ class OperatorActivity : AppCompatActivity(){
                 }
             } else {
                 println(partIdAutoComplete!!.text.toString())
-                val mainIntent = Intent(this@OperatorActivity, VideoRecordingActivity::class.java)
+                val mainIntent = Intent(this@OperatorActivity, VideoRecordActivityNew::class.java)
                 startActivity(mainIntent)
             }
         }
