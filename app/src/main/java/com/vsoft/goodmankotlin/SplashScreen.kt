@@ -31,11 +31,10 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun navigationScreen() {
-        finishAffinity()
         val i = Intent(this, LoginActivity::class.java)
         startActivity(i)
         // close this activity
-        //finish()
+        finish()
     }
 
     /**

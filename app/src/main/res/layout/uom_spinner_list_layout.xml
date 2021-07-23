@@ -5,8 +5,8 @@
               android:layout_height="match_parent">
 	<ImageView
 		android:id="@+id/close_uom_spinner_popup"
-		android:layout_width="40dp"
-		android:layout_height="40dp"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
 		android:layout_gravity="right"
 		android:layout_margin="10dp"
 		android:background="@drawable/ic_clear_black_24dp" />
@@ -16,13 +16,15 @@
 		android:layout_width="match_parent"
 		android:layout_marginRight="5dp"
 		android:layout_marginLeft="5dp"
-		android:layout_height="50dp"
-		android:imeOptions="flagNoExtractUi|actionDone"
+		android:padding="5dp"
+		android:layout_height="wrap_content"
+		android:windowSoftInputMode="adjustResize|stateHidden"
+		android:imeOptions="flagNoExtractUi"
 		android:visibility="visible"
 		android:imeActionLabel="Done"
 		android:focusable="true"
 		android:background="@drawable/spinner_box_bg"
-		android:layout_marginTop="10dp"
+		android:layout_marginTop="5dp"
 		android:paddingLeft="5dp"
 		android:singleLine="true"
 		android:ems="10"
@@ -30,7 +32,8 @@
 	<ListView
 		android:id="@+id/spinnerList"
 		android:layout_width="match_parent"
-		android:layout_marginTop="10dp"
+		android:stackFromBottom="true"
+		android:transcriptMode="normal"
 		android:layout_height="match_parent">
 	</ListView>
 </LinearLayout>

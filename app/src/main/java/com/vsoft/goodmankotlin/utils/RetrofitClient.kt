@@ -9,7 +9,8 @@ class RetrofitClient() {
     companion object {
     private var instance: RetrofitClient? = null
     private var myApi: RetrofitApiInterface? = null
-    var BASE_URL:String = "http://111.93.3.148:12803"
+    //var BASE_URL:String = "http://111.93.3.148:12803"
+    var BASE_URL:String = "http://111.93.3.148:12808"
 
     init {
         val okHttpClient = OkHttpClient.Builder()

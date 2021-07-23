@@ -59,7 +59,7 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
 
         if (batterLevel >= 15) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            //window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (checkPermissions()) startCameraSession() else requestPermissions()
 

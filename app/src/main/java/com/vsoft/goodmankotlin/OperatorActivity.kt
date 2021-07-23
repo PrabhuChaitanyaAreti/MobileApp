@@ -34,20 +34,16 @@ class OperatorActivity : AppCompatActivity(){
         dieIdAutoComplete = findViewById<AutoCompleteTextView>(R.id.die_spinner)
         partIdAutoComplete = findViewById<AutoCompleteTextView>(R.id.part_spinner)
         btnContinue = findViewById<View>(R.id.btnContinue) as Button
-
         //add array list to operator spinner.
-        val operatorAdapter = ArrayAdapter<CharSequence>(this, R.layout.spinner_text, operatorArray)
-        operatorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val operatorAdapter = ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_dropdown_item, operatorArray)
         operatorAutoComplete?.setAdapter(operatorAdapter)
 
         //add array list to Die ID spinner.
-        val dieAdapter = ArrayAdapter<CharSequence>(this, R.layout.spinner_text, dieArray)
-        dieAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val dieAdapter = ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_dropdown_item, dieArray)
         dieIdAutoComplete?.setAdapter<ArrayAdapter<CharSequence>>(dieAdapter)
 
         //add array list to Part Id spinner.
-        val partAdapter = ArrayAdapter<CharSequence>(this, R.layout.spinner_text, partArray)
-        partAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val partAdapter = ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_dropdown_item, partArray)
         partIdAutoComplete?.setAdapter<ArrayAdapter<CharSequence>>(partAdapter)
 
         //visible gone for one after on can be select.

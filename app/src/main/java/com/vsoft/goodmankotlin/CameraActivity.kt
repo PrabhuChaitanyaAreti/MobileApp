@@ -180,7 +180,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
             parameters.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
         }
-        mCamera!!.setParameters(parameters)
+        //mCamera?.setParameters(parameters)
         cameraPreview = findViewById(R.id.cPreview)
         mPreview = CameraPreview(myContext, mCamera)
         cameraPreview!!.addView(mPreview)

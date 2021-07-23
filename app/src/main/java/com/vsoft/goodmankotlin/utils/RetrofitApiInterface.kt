@@ -25,4 +25,7 @@ interface RetrofitApiInterface {
     @Multipart
     @POST("/placeholder/api/upload")
     fun uploadDyeImage(@Part filePart: MultipartBody.Part?): Call<PunchResponse?>?
+    @Multipart
+    @POST("/postVideo")
+    fun uploadDyeVideo(@Part file: MultipartBody.Part?): Call<PunchResponse?>?
 }

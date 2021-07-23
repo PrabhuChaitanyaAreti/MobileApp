@@ -36,7 +36,7 @@ class CameraPreview(context: Context?, camera: Camera?) :
                 } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
                     parameters.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
                 }
-                mCamera!!.parameters = parameters
+                //mCamera!!.parameters = parameters
                 mCamera!!.setPreviewDisplay(holder)
                 mCamera!!.startPreview()
             }
@@ -80,7 +80,7 @@ class CameraPreview(context: Context?, camera: Camera?) :
             } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
                 parameters.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
             }
-            mCamera!!.parameters = parameters
+            //mCamera!!.parameters = parameters
             mCamera!!.setPreviewDisplay(mHolder)
             mCamera!!.startPreview()
         } catch (e: Exception) {
@@ -116,7 +116,7 @@ class CameraPreview(context: Context?, camera: Camera?) :
         } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
             parameters.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
         }
-        mCamera!!.parameters = parameters
+        //mCamera!!.parameters = parameters
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {

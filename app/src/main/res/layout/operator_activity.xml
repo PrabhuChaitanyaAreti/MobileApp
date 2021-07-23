@@ -40,12 +40,13 @@ android:layout_height="match_parent">
             android:completionThreshold="1"
             android:hint="Select Operator"
             android:padding="10dp"
+            android:inputType="textNoSuggestions"
             android:dropDownHeight="100dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:singleLine="true"
-            android:imeOptions="flagNoExtractUi"
+            android:imeOptions="flagNoExtractUi|actionDone"
             android:background="@drawable/background"
             android:layout_marginTop="20dp"
             android:layout_gravity="center"
@@ -61,19 +62,19 @@ android:layout_height="match_parent">
             android:completionThreshold="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textNoSuggestions"
             android:hint="Select Die Id"
             android:layout_centerVertical="true"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:imeOptions="flagNoExtractUi"
+            android:imeOptions="flagNoExtractUi|actionDone"
             android:singleLine="true"
             android:background="@drawable/background"
             android:textCursorDrawable="@drawable/color_cursor"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:gravity="center"
             android:textAlignment="center"
-            android:textColorHint="#CFD8DC" android:dropDownVerticalOffset="0dp"
-            android:dropDownHorizontalOffset="0dp"/>
+            android:textColorHint="#CFD8DC" />
 
         <AutoCompleteTextView
             android:id="@+id/part_spinner"
@@ -82,7 +83,8 @@ android:layout_height="match_parent">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:completionThreshold="1"
-            android:imeOptions="flagNoExtractUi"
+            android:inputType="textNoSuggestions"
+            android:imeOptions="flagNoExtractUi|actionDone"
             android:singleLine="true"
             android:hint="Select Part Id"
             android:layout_centerVertical="true"
@@ -93,8 +95,7 @@ android:layout_height="match_parent">
             android:textAlignment="center"
             android:textCursorDrawable="@drawable/color_cursor"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColorHint="#CFD8DC" android:dropDownVerticalOffset="0dp"
-            android:dropDownHorizontalOffset="0dp" />
+            android:textColorHint="#CFD8DC"/>
     </LinearLayout>
 
     <Button

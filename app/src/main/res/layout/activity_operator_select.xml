@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -71,6 +70,7 @@
                         android:id="@+id/operator_au_tv"
                         android:layout_width="0dp"
                         android:layout_weight="60"
+                        android:textAllCaps="false"
                         android:layout_height="match_parent"
                         android:hint="Enter Operator"
                         android:background="@drawable/background"
@@ -107,6 +107,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="60"
                         android:background="@drawable/background"
+                        android:textAllCaps="false"
                         android:layout_height="match_parent"
                         android:hint="Enter Die Id"
                         android:gravity="center"
@@ -142,6 +143,7 @@
                         android:id="@+id/part_au_tv"
                         android:layout_width="0dp"
                         android:layout_weight="60"
+                        android:textAllCaps="false"
                         android:imeActionLabel="Done"
                         android:background="@drawable/background"
                         android:layout_height="match_parent"

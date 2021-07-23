@@ -1,4 +1,5 @@
 package com.vsoft.goodmankotlin;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,7 +15,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,7 +30,12 @@ import com.vsoft.goodmankotlin.model.ChoiceListOperator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperatorSelectActivityNew extends Activity {
+public class OperatorSelectActivity extends Activity {
+
+
+    String[] operatorArray = {"Operator1","Operator2","Operator3","Operator4","Operator5"};
+    String[] dieArray = {"Die Id1","Die Id2","Die Id3","Die Id4","Die Id5"};
+    String[] partArray = {"Part Id1","Part Id2","Part Id3","Part Id4","Part Id5"};
     Button btnContinue;
     LinearLayout mainLyt;
     private EditText searchET;
@@ -51,7 +56,7 @@ public class OperatorSelectActivityNew extends Activity {
         mainLyt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideSoftKeyboard(OperatorSelectActivityNew.this);
+                hideSoftKeyboard(OperatorSelectActivity.this);
             }
         });
 
@@ -93,7 +98,7 @@ public class OperatorSelectActivityNew extends Activity {
                         public void run() {
 
                             if (!isFinishing()){
-                                new AlertDialog.Builder(OperatorSelectActivityNew.this)
+                                new AlertDialog.Builder(OperatorSelectActivity.this)
                                         .setTitle("Error")
                                         .setMessage("Please enter operator")
                                         .setCancelable(false)
@@ -115,7 +120,7 @@ public class OperatorSelectActivityNew extends Activity {
                         public void run() {
 
                             if (!isFinishing()){
-                                new AlertDialog.Builder(OperatorSelectActivityNew.this)
+                                new AlertDialog.Builder(OperatorSelectActivity.this)
                                         .setTitle("Error")
                                         .setMessage("Please enter die Id")
                                         .setCancelable(false)
@@ -138,7 +143,7 @@ public class OperatorSelectActivityNew extends Activity {
                         public void run() {
 
                             if (!isFinishing()){
-                                new AlertDialog.Builder(OperatorSelectActivityNew.this)
+                                new AlertDialog.Builder(OperatorSelectActivity.this)
                                         .setTitle("Error")
                                         .setMessage("Please enter part Id")
                                         .setCancelable(false)
@@ -154,9 +159,9 @@ public class OperatorSelectActivityNew extends Activity {
 
 
                 }else {
-                    Intent mainIntent = new Intent(OperatorSelectActivityNew.this, VideoRecordingActivity.class);
+                    Intent mainIntent = new Intent(OperatorSelectActivity.this, VideoRecordingActivity.class);
                     startActivity(mainIntent);
-                    finish();
+                    //finish();
 
                 }
 
@@ -181,7 +186,7 @@ public class OperatorSelectActivityNew extends Activity {
             ListView spinnerList;
             ImageView close_spinner_popup;
             ArrayList<ChoiceListOperator> dataModels;
-            LayoutInflater inflater = LayoutInflater.from(OperatorSelectActivityNew.this);
+            LayoutInflater inflater = LayoutInflater.from(OperatorSelectActivity.this);
             final View dialogLayout = inflater.inflate(R.layout.uom_spinner_list_layout, null);
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setView(dialogLayout);
@@ -280,23 +285,7 @@ public class OperatorSelectActivityNew extends Activity {
                 }
             });
 
-            spinnerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String selectedItem = dataModels.get(position).getName();
-                    // Display the selected item text on TextView
 
-                    if(dataFrom.contains("Operator")){
-                        operatorBT.setText(selectedItem);
-                    }else if(dataFrom.contains("DieID")){
-                        dieBT.setText(selectedItem);
-                    } else if(dataFrom.contains("PartID")){
-                        partBT.setText(selectedItem);
-                    }
-
-                    customAlertDialogSpinner.dismiss();
-                }
-            });
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -351,11 +340,31 @@ public class OperatorSelectActivityNew extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = LayoutInflater.from(OperatorSelectActivityNew.this).
+                convertView = LayoutInflater.from(OperatorSelectActivity.this).
                         inflate(R.layout.spinner_row_item, parent, false);
             }
+
+
             TextView label = (TextView) convertView.findViewById(R.id.spinner_text);
             label.setText(containerVoulumeSpinnerList.get(position).getName());
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String asas = containerVoulumeSpinnerList.get(position).getName();
+
+                    if(dataFrom.contains("Operator")){
+                        operatorBT.setText(asas);
+                    }else if(dataFrom.contains("DieID")){
+                        dieBT.setText(asas);
+                    } else if(dataFrom.contains("PartID")){
+                        partBT.setText(asas);
+                    }
+
+                    customAlertDialogSpinner.dismiss();
+
+                }
+            });
 
             // returns the view for the current row
             return convertView;
@@ -379,13 +388,10 @@ public class OperatorSelectActivityNew extends Activity {
 
         @Override
         public Filter getFilter() {
-
             if (filterChoice == null) {
                 filterChoice = new NameListSpinnerAdapter.ChoiceFilter();
             }
-
             return filterChoice;
-
         }
 
         private class ChoiceFilter extends Filter {
@@ -398,6 +404,9 @@ public class OperatorSelectActivityNew extends Activity {
                     for (int i = 0; i < choiceFilterList.size(); i++) {
                         if (choiceFilterList.get(i).getName().toLowerCase().contains(charSequence)) {
                             filterList.add(choiceFilterList.get(i));
+                        }else{
+                            filterList.clear();
+                            filterList.add(new ChoiceListOperator(charSequence.toString()));
                         }
                     }
                     results.count = filterList.size();

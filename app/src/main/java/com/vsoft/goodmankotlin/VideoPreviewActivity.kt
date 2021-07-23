@@ -159,7 +159,7 @@ class VideoPreviewActivity : AppCompatActivity() {
                     RequestBody.create(MediaType.parse("image/*"), file)
                 )
                 val call: Call<PunchResponse?>? =
-                    RetrofitClient.getInstance()!!.getMyApi()!!.uploadDyeImage(filePart)
+                    RetrofitClient.getInstance()!!.getMyApi()!!.uploadDyeVideo(filePart)
                 call!!.enqueue(object : Callback<PunchResponse?> {
                     override fun onResponse(
                         call: Call<PunchResponse?>,
