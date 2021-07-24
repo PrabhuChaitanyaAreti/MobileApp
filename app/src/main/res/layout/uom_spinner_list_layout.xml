@@ -19,6 +19,7 @@
 		android:padding="5dp"
 		android:layout_height="wrap_content"
 		android:windowSoftInputMode="adjustResize|stateHidden"
+		android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 		android:imeOptions="flagNoExtractUi"
 		android:visibility="visible"
 		android:imeActionLabel="Done"
@@ -32,8 +33,6 @@
 	<ListView
 		android:id="@+id/spinnerList"
 		android:layout_width="match_parent"
-		android:stackFromBottom="true"
-		android:transcriptMode="normal"
-		android:layout_height="match_parent">
+		android:layout_height="200dp">
 	</ListView>
 </LinearLayout>

@@ -82,11 +82,6 @@ public class OperatorSelectActivity extends Activity {
             }
         });
 
-
-
-
-
-
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -245,8 +240,6 @@ public class OperatorSelectActivity extends Activity {
             spinnerList.setAdapter(nameSpinnerAdapter);
             searchET = dialogLayout.findViewById(R.id.search_et);
             searchET.setOnEditorActionListener(new DoneOnEditorActionListener(dataFrom));
-
-
             customAlertDialogSpinner = builder.create();
             customAlertDialogSpinner.setCancelable(false);
             customAlertDialogSpinner.setCanceledOnTouchOutside(false);
@@ -305,7 +298,6 @@ public class OperatorSelectActivity extends Activity {
                 InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 customAlertDialogSpinner.dismiss();
-
                 if(from.contains("Operator")){
                     operatorBT.setText(searchET.getText().toString());
                 }else if(from.contains("DieID")){
@@ -324,7 +316,7 @@ public class OperatorSelectActivity extends Activity {
     public class NameListSpinnerAdapter extends BaseAdapter implements Filterable {
         List<ChoiceListOperator> containerVoulumeSpinnerList;
         List<ChoiceListOperator> choiceFilterList;
-        NameListSpinnerAdapter.ChoiceFilter filterChoice;
+        ChoiceFilter filterChoice;
         private Context mContext;
         String dataFrom;
 
@@ -396,7 +388,6 @@ public class OperatorSelectActivity extends Activity {
 
         private class ChoiceFilter extends Filter {
             FilterResults results = new FilterResults();
-
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
                 ArrayList<ChoiceListOperator> filterList = new ArrayList<ChoiceListOperator>();
