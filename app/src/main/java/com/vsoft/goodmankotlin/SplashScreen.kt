@@ -31,7 +31,7 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun navigationScreen() {
-        val i = Intent(this, LoginActivity::class.java)
+        val i = Intent(this, MaskingActivity::class.java)
         startActivity(i)
         // close this activity
         finish()

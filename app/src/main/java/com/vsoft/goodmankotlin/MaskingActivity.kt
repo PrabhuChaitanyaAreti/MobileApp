@@ -411,7 +411,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         val windowAlDl: Window? = dialogShowInfo.window
 
         layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
-        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
 
         windowAlDl?.attributes = layoutParams
         dialogShowInfo.show()
