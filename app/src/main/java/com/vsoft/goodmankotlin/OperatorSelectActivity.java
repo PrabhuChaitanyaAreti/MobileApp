@@ -154,7 +154,7 @@ public class OperatorSelectActivity extends Activity {
 
 
                 }else {
-                    Intent mainIntent = new Intent(OperatorSelectActivity.this, VideoRecordingActivity.class);
+                    Intent mainIntent = new Intent(OperatorSelectActivity.this, VideoRecordActivityNew.class);
                     startActivity(mainIntent);
                     //finish();
 

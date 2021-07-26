@@ -53,12 +53,11 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
     private var mPicture: PictureCallback? = null
 
     private var capture: Button? = null
-    private  var btnSendEdge:android.widget.Button? = null
+    private var btnSendEdge:android.widget.Button? = null
     private var cameraPreview: LinearLayout? = null
-    private var imgSettings: ImageView? =
-        null
-    private  var imgCapture:android.widget.ImageView? = null
-    private  var imgPreview:android.widget.ImageView? = null
+    private var imgSettings: ImageView? = null
+    private var imgCapture:android.widget.ImageView? = null
+    private var imgPreview:android.widget.ImageView? = null
 
     private var myContext: Context? = null
 
