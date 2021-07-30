@@ -44,9 +44,9 @@
         </activity>
         <activity android:name=".LoginActivity" android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        <activity android:name=".OperatorActivity" android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:fitsSystemWindows="true"/>
         <activity android:name=".OperatorSelectActivity" android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:fitsSystemWindows="true"/>
+        <activity android:name=".OperatorSelectActivityJava" android:screenOrientation="userLandscape"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity

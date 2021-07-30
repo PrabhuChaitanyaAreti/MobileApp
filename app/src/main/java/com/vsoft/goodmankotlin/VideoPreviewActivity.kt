@@ -7,13 +7,13 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
-import androidx.media2.exoplayer.external.ExoPlayerFactory
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -234,8 +234,8 @@ class VideoPreviewActivity : AppCompatActivity() {
         seekBar = findViewById<View>(R.id.seekbar) as SeekBar
 
         // video_index = getIntent().getIntExtra("pos" , 0);
-        mHandler = Handler()
-        handler = Handler()
+        mHandler = Handler(Looper.getMainLooper())
+        handler = Handler(Looper.getMainLooper())
         absPlayerInternal!!.addListener(object : Player.EventListener {
             override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
                 val dur = absPlayerInternal!!.duration
@@ -302,7 +302,7 @@ class VideoPreviewActivity : AppCompatActivity() {
         total.text = timeConversion(total_duration as Long)
         current!!.text = timeConversion(current_pos.toLong())
         seekBar!!.max = total_duration.toInt()
-        val handler = Handler()
+        val handler = Handler(Looper.getMainLooper())
         val runnable: Runnable = object : Runnable {
             override fun run() {
                 try {
