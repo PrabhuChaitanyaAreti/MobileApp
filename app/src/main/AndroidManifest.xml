@@ -61,8 +61,8 @@
             android:name=".VideoRecordActivityNew"
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-
-        <activity android:name=".VideoPreviewActivity"
+        <activity
+            android:name=".VideoPreviewActivity"
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity

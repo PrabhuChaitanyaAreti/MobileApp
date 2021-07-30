@@ -276,7 +276,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
             progressDialog!!.setCancelable(false)
             progressDialog!!.setMessage("Please wait .. Processing image may take some time.")
             if (NetworkUtils.isNetworkAvailable(this)) {
-                Handler().post { progressDialog!!.show() }
+                Handler(Looper.getMainLooper()).post { progressDialog!!.show() }
                 val file = File(imagePath) // initialize file here
                 val filePart: MultipartBody.Part = MultipartBody.Part.createFormData(
                     "file",

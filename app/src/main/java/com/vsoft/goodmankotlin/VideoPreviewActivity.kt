@@ -149,7 +149,7 @@ class VideoPreviewActivity : AppCompatActivity() {
             progressDialog!!.setCancelable(false)
             progressDialog!!.setMessage("Please wait .. Processing image may take some time.")
             if (NetworkUtils.isNetworkAvailable(this@VideoPreviewActivity)) {
-                Handler().post {
+                Handler(Looper.getMainLooper()).post {
                     progressDialog!!.show()
                 }
                 val file = File(path) // initialize file here

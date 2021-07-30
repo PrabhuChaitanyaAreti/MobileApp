@@ -15,6 +15,8 @@ import android.util.Log
 import android.view.TextureView
 import android.view.View
 import android.view.WindowManager
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +25,9 @@ import com.vsoft.goodmankotlin.utils.BatteryUtil
 import kotlinx.android.synthetic.main.activity_video_record_new.*
 import java.io.File
 import java.io.IOException
+import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureListener ,View.OnClickListener{
     private var mCamera: Camera? = null
@@ -55,6 +59,9 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
 
     private  var isFlashMode = false
 
+    private var cameraSizesArray = emptyArray<String?>()
+    private var cameraFPSArray: Array<String>?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_record_new)
@@ -72,7 +79,7 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
                 requestPermissions()
             }
             videoRecordPlayPause.visibility= View.GONE
-            settingsImgIcon.visibility= View.GONE
+            settingsImgIcon.visibility= View.VISIBLE
 
             videoOnlineImageButton.setOnClickListener(this)
             flashImgIcon.setOnClickListener(this)
@@ -92,6 +99,11 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
                 MediaPrepareTask().execute(null, null, null)
             }
         }else  if(v==settingsImgIcon){
+            if (Counter != null) {
+                Counter!!.cancel()
+                Counter = null
+            }
+            showDialog()
 
         }else  if(v==flashImgIcon){
             if(isFlashMode){
@@ -405,16 +417,42 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
             mSupportedVideoSizes,
             mSupportedPreviewSizes, surface_view!!.width, surface_view!!.height
         )
+            Log.e(TAG, "onSurfaceTextureAvailable surface_view!!.width::: " + surface_view!!.width)
+            Log.e(TAG, "onSurfaceTextureAvailable surface_view!!.height::: " + surface_view!!.height)
+
+
+
          profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
         profile!!.videoFrameWidth = optimalSize!!.width
         profile!!.videoFrameHeight = optimalSize.height
 
         parameters!!.setPreviewSize(profile!!.videoFrameWidth, profile!!.videoFrameHeight)
-        mCamera!!.parameters = parameters
+
+            val focusModes: List<String> =  parameters!!.getSupportedFocusModes()
+            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                parameters!!.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
+            } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                parameters!!.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO)
+            }
+
+            mCamera!!.parameters = parameters
 
             mCamera!!.setPreviewTexture(p0)
             surface_view!!.alpha = 1.0f
             mCamera!!.startPreview()
+
+            val optimalSize1 : Camera.Size? =  mCamera!!.parameters.previewSize
+
+            Log.d(
+                TAG,
+                "onSurfaceTextureAvailable optimalSize1!!.width ${optimalSize1!!.width}"
+            )
+            Log.d(
+                TAG,
+                "onSurfaceTextureAvailable optimalSize1!!.height ${optimalSize1.height}"
+            )
+
+            getCameraCharacteristics()
         } catch (e: IOException) {
             Log.e(
                 TAG,
@@ -493,4 +531,187 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
         }
         Counter!!.start()
     }
+
+    private fun getCameraCharacteristics() {
+        Log.d(TAG, "getCameraCharacteristics")
+        try {
+
+           // val sizes: List<Camera.Size> = parameters!!.getSupportedPreviewSizes()
+            val mSupportedSizes = parameters!!.supportedPreviewSizes
+          //  val mSupportedSizes = parameters!!.supportedVideoSizes
+            cameraSizesArray = arrayOfNulls<String?>(mSupportedSizes.size)
+            for (i in mSupportedSizes.indices) {
+                val str = mSupportedSizes[i].width.toString() + "x" + mSupportedSizes[i].height
+                Log.i(TAG, "imageDimension $str")
+                cameraSizesArray[i] = str
+            }
+
+            val sb1 = StringBuffer()
+            val supportedPreviewFps: List<IntArray> = parameters!!.getSupportedPreviewFpsRange()
+            val supportedPreviewFpsIterator = supportedPreviewFps.iterator()
+            while (supportedPreviewFpsIterator.hasNext()) {
+                val tmpRate = supportedPreviewFpsIterator.next()
+                val sb = StringBuffer()
+                var b = true
+                val i = tmpRate.size
+                var j = 0
+                while (j < i) {
+                    if (b) {
+                        sb.append(tmpRate[j].toString() + " - ")
+                        b = false
+                    } else {
+                        sb.append(tmpRate[j])
+                    }
+                    j++
+                }
+                sb1.append(sb.toString() + "n")
+            }
+            Log.v("CameraTest111", sb1.toString())
+            var str = sb1.toString()
+            str = str.replace("000".toRegex(), "")
+            cameraFPSArray = str.split("n").toTypedArray()
+            Log.e(
+                TAG,
+                "printSupportFormats: cameraFPSArray " + Arrays.toString(cameraFPSArray)
+            )
+        } catch (e: java.lang.Exception) {
+            Log.d(TAG, "CameraAccessException: " + e.message)
+        }
+    }
+    private fun showDialog() {
+        val inflater = layoutInflater
+        val alertLayout: View = inflater.inflate(R.layout.camera_settings_dialog, null)
+        val spResolution1 = alertLayout.findViewById<Spinner>(R.id.spResolution)
+        val langAdapter1 = ArrayAdapter<CharSequence>(
+            this@VideoRecordActivityNew,
+            R.layout.spinner_text,
+            cameraSizesArray
+        )
+        langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
+        spResolution1.adapter = langAdapter1
+        val spResolution2 = alertLayout.findViewById<Spinner>(R.id.spFPS)
+        val langAdapter2 = ArrayAdapter<CharSequence>(
+            this@VideoRecordActivityNew,
+            R.layout.spinner_text,
+            cameraFPSArray!!
+        )
+        langAdapter2.setDropDownViewResource(R.layout.simple_spinner_dropdown)
+        spResolution2.adapter = langAdapter2
+        val alert = AlertDialog.Builder(this)
+        alert.setTitle("Settings")
+        alert.setView(alertLayout)
+        alert.setCancelable(false)
+        alert.setNegativeButton(
+            "Cancel"
+        ) { dialog, which ->
+            //Toast.makeText(getBaseContext(), "Cancel Clicked", Toast.LENGTH_SHORT).show();
+        }
+        alert.setPositiveButton(
+            "OK"
+        ) { dialog, which ->
+            val size = spResolution1.selectedItem.toString()
+            Log.d(TAG, "spinner ok click size $size")
+            val separated = size.split("x").toTypedArray()
+            Log.d(
+                TAG,
+                "spinner ok click separated.length " + separated.size
+            )
+            Log.d(
+                TAG,
+                "spinner ok click Integer.parseInt(separated[0]) " + separated[0].toInt()
+            )
+            Log.d(
+                TAG,
+                "spinner ok click Integer.parseInt(separated[1]) " + separated[1].toInt()
+            )
+            // Camera camera = Camera.open();
+            //int cameraSizeResolution =camera.new Size(Integer.parseInt(separated[0]),Integer.parseInt(separated[1]));
+            val selectedWidth = separated[0].toInt()
+            val selectedHeight = separated[1].toInt()
+            Log.d(
+                TAG,
+                "spinner ok click selectedWidth $selectedWidth"
+            )
+            Log.d(
+                TAG,
+                "spinner ok click selectedHeight $selectedHeight"
+            )
+
+            //Camera.Size previewSize = getOptimalPreviewSize(params.getSupportedPreviewSizes(),selectedWidth,selectedHeight);
+            //  Log.d(TAG, "spinner ok click previewSize.width " + previewSize.width);
+            //Log.d(TAG, "spinner ok click previewSize.height " + previewSize.height);
+
+            if (mCamera != null) {
+                if (parameters != null) {
+                    mCamera!!.unlock()
+                   // parameters!!.setPreviewSize(selectedWidth,selectedHeight);
+                    //params.setPictureSize(previewSize.width, previewSize.height);
+                    //   params.setPreviewSize(selectedWidth,selectedHeight);
+                    //  params.setPictureSize(selectedWidth,selectedHeight);
+
+                    val mSupportedPreviewSizes = parameters!!.supportedPreviewSizes
+                    val mSupportedVideoSizes = parameters!!.supportedVideoSizes
+                   /* val optimalSize: Camera.Size? = CameraHelper.getOptimalVideoSize(
+                        mSupportedVideoSizes,
+                        mSupportedPreviewSizes, selectedWidth,selectedHeight
+                    )*/
+                   // val optimalSize: Camera.Size? =
+                     //   getBestSize(selectedWidth, selectedHeight,  parameters!!.getSupportedPreviewSizes())
+                    val optimalSize : Camera.Size? = getBestSize(parameters!!.getSupportedPreviewSizes())
+                    Log.d(
+                        TAG,
+                        "spinner ok click optimalSize!!.width ${optimalSize!!.width}"
+                    )
+                    Log.d(
+                        TAG,
+                        "spinner ok click optimalSize!!.height ${optimalSize.height}"
+                    )
+
+                    profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
+                    profile!!.videoFrameWidth = optimalSize.width
+                    profile!!.videoFrameHeight = optimalSize.height
+
+                   // parameters!!.setPreviewSize(profile!!.videoFrameWidth, profile!!.videoFrameHeight)
+                  //  parameters!!.setPreviewSize( optimalSize.width,optimalSize.height)
+
+                    //mCamera!!.parameters = parameters
+                }
+            }
+        }
+        val dialog = alert.create()
+        dialog.show()
+    }
+   /* private fun getBestSize(
+        targetWidth: Int,
+        targetHeight: Int,
+        sizeList: List<Camera.Size>
+    ): Camera.Size? {
+        var bestSize: Camera.Size? = null
+        for (size in sizeList) {
+            if (size.width == targetHeight && size.height == targetWidth) {
+                bestSize = size
+                return bestSize
+            }
+            val isVer = size.height > size.width // Whether it is vertical
+            val small = if (isVer) size.width else size.height // one with a small width
+            if (small > targetWidth) {
+                if (bestSize == null || bestSize.width > small) {
+                    bestSize = size
+                }
+            }
+        }
+        //LogUtil.e("Optimal size:" + bestSize!!.height + " * " + bestSize.width)
+        return bestSize
+    }
+*/
+   var supportedNum: Int = 0
+    private fun getBestSize(sizeList: List<Camera.Size>): Camera.Size? {
+        var bestSize: Camera.Size? = null
+        if (supportedNum >= sizeList.size) {
+            return bestSize
+        }
+        bestSize = sizeList[supportedNum++]
+        return bestSize
+    }
+
 }
