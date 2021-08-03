@@ -19,6 +19,6 @@ interface VideoDao {
     @Query("delete from video_table")
     fun deleteAllVideos()
 
-    @Query("select * from video_table")
+    @Query("select * from video_table where status=false")
     fun getAllVideos(): LiveData<List<VideoModel>>
 }

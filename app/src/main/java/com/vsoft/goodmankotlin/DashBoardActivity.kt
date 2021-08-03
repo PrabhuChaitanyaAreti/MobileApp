@@ -62,7 +62,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
         progressDialog!!.setCancelable(false)
-        progressDialog!!.setMessage("Please wait .. Checking user details..")
+        progressDialog!!.setMessage("Please wait .. Saving video will take time..")
     }
     override fun onClick(v: View?) {
         if(v?.id==addOperator.id){
@@ -108,9 +108,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
         writer.write(jsonString)
         writer.close()
         val metaDataFilePart = MultipartBody.Part.createFormData(
-            "file",
+            "meta_data",
             jsonFile.name,
-            RequestBody.create(MediaType.parse("multipart/form-data"), jsonFile)
+            RequestBody.create(MediaType.parse("*/*"), jsonFile)
         )
         val file = File(path) // initialize file here
         val videoFilePart = MultipartBody.Part.createFormData(
@@ -126,7 +126,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
                 progressDialog!!.show()
             }
             val call: Call<videoUploadSaveRespose?>? =
-                RetrofitClient.getInstance()!!.getMyApi()!!.saveVideo(metaData,videoFile)
+                RetrofitClient.getInstance()!!.getMyApi1()!!.saveVideo(metaData,videoFile)
             call!!.enqueue(object : Callback<videoUploadSaveRespose?> {
                 override fun onResponse(
                     call: Call<videoUploadSaveRespose?>,
@@ -135,18 +135,22 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
                     try {
                         val statusCode=response.body()!!.statusCode
                         if(statusCode==200){
-
+                            DialogUtils.showNormalAlert(
+                                this@DashBoardActivity,
+                                "Alert!!",
+                                "Data saved successfully"
+                            )
                         }else if(statusCode==401){
                             DialogUtils.showNormalAlert(
                                 this@DashBoardActivity,
                                 "Alert!!",
-                                "Invalid Credentials"
+                                "File Exists"
                             )
                         }else{
                             DialogUtils.showNormalAlert(
                                 this@DashBoardActivity,
                                 "Alert!!",
-                                "Invalid Credentials"
+                                "File Exists"
                             )
                         }
                         if (progressDialog!!.isShowing) {
