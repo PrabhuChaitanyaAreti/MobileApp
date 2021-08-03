@@ -179,6 +179,11 @@ class CameraHelper {
                     (mediaStorageDir.path + File.separator +
                             "VID_" + timeStamp + ".mp4")
                 )
+
+              /*  mediaFile = File(
+                    (mediaStorageDir.path + File.separator +
+                            "check1.mp4")
+                )*/
             } else {
                 return null
             }

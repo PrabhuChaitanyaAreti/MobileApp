@@ -10,8 +10,8 @@ class RetrofitClient() {
     private var instance: RetrofitClient? = null
     private var myApi: RetrofitApiInterface? = null
     //var BASE_URL:String = "http://111.93.3.148:12803"
-    var BASE_URL:String = "http://111.93.3.148:12808"
-
+    //var BASE_URL:String = "http://111.93.3.148:12808"
+    var BASE_URL:String = "http://111.93.3.148:13808"
     init {
         val okHttpClient = OkHttpClient.Builder()
             .connectTimeout(1, TimeUnit.MINUTES)
