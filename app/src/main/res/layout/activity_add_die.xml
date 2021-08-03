@@ -48,7 +48,7 @@
                 android:inputType="textNoSuggestions"
                 android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
                 android:longClickable="false"
-                android:maxLength="100"
+                android:maxLength="5"
                 android:maxLines="1"
                 android:paddingEnd="5dp"
                 android:paddingStart="5dp"

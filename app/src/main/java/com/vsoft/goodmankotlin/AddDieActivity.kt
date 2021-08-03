@@ -11,9 +11,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import com.vsoft.goodmankotlin.database.VideoViewModel
 import kotlinx.android.synthetic.main.activity_add_die.*
 
 class AddDieActivity : AppCompatActivity() , View.OnClickListener , View.OnTouchListener {
@@ -35,10 +32,7 @@ class AddDieActivity : AppCompatActivity() , View.OnClickListener , View.OnTouch
 
         dieIdEditText.setOnTouchListener(this)
         partIdEditText.setOnTouchListener(this)
-        continueButton.setOnClickListener(this)
 
-        dieIdEditText.setOnClickListener(this)
-        partIdEditText.setOnClickListener(this)
         continueButton.setOnClickListener(this)
 
          sharedPreferences = this.getSharedPreferences(sharedPrefFile,
@@ -61,17 +55,11 @@ class AddDieActivity : AppCompatActivity() , View.OnClickListener , View.OnTouch
         if(view == continueButton){
             dieIdStr = dieIdEditText!!.text.toString()
             partIdStr = partIdEditText!!.text.toString()
-
-
-
-
             if (dieIdStr != null && dieIdStr!!.isNotEmpty() && !TextUtils.isEmpty(dieIdStr) && dieIdStr != "null") {
                 if (partIdStr != null && partIdStr!!.isNotEmpty() && !TextUtils.isEmpty(partIdStr) && partIdStr != "null") {
 
-                    Log.d("TAG", "AddDieActivity  sharedPreferences  dieIdStr $dieIdStr")
-                    Log.d("TAG", "AddDieActivity sharedPreferences  partIdStr $partIdStr")
-
-
+                    Log.d("TAG", "AddDieActivity   dieIdStr $dieIdStr")
+                    Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
 
                     val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
                     editor.putString("dieIdStr",dieIdStr)

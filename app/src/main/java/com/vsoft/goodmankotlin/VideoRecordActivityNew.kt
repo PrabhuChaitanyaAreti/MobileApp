@@ -24,15 +24,16 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureListener ,View.OnClickListener{
+class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureListener,
+    View.OnClickListener {
     private var mCamera: Camera? = null
     private var mMediaRecorder: MediaRecorder? = null
     private var mOutputFile: File? = null
     private var isRecording = false
-    private var isPauseResume =false
+    private var isPauseResume = false
 
-    private var parameters:Camera.Parameters?=null;
-    private var  profile:CamcorderProfile?=null
+    private var parameters: Camera.Parameters? = null;
+    private var profile: CamcorderProfile? = null
 
     private val TAG = VideoRecordActivityNew::class.java.simpleName
 
@@ -40,6 +41,7 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
     private var RECORD_AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
 
     private var RC_PERMISSION = 101
+
     /**
      * Background and Countdown timer variables
      */
@@ -52,28 +54,28 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
     private var recordmCountDown: CountDownTimer? = null
     private var recordSecondsLeft: Long = 0
 
-    private  var isFlashMode = false
+    private var isFlashMode = false
 
     private var cameraSizesArray = emptyArray<String?>()
-    private var cameraFPSArray: Array<String>?=null
+    private var cameraFPSArray: Array<String>? = null
 
-    private var surface_view:TextureView?=null
-    private var settingsImgIcon:ImageView?=null
-    private var videoOnlineImageButton:ImageButton?=null
-    private var videoRecordPlayPause:ImageButton?=null
-    private var flashImgIcon:ImageView?=null
-    private var timeleftTxt:TextView?=null
+    private var surface_view: TextureView? = null
+    private var settingsImgIcon: ImageView? = null
+    private var videoOnlineImageButton: ImageButton? = null
+    private var videoRecordPlayPause: ImageButton? = null
+    private var flashImgIcon: ImageView? = null
+    private var timeleftTxt: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_record_new)
 
-        surface_view=findViewById(R.id.surface_view)
-        settingsImgIcon=findViewById(R.id.settingsImgIcon)
-        videoOnlineImageButton=findViewById(R.id.videoOnlineImageButton)
-        videoRecordPlayPause=findViewById(R.id.videoRecordPlayPause)
-        flashImgIcon=findViewById(R.id.flashImgIcon)
-        timeleftTxt=findViewById(R.id.timeleftTxt)
+        surface_view = findViewById(R.id.surface_view)
+        settingsImgIcon = findViewById(R.id.settingsImgIcon)
+        videoOnlineImageButton = findViewById(R.id.videoOnlineImageButton)
+        videoRecordPlayPause = findViewById(R.id.videoRecordPlayPause)
+        flashImgIcon = findViewById(R.id.flashImgIcon)
+        timeleftTxt = findViewById(R.id.timeleftTxt)
 
         val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoRecordActivityNew)
 
@@ -81,14 +83,13 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
 
         if (batterLevel >= 15) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            if (checkPermissions()){
+            if (checkPermissions()) {
                 surface_view!!.surfaceTextureListener = this
-            } else
-            {
+            } else {
                 requestPermissions()
             }
-            videoRecordPlayPause!!.visibility= View.GONE
-            settingsImgIcon!!.visibility= View.VISIBLE
+            videoRecordPlayPause!!.visibility = View.GONE
+            settingsImgIcon!!.visibility = View.VISIBLE
 
             videoOnlineImageButton!!.setOnClickListener(this)
             flashImgIcon!!.setOnClickListener(this)
@@ -101,33 +102,33 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onClick(v: View?) {
-        if(v==videoOnlineImageButton){
+        if (v == videoOnlineImageButton) {
             if (isRecording) {
-               stopRecording()
+                stopRecording()
             } else {
                 MediaPrepareTask().execute(null, null, null)
             }
-        }else  if(v==settingsImgIcon){
+        } else if (v == settingsImgIcon) {
             if (Counter != null) {
                 Counter!!.cancel()
                 Counter = null
             }
             showDialog()
 
-        }else  if(v==flashImgIcon){
-            if(isFlashMode){
-                isFlashMode=false
+        } else if (v == flashImgIcon) {
+            if (isFlashMode) {
+                isFlashMode = false
                 flashImgIcon!!.setImageResource(R.drawable.flash_off)
                 parameters!!.setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
                 mCamera!!.setParameters(parameters!!)
-            }else{
+            } else {
                 flashImgIcon!!.setImageResource(R.drawable.flash_on)
-                isFlashMode=true
+                isFlashMode = true
                 parameters!!.setFlashMode(Camera.Parameters.FLASH_MODE_ON)
                 parameters!!.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
                 mCamera!!.setParameters(parameters!!)
             }
-        }else  if(v==videoRecordPlayPause){
+        } else if (v == videoRecordPlayPause) {
             if (isPauseResume) {
                 isPauseResume = false
                 videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
@@ -154,7 +155,7 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
 
                     override fun onTick(millisUntilFinished: Long) {
                         println("resume onTick millisUntilFinished $millisUntilFinished")
-                        recordSecondsLeft=millisUntilFinished;
+                        recordSecondsLeft = millisUntilFinished;
                         recordSecondsLeft =
                             TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
                                 TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
@@ -196,8 +197,8 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
                 mMediaRecorder!!.stop() // stop the recording
             }
             flashImgIcon!!.setImageResource(R.drawable.flash_off)
-            settingsImgIcon!!.visibility= View.GONE
-            videoRecordPlayPause!!.visibility= View.GONE
+            settingsImgIcon!!.visibility = View.GONE
+            videoRecordPlayPause!!.visibility = View.GONE
             videoOnlineImageButton!!.setImageResource(R.drawable.video_record_start_new)
             releaseMediaRecorder() // release the MediaRecorder object
             mCamera!!.lock() // take camera access back from MediaRecorder
@@ -245,18 +246,33 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
             }
         }
     }
+
     private fun requestPermissions() {
-        ActivityCompat.requestPermissions(this, arrayOf(CAMERA_PERMISSION, RECORD_AUDIO_PERMISSION), RC_PERMISSION)
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(CAMERA_PERMISSION, RECORD_AUDIO_PERMISSION),
+            RC_PERMISSION
+        )
     }
 
     private fun checkPermissions(): Boolean {
-        return ((ActivityCompat.checkSelfPermission(this, CAMERA_PERMISSION)) == PackageManager.PERMISSION_GRANTED
-                && (ActivityCompat.checkSelfPermission(this, CAMERA_PERMISSION)) == PackageManager.PERMISSION_GRANTED)
+        return ((ActivityCompat.checkSelfPermission(
+            this,
+            CAMERA_PERMISSION
+        )) == PackageManager.PERMISSION_GRANTED
+                && (ActivityCompat.checkSelfPermission(
+            this,
+            CAMERA_PERMISSION
+        )) == PackageManager.PERMISSION_GRANTED)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode) {
+        when (requestCode) {
             RC_PERMISSION -> {
                 var allPermissionsGranted = false
                 for (result in grantResults) {
@@ -269,12 +285,13 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
                 }
                 if (allPermissionsGranted) {
                     surface_view!!.surfaceTextureListener = this
-                } else{
+                } else {
                     permissionsNotGranted()
                 }
             }
         }
     }
+
     private fun permissionsNotGranted() {
         AlertDialog.Builder(this).setTitle("Permissions required")
             .setMessage("These permissions are required to use this app. Please allow Camera and Audio permissions first")
@@ -325,18 +342,32 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
         mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
         mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
 
-      /*  mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
-        mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.CAMCORDER)
-        mMediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mMediaRecorder!!.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
-        mMediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC)*/
+        /*  mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
+          mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.CAMCORDER)
+          mMediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+          mMediaRecorder!!.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
+          mMediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC)*/
+//
+//        mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+//        mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC);
+//        mMediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+//        mMediaRecorder!!.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+//        mMediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
-      /*  mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-        mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mMediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mMediaRecorder!!.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        mMediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-*/
+       // mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC);
+       // mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+     //   mMediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+       // mMediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+       // mMediaRecorder!!.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+
+
+        ///Log.e("---1----", width+"------------"+height);
+//                    mediaRecorder.setVideoSize(camera.getParameters().getPreviewSize().width, camera.getParameters().getPreviewSize().height);
+       /// mMediaRecorder!!.setVideoFrameRate(30);
+        //mMediaRecorder!!.setVideoEncodingBitRate(3*1024*1024);
+//                    mediaRecorder.setOrientationHint(90);
+        //mMediaRecorder!!.setMaxDuration(60*60*1000);
+
         // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
         mMediaRecorder!!.setProfile(profile)
 
@@ -360,7 +391,7 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
             return false
         } catch (e: IOException) {
             Log.d(
-               TAG,
+                TAG,
                 "IOException preparing MediaRecorder: " + e.message
             )
             releaseMediaRecorder()
@@ -368,42 +399,48 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
         }
         return true
     }
-   inner class MediaPrepareTask() : AsyncTask<Void, Void, Boolean>() {
+
+    inner class MediaPrepareTask() : AsyncTask<Void, Void, Boolean>() {
         override fun doInBackground(vararg params: Void?): Boolean? {
             // initialize video camera
-            isRecording = if (prepareVideoRecorder()) {
+
+            if (prepareVideoRecorder()) {
                 // Camera is available and unlocked, MediaRecorder is prepared,
                 // now you can start recording
-                    try{
-                        mMediaRecorder!!.start()
-                    }catch (e:Exception){
-                        e.printStackTrace()
-                    }
+                try {
+                    mMediaRecorder!!.start()
 
+                    isRecording = true
 
-                Handler(Looper.getMainLooper()).postDelayed(Runnable {
-                    // enable stop button
+                    Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                        // enable stop button
+                        runOnUiThread {
+                            videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
+                            settingsImgIcon!!.visibility = View.GONE
+                            videoRecordPlayPause!!.visibility = View.VISIBLE
+                            videoOnlineImageButton!!.setImageResource(R.drawable.video_record_stop_new)
+                            recordmCountDown = object : CountDownTimer(recordDynamicTimer, 1000) {
+                                override fun onFinish() {
+                                    stopRecording()
+                                }
 
-                runOnUiThread {
-                    videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
-                    settingsImgIcon!!.visibility= View.GONE
-                    videoRecordPlayPause!!.visibility= View.VISIBLE
-                    videoOnlineImageButton!!.setImageResource(R.drawable.video_record_stop_new)
-                    recordmCountDown = object : CountDownTimer(recordDynamicTimer, 1000) {
-                        override fun onFinish() {
-                            stopRecording()
+                                override fun onTick(millisUntilFinished: Long) {
+                                    recordSecondsLeft =
+                                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
+                                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
+                                        )
+                                    timeleftTxt!!.setText("$recordSecondsLeft/20")
+                                }
+                            }.start()
                         }
-                        override fun onTick(millisUntilFinished: Long) {
-                            recordSecondsLeft =
-                                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
-                                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                                )
-                            timeleftTxt!!.setText("$recordSecondsLeft/20")
-                        }
-                    }.start()
+                    }, 1000)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    // prepare didn't work, release the camera
+                    releaseMediaRecorder()
+                    return false
                 }
-                }, 1000)
-                true
+
             } else {
                 // prepare didn't work, release the camera
                 releaseMediaRecorder()
@@ -427,27 +464,30 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
                    * Background timer initialize
                    */
             backgroundTimer()
-        mCamera = CameraHelper.getDefaultCameraInstance()
-        parameters = mCamera!!.parameters
+            mCamera = CameraHelper.getDefaultCameraInstance()
+            parameters = mCamera!!.parameters
 
-        val mSupportedPreviewSizes = parameters!!.supportedPreviewSizes
-        val mSupportedVideoSizes = parameters!!.supportedVideoSizes
-        val optimalSize: Camera.Size? = CameraHelper.getOptimalVideoSize(
-            mSupportedVideoSizes,
-            mSupportedPreviewSizes, surface_view!!.width, surface_view!!.height
-        )
+            val mSupportedPreviewSizes = parameters!!.supportedPreviewSizes
+            val mSupportedVideoSizes = parameters!!.supportedVideoSizes
+            val optimalSize: Camera.Size? = CameraHelper.getOptimalVideoSize(
+                mSupportedVideoSizes,
+                mSupportedPreviewSizes, surface_view!!.width, surface_view!!.height
+            )
             Log.e(TAG, "onSurfaceTextureAvailable surface_view!!.width::: " + surface_view!!.width)
-            Log.e(TAG, "onSurfaceTextureAvailable surface_view!!.height::: " + surface_view!!.height)
+            Log.e(
+                TAG,
+                "onSurfaceTextureAvailable surface_view!!.height::: " + surface_view!!.height
+            )
 
 
 
-         profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
-        profile!!.videoFrameWidth = optimalSize!!.width
-        profile!!.videoFrameHeight = optimalSize.height
+            profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
+            profile!!.videoFrameWidth = optimalSize!!.width
+            profile!!.videoFrameHeight = optimalSize.height
 
-        parameters!!.setPreviewSize(profile!!.videoFrameWidth, profile!!.videoFrameHeight)
+            parameters!!.setPreviewSize(profile!!.videoFrameWidth, profile!!.videoFrameHeight)
 
-            val focusModes: List<String> =  parameters!!.getSupportedFocusModes()
+            val focusModes: List<String> = parameters!!.getSupportedFocusModes()
             if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
                 parameters!!.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
             } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
@@ -460,7 +500,7 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
             surface_view!!.alpha = 1.0f
             mCamera!!.startPreview()
 
-            val optimalSize1 : Camera.Size? =  mCamera!!.parameters.previewSize
+            val optimalSize1: Camera.Size? = mCamera!!.parameters.previewSize
 
             Log.d(
                 TAG,
@@ -555,9 +595,9 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
         Log.d(TAG, "getCameraCharacteristics")
         try {
 
-           // val sizes: List<Camera.Size> = parameters!!.getSupportedPreviewSizes()
+            // val sizes: List<Camera.Size> = parameters!!.getSupportedPreviewSizes()
             val mSupportedSizes = parameters!!.supportedPreviewSizes
-          //  val mSupportedSizes = parameters!!.supportedVideoSizes
+            //  val mSupportedSizes = parameters!!.supportedVideoSizes
             cameraSizesArray = arrayOfNulls<String?>(mSupportedSizes.size)
             for (i in mSupportedSizes.indices) {
                 val str = mSupportedSizes[i].width.toString() + "x" + mSupportedSizes[i].height
@@ -597,6 +637,7 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
             Log.d(TAG, "CameraAccessException: " + e.message)
         }
     }
+
     private fun showDialog() {
         val inflater = layoutInflater
         val alertLayout: View = inflater.inflate(R.layout.camera_settings_dialog, null)
@@ -663,22 +704,23 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
             if (mCamera != null) {
                 if (parameters != null) {
                     mCamera!!.unlock()
-                   // parameters!!.setPreviewSize(selectedWidth,selectedHeight);
+                    // parameters!!.setPreviewSize(selectedWidth,selectedHeight);
                     //params.setPictureSize(previewSize.width, previewSize.height);
                     //   params.setPreviewSize(selectedWidth,selectedHeight);
                     //  params.setPictureSize(selectedWidth,selectedHeight);
 
                     val mSupportedPreviewSizes = parameters!!.supportedPreviewSizes
                     val mSupportedVideoSizes = parameters!!.supportedVideoSizes
-                   /* val optimalSize: Camera.Size? = CameraHelper.getOptimalVideoSize(
-                        mSupportedVideoSizes,
-                        mSupportedPreviewSizes, selectedWidth,selectedHeight
-                    )*/
-                   // val optimalSize: Camera.Size? =
-                     //   getBestSize(selectedWidth, selectedHeight,  parameters!!.getSupportedPreviewSizes())
-                   // val optimalSize : Camera.Size? = getBestSize(parameters!!.getSupportedPreviewSizes())
+                    /* val optimalSize: Camera.Size? = CameraHelper.getOptimalVideoSize(
+                         mSupportedVideoSizes,
+                         mSupportedPreviewSizes, selectedWidth,selectedHeight
+                     )*/
+                    // val optimalSize: Camera.Size? =
+                    //   getBestSize(selectedWidth, selectedHeight,  parameters!!.getSupportedPreviewSizes())
+                    // val optimalSize : Camera.Size? = getBestSize(parameters!!.getSupportedPreviewSizes())
 
-                    val optimalSize : Camera.Size? =  choosePreviewSize(parameters!!,selectedWidth,selectedHeight)
+                    val optimalSize: Camera.Size? =
+                        choosePreviewSize(parameters!!, selectedWidth, selectedHeight)
                     Log.d(
                         TAG,
                         "spinner ok click optimalSize!!.width ${optimalSize!!.width}"
@@ -692,40 +734,41 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
                     profile!!.videoFrameWidth = optimalSize.width
                     profile!!.videoFrameHeight = optimalSize.height
 
-                   // parameters!!.setPreviewSize(profile!!.videoFrameWidth, profile!!.videoFrameHeight)
+                    // parameters!!.setPreviewSize(profile!!.videoFrameWidth, profile!!.videoFrameHeight)
                     //parameters!!.setPreviewSize( optimalSize.width,optimalSize.height)
-                   // parameters!!.setPreviewSize( selectedWidth,selectedHeight)
-                  //  mCamera!!.parameters = parameters
+                    // parameters!!.setPreviewSize( selectedWidth,selectedHeight)
+                    //  mCamera!!.parameters = parameters
                 }
             }
         }
         val dialog = alert.create()
         dialog.show()
     }
-   /* private fun getBestSize(
-        targetWidth: Int,
-        targetHeight: Int,
-        sizeList: List<Camera.Size>
-    ): Camera.Size? {
-        var bestSize: Camera.Size? = null
-        for (size in sizeList) {
-            if (size.width == targetHeight && size.height == targetWidth) {
-                bestSize = size
-                return bestSize
-            }
-            val isVer = size.height > size.width // Whether it is vertical
-            val small = if (isVer) size.width else size.height // one with a small width
-            if (small > targetWidth) {
-                if (bestSize == null || bestSize.width > small) {
-                    bestSize = size
-                }
-            }
-        }
-        //LogUtil.e("Optimal size:" + bestSize!!.height + " * " + bestSize.width)
-        return bestSize
-    }
-*/
-   var supportedNum: Int = 0
+
+    /* private fun getBestSize(
+         targetWidth: Int,
+         targetHeight: Int,
+         sizeList: List<Camera.Size>
+     ): Camera.Size? {
+         var bestSize: Camera.Size? = null
+         for (size in sizeList) {
+             if (size.width == targetHeight && size.height == targetWidth) {
+                 bestSize = size
+                 return bestSize
+             }
+             val isVer = size.height > size.width // Whether it is vertical
+             val small = if (isVer) size.width else size.height // one with a small width
+             if (small > targetWidth) {
+                 if (bestSize == null || bestSize.width > small) {
+                     bestSize = size
+                 }
+             }
+         }
+         //LogUtil.e("Optimal size:" + bestSize!!.height + " * " + bestSize.width)
+         return bestSize
+     }
+ */
+    var supportedNum: Int = 0
     private fun getBestSize(sizeList: List<Camera.Size>): Camera.Size? {
         var bestSize: Camera.Size? = null
         if (supportedNum >= sizeList.size) {
@@ -736,13 +779,13 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
     }
 
 
-
-    fun choosePreviewSize(parms: Camera.Parameters, width: Int, height: Int): Camera.Size?  {
+    fun choosePreviewSize(parms: Camera.Parameters, width: Int, height: Int): Camera.Size? {
         // We should make sure that the requested MPEG size is less than the preferred
         // size, and has the same aspect ratio.
         val ppsfv = parms.preferredPreviewSizeForVideo
         if (ppsfv != null) {
-            Log.d("",
+            Log.d(
+                "",
                 "Camera preferred preview size for video is " +
                         ppsfv.width + "x" + ppsfv.height
             )
@@ -752,14 +795,14 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
         //}
         for (size: Camera.Size in parms.supportedPreviewSizes) {
             if (size.width == width && size.height == height) {
-               // parms.setPreviewSize(width, height)
+                // parms.setPreviewSize(width, height)
                 return size
             }
         }
-        Log.d("","Unable to set preview size to " + width + "x" + height)
+        Log.d("", "Unable to set preview size to " + width + "x" + height)
         //if (ppsfv != null) {
-            //parms.setPreviewSize(ppsfv.width, ppsfv.height)
-            return ppsfv
+        //parms.setPreviewSize(ppsfv.width, ppsfv.height)
+        return ppsfv
         //}
         // else use whatever the default size is
     }
