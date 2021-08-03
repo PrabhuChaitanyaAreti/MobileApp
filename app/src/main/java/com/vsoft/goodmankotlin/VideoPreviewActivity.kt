@@ -1,8 +1,11 @@
 package com.vsoft.goodmankotlin
 
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
@@ -37,11 +40,13 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class VideoPreviewActivity : AppCompatActivity() {
     val TAG = VideoPreviewActivity::class.java.simpleName
-    private var path: String? = null
+    private var path= ""
     private  var videofilename: String? = null
     private var isplay = false
     private var current_pos: Long = 0
@@ -66,9 +71,28 @@ class VideoPreviewActivity : AppCompatActivity() {
     private lateinit var vm: VideoViewModel
 
 
+    private val sharedPrefFile = "kotlinsharedpreference"
+    var sharedPreferences: SharedPreferences?=null
+
+    private var dieIdStr=  ""
+    private  var partIdStr = ""
+    private var isNewDie=false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_preview)
+
+        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+            Context.MODE_PRIVATE)
+
+
+        dieIdStr = sharedPreferences!!.getString("dieIdStr","").toString()
+        partIdStr = sharedPreferences!!.getString("partIdStr","").toString()
+        isNewDie=sharedPreferences!!.getBoolean("IsNewDie",false)
+
+        Log.d("TAG", "VideoPreviewActivity  sharedPreferences  dieIdStr $dieIdStr")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  partIdStr $partIdStr")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  IsNewDie $isNewDie")
 
 
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
@@ -99,7 +123,7 @@ class VideoPreviewActivity : AppCompatActivity() {
 
         if (batterLevel >= 15) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        path = intent.extras!!.getString("videoSavingFilePath")
+        path = intent.extras!!.getString("videoSavingFilePath").toString()
         Log.d(TAG, "VideoPreviewActivity onCreate $path")
         videofilename = CommonUtils.getFileName(path!!)
         println("VideoPreviewActivity videofilename is $videofilename")
@@ -174,7 +198,41 @@ class VideoPreviewActivity : AppCompatActivity() {
             finish()
         }
          videoSubmit = findViewById<TextView>(R.id.videoSubmit)
+            if(isNewDie){
+                videoSubmit!!.text="Save"
+            }else{
+                videoSubmit!!.text="Submit"
+            }
         videoSubmit!!.setOnClickListener {
+
+            if(isNewDie){
+                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false))
+                val builder = AlertDialog.Builder(this@VideoPreviewActivity)
+                builder.setCancelable(false)
+                builder.setTitle(this@VideoPreviewActivity.getResources().getString(R.string.app_name))
+                builder.setMessage("You have been sucessfully saved die details in local DB.")
+                builder.setNeutralButton("Ok") { dialog, which ->
+                    dialog.dismiss()
+                    if (alertDialog!!.isShowing) {
+                        alertDialog!!.dismiss()
+                    }
+                    dialog.dismiss()
+                    val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                alertDialog = builder.create()
+                if (!this@VideoPreviewActivity.isFinishing) {
+                    try {
+                        alertDialog?.show()
+                    } catch (e: WindowManager.BadTokenException) {
+                        Log.e("BadTokenException", e.toString())
+                    }
+                }
+
+            }else{
+
             if (absPlayerInternal!!.isPlaying()) {
                 absPlayerInternal!!.stop()
             }
@@ -267,6 +325,7 @@ class VideoPreviewActivity : AppCompatActivity() {
                     "Alert!!",
                     "Please check your internet connection and try again"
                 )
+            }
             }
         }
 

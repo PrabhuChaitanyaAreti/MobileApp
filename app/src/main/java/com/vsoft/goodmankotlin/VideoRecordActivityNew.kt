@@ -374,7 +374,13 @@ class VideoRecordActivityNew : AppCompatActivity(),TextureView.SurfaceTextureLis
             isRecording = if (prepareVideoRecorder()) {
                 // Camera is available and unlocked, MediaRecorder is prepared,
                 // now you can start recording
-                mMediaRecorder!!.start()
+                    try{
+                        mMediaRecorder!!.start()
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                    }
+
+
                 Handler(Looper.getMainLooper()).postDelayed(Runnable {
                     // enable stop button
 

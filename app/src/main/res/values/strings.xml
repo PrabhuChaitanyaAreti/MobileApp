@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GoodManKotlin</string>
+    <string name="app_name">GoodMan</string>
 
     <string name="btn_take_picture">Take Picture</string>
     <string name="btn_retake_picture">Retake Picture</string>
