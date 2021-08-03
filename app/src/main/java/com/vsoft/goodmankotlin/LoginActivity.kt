@@ -130,7 +130,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                     try {
                         val statusCode=response.body()!!.statusCode
                             if(statusCode==200){
-                                operatorSelectionScreenNavigation()
+                                navigateToDashBoard()
                             }else if(statusCode==401){
                                 DialogUtils.showNormalAlert(
                                     this@LoginActivity,
@@ -173,8 +173,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
             )
         }
     }
-    private fun operatorSelectionScreenNavigation() {
+    private fun navigateToOperatorSelection() {
         val mainIntent = Intent(this@LoginActivity, OperatorSelectActivity::class.java)
+        startActivity(mainIntent)
+        finish()
+    }
+    private fun navigateToDashBoard() {
+        val mainIntent = Intent(this@LoginActivity, DashBoardActivity::class.java)
         startActivity(mainIntent)
         finish()
     }
