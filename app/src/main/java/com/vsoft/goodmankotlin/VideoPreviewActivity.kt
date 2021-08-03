@@ -7,6 +7,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.WindowManager
 import android.widget.*
@@ -186,7 +187,7 @@ class VideoPreviewActivity : AppCompatActivity() {
             progressDialog!!.setCancelable(false)
             progressDialog!!.setMessage("Please wait .. Processing image may take some time.")
             if (NetworkUtils.isNetworkAvailable(this@VideoPreviewActivity)) {
-                Handler().post {
+                Handler(Looper.getMainLooper()).post {
                     progressDialog!!.show()
                 }
                 val file = File(path) // initialize file here
@@ -270,8 +271,8 @@ class VideoPreviewActivity : AppCompatActivity() {
         }
 
         // video_index = getIntent().getIntExtra("pos" , 0);
-        mHandler = Handler()
-        handler = Handler()
+        mHandler = Handler(Looper.getMainLooper())
+        handler = Handler(Looper.getMainLooper())
         absPlayerInternal!!.addListener(object : Player.EventListener {
             override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
                 val dur = absPlayerInternal!!.duration
@@ -338,7 +339,7 @@ class VideoPreviewActivity : AppCompatActivity() {
         total!!.text = timeConversion(total_duration as Long)
         current!!.text = timeConversion(current_pos.toLong())
         seekBar!!.max = total_duration.toInt()
-        val handler = Handler()
+        val handler = Handler(Looper.getMainLooper())
         val runnable: Runnable = object : Runnable {
             override fun run() {
                 try {

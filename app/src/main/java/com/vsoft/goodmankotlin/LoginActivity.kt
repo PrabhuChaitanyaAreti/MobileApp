@@ -2,10 +2,13 @@ package com.vsoft.goodmankotlin
 
 import android.Manifest
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
@@ -19,31 +22,51 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.vsoft.goodmankotlin.utils.CameraUtils
-import com.vsoft.goodmankotlin.utils.CommonUtils
+import com.vsoft.goodmankotlin.model.PunchResponse
+import com.vsoft.goodmankotlin.model.UserAuthRequest
+import com.vsoft.goodmankotlin.model.UserAuthResponse
+import com.vsoft.goodmankotlin.utils.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchListener {
-    private var loginButton: Button? = null
-    private var empIdEditText: EditText? = null
-    private  var pinEditText: EditText? = null
+    private lateinit var loginButton: Button
+    private lateinit var empIdEditText: EditText
+    private lateinit var pinEditText: EditText
     private var empIdStr = ""
     private  var pinStr:String? = ""
     private val minEmpIdDigits = 6
     private  var maxEmpIdDigits:Int = 8
     private  var pinMaxDigits:Int = 4
-    private var alertDialog: AlertDialog? = null
+    private lateinit var alertDialog: AlertDialog
+    private lateinit var progressDialog: ProgressDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        init()
+        initProgress()
+        initListeners()
+    }
+    private fun init(){
         empIdEditText = findViewById(R.id.empIdEditText)
         pinEditText = findViewById(R.id.pinEditText)
+        loginButton = findViewById(R.id.loginButton)
+    }
+    private fun initProgress(){
+        progressDialog = ProgressDialog(this)
+        progressDialog!!.setCancelable(false)
+        progressDialog!!.setMessage("Please wait .. Checking user details..")
+    }
+    private fun initListeners(){
         empIdEditText?.setOnTouchListener(this)
         pinEditText?.setOnTouchListener(this)
-
-        loginButton = findViewById(R.id.loginButton)
         loginButton?.setOnClickListener(this)
     }
-
     override fun onClick(view: View?) {
         if (view === loginButton) {
             validations()
@@ -87,15 +110,73 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
     }
     private fun screenNavigationWithPermissions() {
         if (CameraUtils.checkPermissions(applicationContext)) {
-            operatorSelectionScreenNavigation()
+            validateUser(empIdStr,pinStr!!)
         } else {
             requestCameraPermission()
         }
     }
-
+    private fun validateUser(userId:String,password:String){
+        if (NetworkUtils.isNetworkAvailable(this@LoginActivity)) {
+            Handler(Looper.getMainLooper()).post {
+                progressDialog!!.show()
+            }
+            val call: Call<UserAuthResponse?>? =
+                RetrofitClient.getInstance()!!.getMyApi()!!.authenticate(UserAuthRequest(userId,password))
+            call!!.enqueue(object : Callback<UserAuthResponse?> {
+                override fun onResponse(
+                    call: Call<UserAuthResponse?>,
+                    response: Response<UserAuthResponse?>
+                ) {
+                    try {
+                        val statusCode=response.body()!!.statusCode
+                            if(statusCode==200){
+                                operatorSelectionScreenNavigation()
+                            }else if(statusCode==401){
+                                DialogUtils.showNormalAlert(
+                                    this@LoginActivity,
+                                    "Alert!!",
+                                    "Invalid Credentials"
+                                )
+                            }else{
+                                DialogUtils.showNormalAlert(
+                                    this@LoginActivity,
+                                    "Alert!!",
+                                    "Invalid Credentials"
+                                )
+                            }
+                        if (progressDialog!!.isShowing) {
+                            progressDialog!!.dismiss()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        if (progressDialog!!.isShowing) {
+                            progressDialog!!.dismiss()
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<UserAuthResponse?>, t: Throwable) {
+                    DialogUtils.showNormalAlert(
+                        this@LoginActivity,
+                        "Alert!!",
+                        "Unable to communicate with server"
+                    )
+                    if (progressDialog!!.isShowing) {
+                        progressDialog!!.dismiss()
+                    }
+                }
+            })
+        } else {
+            DialogUtils.showNormalAlert(
+                this@LoginActivity,
+                "Alert!!",
+                "Please check your internet connection and try again"
+            )
+        }
+    }
     private fun operatorSelectionScreenNavigation() {
         val mainIntent = Intent(this@LoginActivity, OperatorSelectActivity::class.java)
         startActivity(mainIntent)
+        finish()
     }
     private fun validationAlert(alertMessage: String) {
         val builder = AlertDialog.Builder(this@LoginActivity)
@@ -110,7 +191,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
             dialog.dismiss()
         }
         alertDialog = builder.create()
-        if (!this@LoginActivity.isFinishing()) {
+        if (!this@LoginActivity.isFinishing) {
             try {
                 alertDialog?.show()
             } catch (e: WindowManager.BadTokenException) {
@@ -133,7 +214,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
-                        operatorSelectionScreenNavigation()
+                        validateUser(empIdStr,pinStr!!)
                     } else if (report.isAnyPermissionPermanentlyDenied) {
                         CommonUtils.showPermissionsAlert(this@LoginActivity)
                     }

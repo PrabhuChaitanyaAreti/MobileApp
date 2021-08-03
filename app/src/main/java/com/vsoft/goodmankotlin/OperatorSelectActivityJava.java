@@ -30,17 +30,12 @@ import com.vsoft.goodmankotlin.model.ChoiceListOperator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperatorSelectActivity extends Activity {
-
-
-    String[] operatorArray = {"Operator1","Operator2","Operator3","Operator4","Operator5"};
-    String[] dieArray = {"Die Id1","Die Id2","Die Id3","Die Id4","Die Id5"};
-    String[] partArray = {"Part Id1","Part Id2","Part Id3","Part Id4","Part Id5"};
-    Button btnContinue;
-    LinearLayout mainLyt;
+public class OperatorSelectActivityJava extends Activity {
+    private Button btnContinue;
+    private LinearLayout mainLyt;
     private EditText searchET;
-    Button operatorBT,dieBT,partBT;
-    AlertDialog customAlertDialogSpinner;
+    private Button operatorBT,dieBT,partBT;
+    private AlertDialog customAlertDialogSpinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +51,7 @@ public class OperatorSelectActivity extends Activity {
         mainLyt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideSoftKeyboard(OperatorSelectActivity.this);
+                hideSoftKeyboard(OperatorSelectActivityJava.this);
             }
         });
 
@@ -82,6 +77,11 @@ public class OperatorSelectActivity extends Activity {
             }
         });
 
+
+
+
+
+
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +93,7 @@ public class OperatorSelectActivity extends Activity {
                         public void run() {
 
                             if (!isFinishing()){
-                                new AlertDialog.Builder(OperatorSelectActivity.this)
+                                new AlertDialog.Builder(OperatorSelectActivityJava.this)
                                         .setTitle("Error")
                                         .setMessage("Please enter operator")
                                         .setCancelable(false)
@@ -115,7 +115,7 @@ public class OperatorSelectActivity extends Activity {
                         public void run() {
 
                             if (!isFinishing()){
-                                new AlertDialog.Builder(OperatorSelectActivity.this)
+                                new AlertDialog.Builder(OperatorSelectActivityJava.this)
                                         .setTitle("Error")
                                         .setMessage("Please enter die Id")
                                         .setCancelable(false)
@@ -138,7 +138,7 @@ public class OperatorSelectActivity extends Activity {
                         public void run() {
 
                             if (!isFinishing()){
-                                new AlertDialog.Builder(OperatorSelectActivity.this)
+                                new AlertDialog.Builder(OperatorSelectActivityJava.this)
                                         .setTitle("Error")
                                         .setMessage("Please enter part Id")
                                         .setCancelable(false)
@@ -154,9 +154,9 @@ public class OperatorSelectActivity extends Activity {
 
 
                 }else {
-                    Intent mainIntent = new Intent(OperatorSelectActivity.this, VideoRecordActivityNew.class);
+                    Intent mainIntent = new Intent(OperatorSelectActivityJava.this, VideoRecordingActivity.class);
                     startActivity(mainIntent);
-                    //finish();
+                    finish();
 
                 }
 
@@ -181,7 +181,7 @@ public class OperatorSelectActivity extends Activity {
             ListView spinnerList;
             ImageView close_spinner_popup;
             ArrayList<ChoiceListOperator> dataModels;
-            LayoutInflater inflater = LayoutInflater.from(OperatorSelectActivity.this);
+            LayoutInflater inflater = LayoutInflater.from(OperatorSelectActivityJava.this);
             final View dialogLayout = inflater.inflate(R.layout.uom_spinner_list_layout, null);
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setView(dialogLayout);
@@ -240,6 +240,8 @@ public class OperatorSelectActivity extends Activity {
             spinnerList.setAdapter(nameSpinnerAdapter);
             searchET = dialogLayout.findViewById(R.id.search_et);
             searchET.setOnEditorActionListener(new DoneOnEditorActionListener(dataFrom));
+
+
             customAlertDialogSpinner = builder.create();
             customAlertDialogSpinner.setCancelable(false);
             customAlertDialogSpinner.setCanceledOnTouchOutside(false);
@@ -298,6 +300,7 @@ public class OperatorSelectActivity extends Activity {
                 InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 customAlertDialogSpinner.dismiss();
+
                 if(from.contains("Operator")){
                     operatorBT.setText(searchET.getText().toString());
                 }else if(from.contains("DieID")){
@@ -332,7 +335,7 @@ public class OperatorSelectActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = LayoutInflater.from(OperatorSelectActivity.this).
+                convertView = LayoutInflater.from(OperatorSelectActivityJava.this).
                         inflate(R.layout.spinner_row_item, parent, false);
             }
 
@@ -380,14 +383,18 @@ public class OperatorSelectActivity extends Activity {
 
         @Override
         public Filter getFilter() {
+
             if (filterChoice == null) {
-                filterChoice = new NameListSpinnerAdapter.ChoiceFilter();
+                filterChoice = new ChoiceFilter();
             }
+
             return filterChoice;
+
         }
 
         private class ChoiceFilter extends Filter {
             FilterResults results = new FilterResults();
+
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
                 ArrayList<ChoiceListOperator> filterList = new ArrayList<ChoiceListOperator>();
@@ -395,9 +402,6 @@ public class OperatorSelectActivity extends Activity {
                     for (int i = 0; i < choiceFilterList.size(); i++) {
                         if (choiceFilterList.get(i).getName().toLowerCase().contains(charSequence)) {
                             filterList.add(choiceFilterList.get(i));
-                        }else{
-                            filterList.clear();
-                            filterList.add(new ChoiceListOperator(charSequence.toString()));
                         }
                     }
                     results.count = filterList.size();
@@ -416,4 +420,6 @@ public class OperatorSelectActivity extends Activity {
             }
         }
     }
+
+
 }
