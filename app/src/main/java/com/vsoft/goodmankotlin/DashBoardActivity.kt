@@ -3,10 +3,8 @@ package com.vsoft.goodmankotlin
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -74,9 +72,20 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
             finish()
         }
         if(v?.id==sync.id){
+
+          /*  var jsonObject= JsonObject()
+            val gson = Gson()
+            jsonObject.addProperty("Die Id","Die Id")
+            jsonObject.addProperty("Part Id","Part Id")
+            jsonObject.addProperty("file_name","check1.mp4")
+            save(this,gson.toJson(jsonObject))*/
+
+
             vm.getAllVideos().observe(this, Observer {
                 Log.i("Videos observed size", "${it.size}")
-                var videosList:List<VideoModel> =it
+
+               var videosList:List<VideoModel> =it
+
                 val iterator = videosList.listIterator()
                 for (item in iterator) {
                     val jsonObject= JsonObject()
@@ -102,16 +111,39 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
 
     @Throws(IOException::class)
     fun save(context: Context, jsonString: String?,path:String?) {
+        Log.i("save jsonString ", "$jsonString")
+        Log.i("save path ", "$path")
+
         val rootFolder: File? = context.getExternalFilesDir(null)
-        val jsonFile = File(rootFolder, "details.json")
+        val jsonFile = File(rootFolder, "post.json")
         val writer = FileWriter(jsonFile)
         writer.write(jsonString)
         writer.close()
+//
+//        val mediaStorageDir: File
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            mediaStorageDir = File(
+//                Environment
+//                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).path + "/Goodman/Videos"
+//            )
+//        } else {
+//            mediaStorageDir = File(
+//                Environment
+//                    .getExternalStorageDirectory().path + "/Goodman/Videos"
+//            )
+//        }
+//        val jsonFile: File = File(mediaStorageDir, "post.json")
+//        val writer = FileWriter(jsonFile)
+//        writer.append(jsonString)
+//        writer.flush()
+//        writer.close()
+
         val metaDataFilePart = MultipartBody.Part.createFormData(
             "meta_data",
             jsonFile.name,
             RequestBody.create(MediaType.parse("*/*"), jsonFile)
         )
+
         val file = File(path) // initialize file here
         val videoFilePart = MultipartBody.Part.createFormData(
             "file",
@@ -133,6 +165,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
                     response: Response<videoUploadSaveRespose?>
                 ) {
                     try {
+                        Log.i("response  ", "$response")
+
                         val statusCode=response.body()!!.statusCode
                         if(statusCode==200){
                             DialogUtils.showNormalAlert(

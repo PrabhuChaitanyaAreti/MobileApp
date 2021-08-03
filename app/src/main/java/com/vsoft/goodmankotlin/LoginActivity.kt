@@ -26,6 +26,7 @@ import com.vsoft.goodmankotlin.model.PunchResponse
 import com.vsoft.goodmankotlin.model.UserAuthRequest
 import com.vsoft.goodmankotlin.model.UserAuthResponse
 import com.vsoft.goodmankotlin.utils.*
+import kotlinx.android.synthetic.main.activity_add_die.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -63,8 +64,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         progressDialog!!.setMessage("Please wait .. Checking user details..")
     }
     private fun initListeners(){
-        empIdEditText?.setOnTouchListener(this)
-        pinEditText?.setOnTouchListener(this)
+        empIdEditText.setOnTouchListener(this)
+        pinEditText.setOnTouchListener(this)
+
         loginButton?.setOnClickListener(this)
     }
     override fun onClick(view: View?) {
