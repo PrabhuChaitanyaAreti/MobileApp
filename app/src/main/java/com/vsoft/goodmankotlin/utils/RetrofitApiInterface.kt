@@ -3,10 +3,12 @@ package com.vsoft.goodmankotlin.utils
 import com.vsoft.goodmankotlin.model.PunchResponse
 import com.vsoft.goodmankotlin.model.UserAuthRequest
 import com.vsoft.goodmankotlin.model.UserAuthResponse
+import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
 import okhttp3.MultipartBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
+import java.io.File
 
 interface RetrofitApiInterface {
 
@@ -28,6 +30,9 @@ interface RetrofitApiInterface {
     @Multipart
     @POST("/postVideo")
     fun uploadDyeVideo(@Part file: MultipartBody.Part?): Call<PunchResponse?>?
+    @Multipart
+    @POST("/uploadFile")
+    fun saveVideo(@Part meta_data:MultipartBody.Part?, @Part file: MultipartBody.Part?): Call<videoUploadSaveRespose?>?
 
     @POST("/login")
     fun authenticate(@Body userAuthRequest: UserAuthRequest): Call<UserAuthResponse?>?
