@@ -1,19 +1,23 @@
 package com.vsoft.goodmankotlin
 
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -22,11 +26,13 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.ui.PlayerControlView
+import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.vsoft.goodmankotlin.database.VideoModel
+import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.model.PunchResponse
 import com.vsoft.goodmankotlin.utils.*
-import kotlinx.android.synthetic.main.activity_video_preview.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -34,14 +40,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class VideoPreviewActivity : AppCompatActivity() {
     val TAG = VideoPreviewActivity::class.java.simpleName
-    private var path: String? = null
+    private var path= ""
     private  var videofilename: String? = null
     private var isplay = false
-    private var seekBar: SeekBar? = null
     private var current_pos: Long = 0
     private  var total_duration: Long =0
     private var mHandler: Handler? = null
@@ -52,9 +59,63 @@ class VideoPreviewActivity : AppCompatActivity() {
     private var progressDialog: ProgressDialog? = null
     private var alertDialog: android.app.AlertDialog? = null
 
+    private var pv_main:PlayerView?=null
+    private var pause:ImageView?=null
+
+    private var  retakeVideo:TextView?=null
+    private var videoSubmit:TextView?=null
+    private var  current:TextView?=null
+    private var seekBar:SeekBar?=null
+    private var  total:TextView?=null
+
+    private lateinit var vm: VideoViewModel
+
+
+    private val sharedPrefFile = "kotlinsharedpreference"
+    var sharedPreferences: SharedPreferences?=null
+
+    private var dieIdStr=  ""
+    private  var partIdStr = ""
+    private var isNewDie=false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_preview)
+
+        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+            Context.MODE_PRIVATE)
+
+
+        dieIdStr = sharedPreferences!!.getString("dieIdStr","").toString()
+        partIdStr = sharedPreferences!!.getString("partIdStr","").toString()
+        isNewDie=sharedPreferences!!.getBoolean("IsNewDie",false)
+
+        Log.d("TAG", "VideoPreviewActivity  sharedPreferences  dieIdStr $dieIdStr")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  partIdStr $partIdStr")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  IsNewDie $isNewDie")
+
+
+        vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
+
+       /* vm.insert(VideoModel("dieid1", "partid1", "filepath","2000",false))
+        vm.insert(VideoModel("dieid1", "partid1", "filepath","2000",false))
+
+        vm.getAllVideos().observe(this, Observer {
+            Log.i("Videos observed size", "${it.size}")
+
+        })
+
+
+      //  vm.update(VideoEntity("dieid1", "partid1", "filepath","2000",false))
+        //vm.delete( VideoEntity("dieid1", "partid1", "filepath","2000",false))
+       // vm.deleteAllVideos()
+*/
+
+        pv_main=findViewById(R.id.pv_main)
+        current=findViewById(R.id.current)
+        total=findViewById(R.id.total)
+        seekBar=findViewById(R.id.seekbar)
+
 
         val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoPreviewActivity)
 
@@ -62,7 +123,7 @@ class VideoPreviewActivity : AppCompatActivity() {
 
         if (batterLevel >= 15) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        path = intent.extras!!.getString("videoSavingFilePath")
+        path = intent.extras!!.getString("videoSavingFilePath").toString()
         Log.d(TAG, "VideoPreviewActivity onCreate $path")
         videofilename = CommonUtils.getFileName(path!!)
         println("VideoPreviewActivity videofilename is $videofilename")
@@ -98,36 +159,37 @@ class VideoPreviewActivity : AppCompatActivity() {
         //absPlayerInternal.setPlayWhenReady(true); // start loading video and play it at the moment a chunk of it is available offline
 
         //absPlayerInternal.setPlayWhenReady(true); // start loading video and play it at the moment a chunk of it is available offline
-        pv_main.setPlayer(absPlayerInternal) // attach surface to the view
+        pv_main!!.setPlayer(absPlayerInternal) // attach surface to the view
 
         absPlayerInternal!!.repeatMode = Player.REPEAT_MODE_ALL
-        pv_main.setKeepScreenOn(true)
+        pv_main!!.setKeepScreenOn(true)
 
-        pv_main.hideController()
-        pv_main.setControllerVisibilityListener(object : PlayerControlView.VisibilityListener {
+        pv_main!!.hideController()
+        pv_main!!.setControllerVisibilityListener(object : PlayerControlView.VisibilityListener {
             override fun onVisibilityChange(i: Int) {
                 if (i == 0) {
-                    pv_main.hideController()
+                    pv_main!!.hideController()
                 }
             }
         })
-        val pause = findViewById<ImageView>(R.id.pause)
-        pause.setImageResource(R.drawable.video_record_play)
-        pause.setOnClickListener {
+            pause = findViewById<ImageView>(R.id.pause)
+        pause!!.setImageResource(R.drawable.video_record_play)
+        pause!!.setOnClickListener {
             if (isplay) {
                 isplay = false
                 //  pvMain.onPause();
                 absPlayerInternal!!.setPlayWhenReady(false)
-                pause.setImageResource(R.drawable.video_record_play)
+                pause!!.setImageResource(R.drawable.video_record_play)
             } else {
                 isplay = true
                 //  pvMain.onResume();
                 absPlayerInternal!!.setPlayWhenReady(true)
-                pause.setImageResource(R.drawable.video_record_pause)
+                pause!!.setImageResource(R.drawable.video_record_pause)
             }
         }
-        val retakeVideo = findViewById<TextView>(R.id.retakeVideo)
-        retakeVideo.setOnClickListener {
+
+         retakeVideo = findViewById<TextView>(R.id.retakeVideo)
+        retakeVideo!!.setOnClickListener {
             if (absPlayerInternal!!.isPlaying()) {
                 absPlayerInternal!!.stop()
             }
@@ -135,13 +197,47 @@ class VideoPreviewActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-        val videoSubmit = findViewById<TextView>(R.id.videoSubmit)
-        videoSubmit.setOnClickListener {
+         videoSubmit = findViewById<TextView>(R.id.videoSubmit)
+            if(isNewDie){
+                videoSubmit!!.text="Save"
+            }else{
+                videoSubmit!!.text="Submit"
+            }
+        videoSubmit!!.setOnClickListener {
+
+            if(isNewDie){
+                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false))
+                val builder = AlertDialog.Builder(this@VideoPreviewActivity)
+                builder.setCancelable(false)
+                builder.setTitle(this@VideoPreviewActivity.getResources().getString(R.string.app_name))
+                builder.setMessage("You have been sucessfully saved die details in local DB.")
+                builder.setNeutralButton("Ok") { dialog, which ->
+                    dialog.dismiss()
+                    if (alertDialog!!.isShowing) {
+                        alertDialog!!.dismiss()
+                    }
+                    dialog.dismiss()
+                    val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                alertDialog = builder.create()
+                if (!this@VideoPreviewActivity.isFinishing) {
+                    try {
+                        alertDialog?.show()
+                    } catch (e: WindowManager.BadTokenException) {
+                        Log.e("BadTokenException", e.toString())
+                    }
+                }
+
+            }else{
+
             if (absPlayerInternal!!.isPlaying()) {
                 absPlayerInternal!!.stop()
             }
-            pause.isEnabled = false
-            pause.setOnClickListener(null)
+            pause!!.isEnabled = false
+            pause!!.setOnClickListener(null)
             seekBar!!.isEnabled = false
             seekBar!!.setOnSeekBarChangeListener(null)
             Log.d("TAG", "btnSendEdge onClick imagePath::: $path")
@@ -230,8 +326,8 @@ class VideoPreviewActivity : AppCompatActivity() {
                     "Please check your internet connection and try again"
                 )
             }
+            }
         }
-        seekBar = findViewById<View>(R.id.seekbar) as SeekBar
 
         // video_index = getIntent().getIntExtra("pos" , 0);
         mHandler = Handler(Looper.getMainLooper())
@@ -299,7 +395,7 @@ class VideoPreviewActivity : AppCompatActivity() {
         current_pos = absPlayerInternal!!.getCurrentPosition()
 
         //display video duration
-        total.text = timeConversion(total_duration as Long)
+        total!!.text = timeConversion(total_duration as Long)
         current!!.text = timeConversion(current_pos.toLong())
         seekBar!!.max = total_duration.toInt()
         val handler = Handler(Looper.getMainLooper())

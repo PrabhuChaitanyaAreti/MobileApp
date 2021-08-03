@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".VideoRecordingActivity">
 
-
     <TextureView
         android:id="@+id/surface_view"
         android:layout_width="match_parent"
@@ -44,7 +43,6 @@
                 android:src="@drawable/video_record_start_new"
                 android:visibility="visible" />
 
-
             <ImageButton
                 android:id="@+id/videoRecordPlayPause"
                 android:layout_width="wrap_content"
@@ -54,14 +52,13 @@
 
         </LinearLayout>
 
-
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:orientation="horizontal">
 
         <ImageView
@@ -72,7 +69,6 @@
             android:padding="10dp"
             android:src="@drawable/flash_off"
             android:visibility="visible" />
-
 
         <TextView
             android:id="@+id/timeleftTxt"
@@ -87,39 +83,3 @@
 
 </RelativeLayout>
 
-    <!--
-    <?xml version="1.0" encoding="utf-8"?>
-
-    <FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".VideoRecordActivityNew">
-
-        <TextureView
-            android:id="@+id/surface_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/button_capture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onCaptureClick"
-            android:text="Capture" />
-        <Button
-            android:id="@+id/button_pause_resume"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onPauseResumeClick"
-            android:text="Pause" />
-    </LinearLayout>
-    </FrameLayout>
-    -->

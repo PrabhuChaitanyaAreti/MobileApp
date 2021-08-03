@@ -32,10 +32,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".DashBoardActivity"
-            android:exported="true" android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+
         <activity
             android:name=".SplashScreen"
             android:screenOrientation="userLandscape"
@@ -80,6 +78,16 @@
             android:name=".MaskingActivity"
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.GoodManKotlin" />
+
+        <activity
+            android:name=".AddDieActivity"
+            android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name=".DashBoardActivity"
+            android:exported="true"
+            android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

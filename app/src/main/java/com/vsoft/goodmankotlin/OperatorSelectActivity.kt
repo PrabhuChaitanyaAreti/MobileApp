@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,9 +26,16 @@ class OperatorSelectActivity : Activity() {
     private lateinit var buttonSelect: Button
     private lateinit var customAlertDialogSpinner: AlertDialog
     private lateinit var progressDialog: ProgressDialog
+    private val sharedPrefFile = "kotlinsharedpreference"
+    var sharedPreferences: SharedPreferences?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_operator_select)
+
+        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+            Context.MODE_PRIVATE)
+
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         mainLyt = findViewById(R.id.main_lyt)
         operatorBT = findViewById(R.id.operator_au_tv)
@@ -79,6 +87,15 @@ class OperatorSelectActivity : Activity() {
                     }
                 }
             } else {
+
+                var dieIdStr=dieBT!!.text.toString()
+                var partIdStr=partBT!!.text.toString()
+
+                val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
+                editor.putString("dieIdStr",dieIdStr)
+                editor.putString("partIdStr",partIdStr)
+                editor.putBoolean("IsNewDie",false)
+                editor.apply()
                 val mainIntent =
                     Intent(this@OperatorSelectActivity, VideoRecordActivityNew::class.java)
                 startActivity(mainIntent)

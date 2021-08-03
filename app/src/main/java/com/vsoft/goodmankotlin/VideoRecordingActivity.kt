@@ -10,15 +10,18 @@ import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.VideoCapture
 import androidx.camera.core.impl.VideoCaptureConfig
+import androidx.camera.view.CameraView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.vsoft.goodmankotlin.utils.BatteryUtil
-import kotlinx.android.synthetic.main.activity_video_record.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -45,9 +48,25 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
     private var recordSecondsLeft: Long = 0
 
     var isFlashMode = false
+
+    private var camera_view:CameraView?=null
+    private var settingsImgIcon:ImageView?=null
+    private var videoOnlineImageButton:ImageButton?=null
+    private var videoRecordPlayPause:ImageButton?=null
+    private var flashImgIcon:ImageView?=null
+    private var timeleftTxt:TextView?=null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_record)
+
+        camera_view=findViewById(R.id.camera_view)
+        settingsImgIcon=findViewById(R.id.settingsImgIcon)
+        videoOnlineImageButton=findViewById(R.id.videoOnlineImageButton)
+        videoRecordPlayPause=findViewById(R.id.videoRecordPlayPause)
+        flashImgIcon=findViewById(R.id.flashImgIcon)
+        timeleftTxt=findViewById(R.id.timeleftTxt)
 
         val recordFiles = ContextCompat.getExternalFilesDirs(this, Environment.DIRECTORY_MOVIES)
         val storageDirectory = recordFiles[0]
@@ -63,13 +82,13 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
 
         if (checkPermissions()) startCameraSession() else requestPermissions()
 
-        videoRecordPlayPause.visibility= View.GONE
-        settingsImgIcon.visibility= View.VISIBLE
+        videoRecordPlayPause!!.visibility= View.GONE
+        settingsImgIcon!!.visibility= View.VISIBLE
 
-        videoOnlineImageButton.setOnClickListener(this)
-        flashImgIcon.setOnClickListener(this)
-        settingsImgIcon.setOnClickListener(this)
-        videoRecordPlayPause.setOnClickListener(this)
+        videoOnlineImageButton!!.setOnClickListener(this)
+        flashImgIcon!!.setOnClickListener(this)
+        settingsImgIcon!!.setOnClickListener(this)
+        videoRecordPlayPause!!.setOnClickListener(this)
         } else {
             batterLevelAlert()
         }
@@ -105,26 +124,26 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
     override fun onClick(v: View?) {
         if(v==videoOnlineImageButton){
             if (isRecording) {
-                camera_view.enableTorch(false)
-                flashImgIcon.setImageResource(R.drawable.flash_off)
+                camera_view!!.enableTorch(false)
+                flashImgIcon!!.setImageResource(R.drawable.flash_off)
                 isRecording = false
-                settingsImgIcon.visibility= View.VISIBLE
-                videoRecordPlayPause.visibility= View.GONE
-                videoOnlineImageButton.setImageResource(R.drawable.video_record_start_new)
-                camera_view.stopRecording()
+                settingsImgIcon!!.visibility= View.VISIBLE
+                videoRecordPlayPause!!.visibility= View.GONE
+                videoOnlineImageButton!!.setImageResource(R.drawable.video_record_start_new)
+                camera_view!!.stopRecording()
                 //videoOnlineImageButton.text = "Record Video"
               //  Toast.makeText(this, "Recording Stopped", Toast.LENGTH_SHORT).show()
             } else {
-                settingsImgIcon.visibility= View.GONE
-                videoRecordPlayPause.visibility= View.VISIBLE
+                settingsImgIcon!!.visibility= View.GONE
+                videoRecordPlayPause!!.visibility= View.VISIBLE
                 isRecording = true
                 //videoOnlineImageButton.text = "Stop Recording"
-                videoOnlineImageButton.setImageResource(R.drawable.video_record_stop_new)
+                videoOnlineImageButton!!.setImageResource(R.drawable.video_record_stop_new)
                 //Toast.makeText(this, "Recording Started", Toast.LENGTH_SHORT).show()
                 recordVideo(videoRecordingFilePath)
                 recordmCountDown = object : CountDownTimer(recordDynamicTimer, 1000) {
                     override fun onFinish() {
-                        camera_view.stopRecording()
+                        camera_view!!.stopRecording()
 
                     }
 
@@ -137,7 +156,7 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
                                 TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
                             )
                         //String time = "" + String.format(FORMAT, hr, min, sec);
-                        timeleftTxt.setText("$recordSecondsLeft/20")
+                        timeleftTxt!!.setText("$recordSecondsLeft/20")
                     }
                 }.start()
             }
@@ -147,12 +166,12 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
         }else  if(v==flashImgIcon){
             if(isFlashMode){
                 isFlashMode=false
-                camera_view.enableTorch(false)
-                flashImgIcon.setImageResource(R.drawable.flash_off)
+                camera_view!!.enableTorch(false)
+                flashImgIcon!!.setImageResource(R.drawable.flash_off)
             }else{
-                flashImgIcon.setImageResource(R.drawable.flash_on)
+                flashImgIcon!!.setImageResource(R.drawable.flash_on)
                 isFlashMode=true
-                camera_view.enableTorch(true)
+                camera_view!!.enableTorch(true)
             }
         }else  if(v==videoRecordPlayPause){
 
@@ -202,7 +221,7 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
        val videoCapture = VideoCapture(videoCaptureConfig)*/
 
       //  camera_view.bindToLifecycle(this, preview, imageCapture, videoCapture)
-        camera_view.bindToLifecycle(this)
+        camera_view!!.bindToLifecycle(this)
     }
 
     private fun permissionsNotGranted() {
@@ -214,7 +233,7 @@ class VideoRecordingActivity: AppCompatActivity(),View.OnClickListener {
     }
 
     private fun recordVideo(videoRecordingFilePath: String) {
-        camera_view.startRecording(File(videoRecordingFilePath), ContextCompat.getMainExecutor(this), object: VideoCapture.OnVideoSavedCallback {
+        camera_view!!.startRecording(File(videoRecordingFilePath), ContextCompat.getMainExecutor(this), object: VideoCapture.OnVideoSavedCallback {
             override fun onVideoSaved(file: File) {
                 videoSavingFilePath=file.absolutePath
                // Toast.makeText(this@VideoRecordingActivity, "Recording Saved", Toast.LENGTH_SHORT).show()
