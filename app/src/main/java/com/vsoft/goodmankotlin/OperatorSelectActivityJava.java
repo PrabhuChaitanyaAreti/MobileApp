@@ -71,7 +71,10 @@ public class OperatorSelectActivityJava extends Activity {
                 hideSoftKeyboard(OperatorSelectActivityJava.this);
             }
         });
-
+        progressDialog = new ProgressDialog(OperatorSelectActivityJava.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Getting Die and Part data ...");
+        getDieAndPartData(false);
         operatorBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,7 +86,11 @@ public class OperatorSelectActivityJava extends Activity {
         dieBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showdieIdListPopUpList();
+                if(isDataSynced) {
+                    showdieIdListPopUpList();
+                }else{
+                    getDieAndPartData(true);
+                }
             }
         });
 
@@ -125,36 +132,7 @@ public class OperatorSelectActivityJava extends Activity {
 
 
         });
-        if(NetworkUtils.Companion.isNetworkAvailable(this) && !isDataSynced) {
-            Call<DieIdDetailsModel> call = new RetrofitClient().getMyApi().doGetListDieDetails();
-            call.enqueue(new Callback<DieIdDetailsModel>() {
-                @Override
-                public void onResponse(Call<DieIdDetailsModel> call, Response<DieIdDetailsModel> response) {
-                    DieIdDetailsModel resourceData = response.body();
-                    responses = resourceData.getResponse();
-                    isDataSynced=true;
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<DieIdDetailsModel> call, Throwable t) {
-                    call.cancel();
-                    isDataSynced=false;
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-                }
-            });
-        }else{
-            isDataSynced=false;
-            DialogUtils.Companion.showNormalAlert(
-                    this,
-            "Alert!!",
-                    "please check your internet connection and try again"
-               );
-        }
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,9 +179,6 @@ public class OperatorSelectActivityJava extends Activity {
                             }
                         }
                     });
-
-
-
                 }else if(partBT.getText().toString().isEmpty()){
 
                     runOnUiThread(new Runnable() {
@@ -241,13 +216,46 @@ public class OperatorSelectActivityJava extends Activity {
 
             }
         });
-        progressDialog = new ProgressDialog(OperatorSelectActivityJava.this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("getting die and part data ...");
-        progressDialog.show();
-
     }
+    private void getDieAndPartData(Boolean open){
+        if(NetworkUtils.Companion.isNetworkAvailable(this) && !isDataSynced) {
+            progressDialog.show();
+            Call<DieIdDetailsModel> call = new RetrofitClient().getMyApi().doGetListDieDetails();
+            call.enqueue(new Callback<DieIdDetailsModel>() {
+                @Override
+                public void onResponse(Call<DieIdDetailsModel> call, Response<DieIdDetailsModel> response) {
+                    DieIdDetailsModel resourceData = response.body();
+                    responses = resourceData.getResponse();
+                    isDataSynced=true;
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    if(open){
+                        dieBT.performClick();
+                    }
+                }
 
+                @Override
+                public void onFailure(Call<DieIdDetailsModel> call, Throwable t) {
+                    call.cancel();
+                    isDataSynced=false;
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                }
+            });
+        }else{
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            isDataSynced=false;
+            DialogUtils.Companion.showNormalAlert(
+                    this,
+                    "Alert!!",
+                    "please check your internet connection and try again"
+            );
+        }
+    }
     private void showOperatorListPopUp() {
         try {
             ListView spinnerList;

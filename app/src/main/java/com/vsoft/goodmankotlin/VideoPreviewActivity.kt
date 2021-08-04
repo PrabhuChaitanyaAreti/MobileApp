@@ -211,7 +211,7 @@ class VideoPreviewActivity : AppCompatActivity() {
                 val builder = AlertDialog.Builder(this@VideoPreviewActivity)
                 builder.setCancelable(false)
                 builder.setTitle(this@VideoPreviewActivity.getResources().getString(R.string.app_name))
-                builder.setMessage("You have been successfully saved die details in local DB.")
+                builder.setMessage("Die details are saved. Please use sync in dashboard to send the data to server")
                 builder.setNeutralButton("Ok") { dialog, which ->
                     dialog.dismiss()
                     if (alertDialog!!.isShowing) {
@@ -219,8 +219,8 @@ class VideoPreviewActivity : AppCompatActivity() {
                     }
                     dialog.dismiss()
                     val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                    intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
-                    finish()
                 }
                 alertDialog = builder.create()
                 if (!this@VideoPreviewActivity.isFinishing) {
@@ -496,4 +496,29 @@ class VideoPreviewActivity : AppCompatActivity() {
             finish()
         })
     }*/
+   override fun onBackPressed() {
+       val builder = android.app.AlertDialog.Builder(this)
+       builder.setTitle(
+           this.getResources().getString(R.string.app_name)
+       )
+       builder.setCancelable(false)
+       builder.setMessage("You can use retake to retake a video after cancelling this dialog or press Ok to navigate to dashboard ?")
+       builder.setPositiveButton(
+           "Ok"
+       ) { dialog, which ->
+           if (alertDialog!!.isShowing) {
+               alertDialog!!.dismiss()
+           }
+           val mainIntent = Intent(this, DashBoardActivity::class.java)
+           mainIntent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+           startActivity(mainIntent)
+       }
+       builder.setNegativeButton(
+           "Cancel"
+       ) { dialog, which ->
+           dialog.dismiss()
+       }
+       alertDialog = builder.create()
+       alertDialog?.show()
+   }
 }

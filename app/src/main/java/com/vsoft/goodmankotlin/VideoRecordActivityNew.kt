@@ -1,6 +1,7 @@
 package com.vsoft.goodmankotlin
 
 import android.Manifest
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.SurfaceTexture
@@ -41,7 +42,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
     private var RECORD_AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
 
     private var RC_PERMISSION = 101
-
+    private lateinit var progressDialog: ProgressDialog
     /**
      * Background and Countdown timer variables
      */
@@ -76,7 +77,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         videoRecordPlayPause = findViewById(R.id.videoRecordPlayPause)
         flashImgIcon = findViewById(R.id.flashImgIcon)
         timeleftTxt = findViewById(R.id.timeleftTxt)
-
+        initProgress()
         val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoRecordActivityNew)
 
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
@@ -99,7 +100,11 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
             batterLevelAlert()
         }
     }
-
+    private fun initProgress(){
+        progressDialog = ProgressDialog(this)
+        progressDialog!!.setCancelable(false)
+        progressDialog!!.setMessage("Please wait .. Checking user details..")
+    }
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onClick(v: View?) {
         if (v == videoOnlineImageButton) {
@@ -208,7 +213,6 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
             val i = Intent(this@VideoRecordActivityNew, VideoPreviewActivity::class.java)
             i.putExtra("videoSavingFilePath", mOutputFile.toString())
             startActivity(i)
-            finish()
         } catch (e: RuntimeException) {
             Log.d(
                 TAG,
@@ -401,9 +405,12 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
     }
 
     inner class MediaPrepareTask() : AsyncTask<Void, Void, Boolean>() {
+        override fun onPreExecute() {
+            super.onPreExecute()
+                progressDialog.show()
+        }
         override fun doInBackground(vararg params: Void?): Boolean? {
             // initialize video camera
-
             if (prepareVideoRecorder()) {
                 // Camera is available and unlocked, MediaRecorder is prepared,
                 // now you can start recording
@@ -415,6 +422,9 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                     Handler(Looper.getMainLooper()).postDelayed(Runnable {
                         // enable stop button
                         runOnUiThread {
+                            if(progressDialog.isShowing){
+                                progressDialog.dismiss()
+                            }
                             videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
                             settingsImgIcon!!.visibility = View.GONE
                             videoRecordPlayPause!!.visibility = View.VISIBLE
@@ -438,6 +448,10 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                     e.printStackTrace()
                     // prepare didn't work, release the camera
                     releaseMediaRecorder()
+//                    runOnUiThread(Runnable {
+//                        if(progressDialog.isShowing)
+//                        progressDialog.dismiss()
+//                    })
                     return false
                 }
 
@@ -451,9 +465,8 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
 
         override fun onPostExecute(result: Boolean?) {
             super.onPostExecute(result)
-            if (!result!!) {
-                finish()
-            }
+            if(progressDialog.isShowing)
+                progressDialog.dismiss()
         }
 
     }
@@ -806,5 +819,29 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         //}
         // else use whatever the default size is
     }
-
+    override fun onBackPressed() {
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle(
+            this.getResources().getString(R.string.app_name)
+        )
+        builder.setCancelable(false)
+        builder.setMessage("Do you want to navigate to dash board?")
+        builder.setPositiveButton(
+            "Ok"
+        ) { dialog, which ->
+            if (alertDialog!!.isShowing) {
+                alertDialog!!.dismiss()
+            }
+            val intent = Intent(this, DashBoardActivity::class.java)
+            intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+        builder.setNegativeButton(
+            "Cancel"
+        ) { dialog, which ->
+            dialog.dismiss()
+        }
+        alertDialog = builder.create()
+        alertDialog?.show()
+    }
 }

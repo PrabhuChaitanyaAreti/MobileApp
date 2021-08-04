@@ -17,6 +17,7 @@ import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.database.subscribeOnBackground
 import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
 import com.vsoft.goodmankotlin.utils.DialogUtils
+import com.vsoft.goodmankotlin.utils.DialogUtils.Companion.showNormalAlert
 import com.vsoft.goodmankotlin.utils.NetworkUtils
 import com.vsoft.goodmankotlin.utils.RetrofitClient
 import okhttp3.MediaType
@@ -37,6 +38,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var logout: TextView
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
+    private var alertDialog: android.app.AlertDialog? = null
     private val sharedPrefFile = "kotlinsharedpreference"
     var sharedPreferences: SharedPreferences?=null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,31 +72,82 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
             DialogUtils.showNormalAlert(
                 this@DashBoardActivity,
                 "Alert!!",
-                "Functionality need to be updated soon.."
+                "Functionality will be updated soon.."
             )
         }
         if(v?.id==addDie.id){
             val mainIntent = Intent(this@DashBoardActivity, AddDieActivity::class.java)
             startActivity(mainIntent)
-            finish()
         }
         if(v?.id==sync.id){
                 sync()
         }
         if(v?.id==skip.id){
+            if(NetworkUtils.isNetworkAvailable(this))
             navigateToOperatorSelection()
+            else{
+                showNormalAlert(
+                    this,
+                    "Alert!!",
+                    "please check your internet connection and try again"
+                )
+            }
         }
         if(v?.id==logout.id){
-            val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
-            editor.clear()
-            editor.apply()
-            navigateToLogin()
+            val builder = android.app.AlertDialog.Builder(this)
+            builder.setTitle(
+                this.getResources().getString(R.string.app_name)
+            )
+            builder.setCancelable(false)
+            builder.setMessage("Do you want to logout ?")
+            builder.setPositiveButton(
+                "Ok"
+            ) { dialog, which ->
+                val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
+                editor.clear()
+                editor.apply()
+                navigateToLogin()
+                dialog.dismiss()
+                if (alertDialog!!.isShowing) {
+                    alertDialog!!.dismiss()
+                }
+            }
+            builder.setNegativeButton(
+                "Cancel"
+            ) { dialog, which ->
+                dialog.dismiss()
+            }
+            alertDialog = builder.create()
+            alertDialog?.show()
         }
+    }
+    override fun onBackPressed() {
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle(
+            this.getResources().getString(R.string.app_name)
+        )
+        builder.setCancelable(false)
+        builder.setMessage("Do you want to exit app ?")
+        builder.setPositiveButton(
+            "Ok"
+        ) { dialog, which ->
+            dialog.dismiss()
+            if (alertDialog!!.isShowing) {
+                alertDialog!!.dismiss()
+            }
+            super.onBackPressed()
+        }
+        builder.setNegativeButton(
+            "Cancel"
+        ) { dialog, which ->
+            dialog.dismiss()
+        }
+        alertDialog = builder.create()
+        alertDialog?.show()
     }
     private fun navigateToOperatorSelection() {
         val mainIntent = Intent(this, OperatorSelectActivityJava::class.java)
         startActivity(mainIntent)
-        finish()
     }
     private fun navigateToLogin() {
         val mainIntent = Intent(this, LoginActivity::class.java)
@@ -230,11 +283,14 @@ private fun sync(){
                 }
             })
         } else {
-            DialogUtils.showNormalAlert(
-                this,
-                "Alert!!",
-                "Please check your internet connection and try again"
-            )
+            runOnUiThread(Runnable {
+                DialogUtils.showNormalAlert(
+                    this,
+                    "Alert!!",
+                    "Please check your internet connection and try again"
+                )
+            })
+
         }
     }
 }
