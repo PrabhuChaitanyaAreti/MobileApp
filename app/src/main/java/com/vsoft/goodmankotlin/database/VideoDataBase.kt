@@ -17,7 +17,7 @@ abstract class VideoDataBase : RoomDatabase() {
         fun getInstance(ctx: Context): VideoDataBase {
             if(instance == null)
                 instance = Room.databaseBuilder(ctx.applicationContext, VideoDataBase::class.java,
-                    "note_database")
+                    "video_database")
                     .fallbackToDestructiveMigration()
                   //  .addCallback(roomCallback)
                     .build()

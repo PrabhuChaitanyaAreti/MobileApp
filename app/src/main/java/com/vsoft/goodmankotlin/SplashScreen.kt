@@ -16,7 +16,9 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.vsoft.goodmankotlin.utils.CameraUtils
-
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
 
 class SplashScreen : AppCompatActivity() {
     private val sharedPrefFile = "kotlinsharedpreference"
@@ -24,6 +26,14 @@ class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+        AppCenter.start(
+            application, "41d26db7-77ac-4c92-bc27-5910ea601d14",
+            Analytics::class.java, Crashes::class.java
+        )
+        AppCenter.start(
+            application, "41d26db7-77ac-4c92-bc27-5910ea601d14",
+            Analytics::class.java, Crashes::class.java
+        )
         sharedPreferences = this.getSharedPreferences(sharedPrefFile,
             Context.MODE_PRIVATE)
         Handler(Looper.getMainLooper()).postDelayed({
