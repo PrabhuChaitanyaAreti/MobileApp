@@ -81,13 +81,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
             save(this,gson.toJson(jsonObject))*/
 
 
-            vm.getAllVideos().observe(this, Observer {
-                Log.i("Videos observed size", "${it.size}")
-
-               var videosList:List<VideoModel> =it
-
-                val iterator = videosList.listIterator()
+            //vm.getAllVideos().observe(this, Observer {
+               var videosList:List<VideoModel>? =vm.getVideos()
+            Log.i("Videos observed size", "${videosList?.size}")
+            val iterator = videosList!!.listIterator()
                 for (item in iterator) {
+                    Log.i("Id:", "${item.id}")
+                    Log.i("Status:", "${item.status}")
                     val jsonObject= JsonObject()
                     val gson = Gson()
                     jsonObject.addProperty("Die Id",item.die_id)
@@ -95,9 +95,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
                     val path=item.video_path;
                     val filename: String = path.substring(path.lastIndexOf("/") + 1)
                     jsonObject.addProperty("file_name",filename)
-                    save(this,gson.toJson(jsonObject),path)
+                    save(this,item.id,gson.toJson(jsonObject),path)
                 }
-            })
+            //})
         }
         if(v?.id==skip.id){
             navigateToOperatorSelection()
@@ -110,10 +110,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     @Throws(IOException::class)
-    fun save(context: Context, jsonString: String?,path:String?) {
+    fun save(context: Context,id:Int?,jsonString: String?,path:String?) {
         Log.i("save jsonString ", "$jsonString")
         Log.i("save path ", "$path")
-
         val rootFolder: File? = context.getExternalFilesDir(null)
         val jsonFile = File(rootFolder, "post.json")
         val writer = FileWriter(jsonFile)
@@ -150,9 +149,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
             file.name,
             RequestBody.create(MediaType.parse("image/*"), file)
         )
-        saveVideoToServer(metaDataFilePart,videoFilePart)
+        saveVideoToServer(id,metaDataFilePart,videoFilePart)
     }
-    private fun saveVideoToServer(metaData:MultipartBody.Part,videoFile:MultipartBody.Part){
+    private fun saveVideoToServer(id:Int?,metaData:MultipartBody.Part,videoFile:MultipartBody.Part){
         if (NetworkUtils.isNetworkAvailable(this)) {
             Handler(Looper.getMainLooper()).post {
                 progressDialog!!.show()
@@ -166,9 +165,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
                 ) {
                     try {
                         Log.i("response  ", "$response")
-
                         val statusCode=response.body()!!.statusCode
                         if(statusCode==200){
+                            runOnUiThread(Runnable {
+                               val status:Int= vm.updateSyncStatus(id)
+                            })
                             DialogUtils.showNormalAlert(
                                 this@DashBoardActivity,
                                 "Alert!!",

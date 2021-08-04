@@ -19,6 +19,11 @@ interface VideoDao {
     @Query("delete from video_table")
     fun deleteAllVideos()
 
-    @Query("select * from video_table where status=false")
+    @Query("select * from video_table where status="+false)
     fun getAllVideos(): LiveData<List<VideoModel>>
+    @Query("select * from video_table where status="+false)
+    fun getVideos():List<VideoModel>
+
+    @Query("UPDATE video_table SET status=:status WHERE id = :id")
+    fun update(status: Boolean?, id: Int):Int
 }

@@ -42,7 +42,18 @@ class VideoRepository(application: Application) {
     fun getAllVideos(): LiveData<List<VideoModel>> {
         return allVideos
     }
-
-
-
+    fun getVideos(): List<VideoModel>? {
+        var videoList: List<VideoModel>? =null
+        subscribeOnBackground {
+            videoList= videoDao.getVideos()
+        }
+        return videoList
+    }
+    fun updateSyncStatus(id:Int?):Int{
+        var status:Int=-1
+        subscribeOnBackground {
+            status= videoDao.update(false, id!!)
+        }
+        return status
+    }
 }
