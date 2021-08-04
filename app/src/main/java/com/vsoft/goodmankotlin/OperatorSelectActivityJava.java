@@ -138,12 +138,18 @@ public class OperatorSelectActivityJava extends Activity {
                 DieIdDetailsModel resourceData = response.body();
 
                 responses = resourceData.getResponse();
+                if(progressDialog.isShowing()){
+                    progressDialog.dismiss();
+                }
 
             }
 
             @Override
             public void onFailure(Call<DieIdDetailsModel> call, Throwable t) {
                 call.cancel();
+                if(progressDialog.isShowing()){
+                    progressDialog.dismiss();
+                }
             }
         });
 
@@ -234,6 +240,7 @@ public class OperatorSelectActivityJava extends Activity {
             }
         });
         progressDialog = new ProgressDialog(OperatorSelectActivityJava.this);
+        progressDialog.setCancelable(false);
         progressDialog.setMessage("getting die and part data ...");
         progressDialog.show();
 

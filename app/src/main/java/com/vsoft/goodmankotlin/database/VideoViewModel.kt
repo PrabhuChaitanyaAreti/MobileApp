@@ -14,8 +14,8 @@ class VideoViewModel(app: Application) : AndroidViewModel(app) {
         repository.insert(video)
     }
 
-    fun update(video: VideoModel) {
-        repository.update(video)
+    fun update(video: VideoModel):Int {
+       return repository.update(video)
     }
 
     fun delete(video: VideoModel) {

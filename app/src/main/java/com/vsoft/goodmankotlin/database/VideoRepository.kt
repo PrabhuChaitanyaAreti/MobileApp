@@ -21,10 +21,12 @@ class VideoRepository(application: Application) {
         }
     }
 
-    fun update(video: VideoModel) {
+    fun update(video: VideoModel):Int {
+        var status:Int=-1
         subscribeOnBackground {
-            videoDao.update(video)
+            status= videoDao.update(video)
         }
+        return status
     }
 
     fun delete(video: VideoModel) {
@@ -43,11 +45,7 @@ class VideoRepository(application: Application) {
         return allVideos
     }
     fun getVideos(): List<VideoModel>? {
-        var videoList: List<VideoModel>? =null
-        subscribeOnBackground {
-            videoList= videoDao.getVideos()
-        }
-        return videoList
+           return videoDao.getVideos()
     }
     fun updateSyncStatus(id:Int?):Int{
         var status:Int=-1

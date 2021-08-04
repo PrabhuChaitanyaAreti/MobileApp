@@ -11,7 +11,7 @@ interface VideoDao {
     fun insert(video: VideoModel)
 
     @Update
-    fun update(video: VideoModel)
+    fun update(video: VideoModel):Int
 
     @Delete
     fun delete(video: VideoModel)
