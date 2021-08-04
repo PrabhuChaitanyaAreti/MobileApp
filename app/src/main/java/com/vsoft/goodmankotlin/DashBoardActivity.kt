@@ -3,19 +3,18 @@ package com.vsoft.goodmankotlin
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.*
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.database.subscribeOnBackground
-
 import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
 import com.vsoft.goodmankotlin.utils.DialogUtils
 import com.vsoft.goodmankotlin.utils.NetworkUtils
@@ -35,9 +34,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var addDie: TextView
     private lateinit var sync: TextView
     private lateinit var skip: TextView
+    private lateinit var logout: TextView
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
-
+    private val sharedPrefFile = "kotlinsharedpreference"
+    var sharedPreferences: SharedPreferences?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
@@ -49,12 +50,14 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
         addDie=findViewById(R.id.addDie)
         sync=findViewById(R.id.sync)
         skip=findViewById(R.id.skip)
-
+        logout=findViewById(R.id.logout)
         addOperator.setOnClickListener(this)
         addDie.setOnClickListener(this)
         sync.setOnClickListener(this)
         skip.setOnClickListener(this)
-
+        logout.setOnClickListener(this)
+        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+            Context.MODE_PRIVATE)
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
     }
     private fun initProgress(){
@@ -81,9 +84,20 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
         if(v?.id==skip.id){
             navigateToOperatorSelection()
         }
+        if(v?.id==logout.id){
+            val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
+            editor.clear()
+            editor.apply()
+            navigateToLogin()
+        }
     }
     private fun navigateToOperatorSelection() {
         val mainIntent = Intent(this, OperatorSelectActivityJava::class.java)
+        startActivity(mainIntent)
+        finish()
+    }
+    private fun navigateToLogin() {
+        val mainIntent = Intent(this, LoginActivity::class.java)
         startActivity(mainIntent)
         finish()
     }
