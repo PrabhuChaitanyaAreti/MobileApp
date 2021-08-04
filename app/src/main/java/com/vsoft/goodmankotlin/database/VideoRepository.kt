@@ -21,10 +21,12 @@ class VideoRepository(application: Application) {
         }
     }
 
-    fun update(video: VideoModel) {
+    fun update(video: VideoModel):Int {
+        var status:Int=-1
         subscribeOnBackground {
-            videoDao.update(video)
+            status= videoDao.update(video)
         }
+        return status
     }
 
     fun delete(video: VideoModel) {

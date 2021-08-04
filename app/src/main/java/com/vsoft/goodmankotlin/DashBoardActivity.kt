@@ -15,8 +15,7 @@ import java.io.FileWriter
 import java.io.IOException
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.vsoft.goodmankotlin.database.VideoModel
-import com.vsoft.goodmankotlin.database.VideoViewModel
+import com.vsoft.goodmankotlin.database.*
 import com.vsoft.goodmankotlin.model.UserAuthRequest
 import com.vsoft.goodmankotlin.model.UserAuthResponse
 import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
@@ -80,24 +79,20 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
             jsonObject.addProperty("file_name","check1.mp4")
             save(this,gson.toJson(jsonObject))*/
 
+           // subscribeOnBackground {
+             //       val videosList:List<VideoModel> =    VideoDataBase.getInstance(this@DashBoardActivity).videoDao().getVideos()
+                      vm.getAllVideos().observe(this, Observer {
+                    //val videosList:List<VideoModel>? =vm.getVideos()
+                        val  videosList=it
+                    Log.i("Videos observed size", "${videosList?.size}")
+                    val iterator = videosList!!.listIterator()
+                    for (item in iterator) {
+                        save(this,item)
+                    }
+                     })
+               // }
 
-            //vm.getAllVideos().observe(this, Observer {
-               var videosList:List<VideoModel>? =vm.getVideos()
-            Log.i("Videos observed size", "${videosList?.size}")
-            val iterator = videosList!!.listIterator()
-                for (item in iterator) {
-                    Log.i("Id:", "${item.id}")
-                    Log.i("Status:", "${item.status}")
-                    val jsonObject= JsonObject()
-                    val gson = Gson()
-                    jsonObject.addProperty("Die Id",item.die_id)
-                    jsonObject.addProperty("Part Id",item.part_id)
-                    val path=item.video_path;
-                    val filename: String = path.substring(path.lastIndexOf("/") + 1)
-                    jsonObject.addProperty("file_name",filename)
-                    save(this,item.id,gson.toJson(jsonObject),path)
-                }
-            //})
+
         }
         if(v?.id==skip.id){
             navigateToOperatorSelection()
@@ -110,7 +105,19 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     @Throws(IOException::class)
-    fun save(context: Context,id:Int?,jsonString: String?,path:String?) {
+    fun save(context: Context,item:VideoModel) {
+        Log.i("Id:", "${item.id}")
+        Log.i("Status:", "${item.status}")
+        val jsonObject= JsonObject()
+        val gson = Gson()
+        jsonObject.addProperty("Die Id",item.die_id)
+        jsonObject.addProperty("Part Id",item.part_id)
+        val path=item.video_path;
+        val filename: String = path.substring(path.lastIndexOf("/") + 1)
+        jsonObject.addProperty("file_name",filename)
+
+        var jsonString=  gson.toJson(jsonObject)
+
         Log.i("save jsonString ", "$jsonString")
         Log.i("save path ", "$path")
         val rootFolder: File? = context.getExternalFilesDir(null)
@@ -149,9 +156,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
             file.name,
             RequestBody.create(MediaType.parse("image/*"), file)
         )
-        saveVideoToServer(id,metaDataFilePart,videoFilePart)
+        saveVideoToServer(item,metaDataFilePart,videoFilePart)
     }
-    private fun saveVideoToServer(id:Int?,metaData:MultipartBody.Part,videoFile:MultipartBody.Part){
+    private fun saveVideoToServer(item:VideoModel,metaData:MultipartBody.Part,videoFile:MultipartBody.Part){
         if (NetworkUtils.isNetworkAvailable(this)) {
             Handler(Looper.getMainLooper()).post {
                 progressDialog!!.show()
@@ -168,7 +175,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
                         val statusCode=response.body()!!.statusCode
                         if(statusCode==200){
                             runOnUiThread(Runnable {
-                               val status:Int= vm.updateSyncStatus(id)
+                                item.status=true
+                             var status:Int?= vm.update(item)
+                                Log.i("response update status ", "$status")
                             })
                             DialogUtils.showNormalAlert(
                                 this@DashBoardActivity,
