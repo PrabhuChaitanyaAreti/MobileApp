@@ -1,9 +1,6 @@
 package com.vsoft.goodmankotlin.utils
 
-import com.vsoft.goodmankotlin.model.PunchResponse
-import com.vsoft.goodmankotlin.model.UserAuthRequest
-import com.vsoft.goodmankotlin.model.UserAuthResponse
-import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
+import com.vsoft.goodmankotlin.model.*
 import okhttp3.MultipartBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -23,7 +20,8 @@ interface RetrofitApiInterface {
     </T> */
     @GET("/placeholder/api/predictions")
     fun getPunchData(): Call<PunchResponse?>?
-
+    @GET("/getDieId")
+    fun doGetListDieDetails(): Call<DieIdDetailsModel?>?
     @Multipart
     @POST("/placeholder/api/upload")
     fun uploadDyeImage(@Part filePart: MultipartBody.Part?): Call<PunchResponse?>?

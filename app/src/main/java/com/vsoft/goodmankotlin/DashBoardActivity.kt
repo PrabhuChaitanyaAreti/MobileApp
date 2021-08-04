@@ -4,21 +4,15 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.*
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProviders
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
-import com.vsoft.goodmankotlin.model.UserAuthRequest
-import com.vsoft.goodmankotlin.model.UserAuthResponse
 import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
 import com.vsoft.goodmankotlin.utils.DialogUtils
 import com.vsoft.goodmankotlin.utils.NetworkUtils
@@ -29,6 +23,9 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 
 class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var addOperator: TextView
@@ -64,7 +61,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     }
     override fun onClick(v: View?) {
         if(v?.id==addOperator.id){
-
+            DialogUtils.showNormalAlert(
+                this@DashBoardActivity,
+                "Alert!!",
+                "Functionality need to be updated soon.."
+            )
         }
         if(v?.id==addDie.id){
             val mainIntent = Intent(this@DashBoardActivity, AddDieActivity::class.java)
@@ -104,7 +105,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
     private fun navigateToOperatorSelection() {
-        val mainIntent = Intent(this, OperatorSelectActivity::class.java)
+        val mainIntent = Intent(this, OperatorSelectActivityJava::class.java)
         startActivity(mainIntent)
         finish()
     }

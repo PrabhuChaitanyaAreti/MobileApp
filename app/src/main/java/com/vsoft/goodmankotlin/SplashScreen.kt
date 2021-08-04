@@ -1,7 +1,9 @@
 package com.vsoft.goodmankotlin
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -17,26 +19,39 @@ import com.vsoft.goodmankotlin.utils.CameraUtils
 
 
 class SplashScreen : AppCompatActivity() {
+    private val sharedPrefFile = "kotlinsharedpreference"
+    var sharedPreferences: SharedPreferences?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+            Context.MODE_PRIVATE)
         Handler(Looper.getMainLooper()).postDelayed({
             // Your Code
             if (CameraUtils.checkPermissions(applicationContext)) {
-                navigationScreen()
+                if(sharedPreferences!!.getBoolean("loginStatus",false)){
+                    navigationToDashBoard()
+                }else {
+                    navigationToLoginScreen()
+                }
             } else {
                 requestCameraPermission()
             }
         }, 1*1000)
     }
 
-    private fun navigationScreen() {
+    private fun navigationToLoginScreen() {
         val i = Intent(this, LoginActivity::class.java)
         startActivity(i)
         // close this activity
         finish()
     }
-
+    private fun navigationToDashBoard() {
+        val i = Intent(this, DashBoardActivity::class.java)
+        startActivity(i)
+        // close this activity
+        finish()
+    }
     /**
      * Requesting permissions using Dexter library
      */
@@ -51,7 +66,11 @@ class SplashScreen : AppCompatActivity() {
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
-                        navigationScreen()
+                        if(sharedPreferences!!.getBoolean("loginStatus",false)){
+                            navigationToDashBoard()
+                        }else {
+                            navigationToLoginScreen()
+                        }
                     } else if (report.isAnyPermissionPermanentlyDenied()) {
                         showPermissionsAlert()
                     }

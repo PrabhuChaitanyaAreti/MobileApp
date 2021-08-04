@@ -3,7 +3,9 @@ package com.vsoft.goodmankotlin
 import android.Manifest
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -46,6 +48,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
     private  var pinMaxDigits:Int = 4
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
+    private val sharedPrefFile = "kotlinsharedpreference"
+    var sharedPreferences: SharedPreferences?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -57,6 +61,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         empIdEditText = findViewById(R.id.empIdEditText)
         pinEditText = findViewById(R.id.pinEditText)
         loginButton = findViewById(R.id.loginButton)
+        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+            Context.MODE_PRIVATE)
     }
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
@@ -132,6 +138,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                     try {
                         val statusCode=response.body()!!.statusCode
                             if(statusCode==200){
+                                val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
+                                editor.putBoolean("loginStatus",true)
+                                editor.apply()
                                 navigateToDashBoard()
                             }else if(statusCode==401){
                                 DialogUtils.showNormalAlert(

@@ -211,7 +211,7 @@ class VideoPreviewActivity : AppCompatActivity() {
                 val builder = AlertDialog.Builder(this@VideoPreviewActivity)
                 builder.setCancelable(false)
                 builder.setTitle(this@VideoPreviewActivity.getResources().getString(R.string.app_name))
-                builder.setMessage("You have been sucessfully saved die details in local DB.")
+                builder.setMessage("You have been successfully saved die details in local DB.")
                 builder.setNeutralButton("Ok") { dialog, which ->
                     dialog.dismiss()
                     if (alertDialog!!.isShowing) {
