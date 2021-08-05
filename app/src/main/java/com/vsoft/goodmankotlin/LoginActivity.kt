@@ -185,7 +185,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         }
     }
     private fun navigateToOperatorSelection() {
-        val mainIntent = Intent(this@LoginActivity, OperatorSelectActivity::class.java)
+        val mainIntent = Intent(this@LoginActivity, OperatorSelectActivityJava::class.java)
         startActivity(mainIntent)
         finish()
     }

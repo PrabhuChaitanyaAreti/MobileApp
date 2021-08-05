@@ -48,11 +48,11 @@ public class OperatorSelectActivityJava extends Activity {
     private Button operatorBT,dieBT,partBT;
     private AlertDialog customAlertDialogSpinner;
     private List<DieIdResponse> responses = new ArrayList<>();
+    private Boolean isDataSynced=false;
     private List<String> listPartId;
     private String sharedPrefFile = "kotlinsharedpreference";
     private SharedPreferences sharedPreferences;
     private ProgressDialog progressDialog;
-    private Boolean isDataSynced=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

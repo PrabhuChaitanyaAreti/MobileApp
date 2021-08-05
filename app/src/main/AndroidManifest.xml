@@ -59,6 +59,11 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
+            android:name=".OperatorSelectActivityWithWebservice"
+            android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
             android:name=".CameraActivity"
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

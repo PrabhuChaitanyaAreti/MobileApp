@@ -31,7 +31,7 @@
 		android:background="@drawable/spinner_box_bg"
 		android:singleLine="true"
 		android:ems="10"
-		android:hint="Search here" />
+		android:hint="Search/Enter here" />
 		<Button
 			android:id="@+id/buttonSelect"
 			android:textAllCaps="false"

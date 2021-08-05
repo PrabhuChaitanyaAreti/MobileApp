@@ -147,7 +147,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
         alertDialog?.show()
     }
     private fun navigateToOperatorSelection() {
-        val mainIntent = Intent(this, OperatorSelectActivity::class.java)
+        val mainIntent = Intent(this, OperatorSelectActivityWithWebservice::class.java)
         startActivity(mainIntent)
     }
     private fun navigateToLogin() {
