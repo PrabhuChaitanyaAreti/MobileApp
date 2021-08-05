@@ -32,11 +32,11 @@ import java.io.FileWriter
 import java.io.IOException
 
 class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var addOperator: LinearLayout
-    private lateinit var addDie: LinearLayout
-    private lateinit var sync: LinearLayout
-    private lateinit var skip: LinearLayout
-    private lateinit var logout: LinearLayout
+    private lateinit var addOperator: TextView
+    private lateinit var addDie: TextView
+    private lateinit var sync: TextView
+    private lateinit var skip: TextView
+    private lateinit var logout: TextView
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
     private var alertDialog: android.app.AlertDialog? = null
