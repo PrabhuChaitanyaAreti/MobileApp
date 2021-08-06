@@ -32,11 +32,11 @@ import java.io.FileWriter
 import java.io.IOException
 
 class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var addOperator: TextView
-    private lateinit var addDie: TextView
-    private lateinit var sync: TextView
-    private lateinit var skip: TextView
-    private lateinit var logout: TextView
+    private lateinit var addOperator: LinearLayout
+    private lateinit var addDie: LinearLayout
+    private lateinit var sync: LinearLayout
+    private lateinit var skip: LinearLayout
+    private lateinit var logout: LinearLayout
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
     private var alertDialog: android.app.AlertDialog? = null
@@ -185,10 +185,12 @@ private fun sync(){
     private fun save(context: Context,item:VideoModel) {
         Log.i("Id:", "${item.id}")
         Log.i("Status:", "${item.status}")
+        Log.i("video die type :", item.die_top_bottom)
         val jsonObject= JsonObject()
         val gson = Gson()
         jsonObject.addProperty("Die Id",item.die_id)
         jsonObject.addProperty("Part Id",item.part_id)
+        jsonObject.addProperty("top_bottom",item.die_top_bottom)
         val path=item.video_path;
         val filename: String = path.substring(path.lastIndexOf("/") + 1)
         jsonObject.addProperty("file_name",filename)

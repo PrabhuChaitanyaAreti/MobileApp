@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.TextUtils
 import android.util.Log
 import android.view.WindowManager
 import android.widget.*
@@ -76,7 +77,11 @@ class VideoPreviewActivity : AppCompatActivity() {
 
     private var dieIdStr=  ""
     private  var partIdStr = ""
+    private var dieTypeStr =""
     private var isNewDie=false
+    private var isDieTop =false
+    private var isDieBottom=false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,11 +93,17 @@ class VideoPreviewActivity : AppCompatActivity() {
 
         dieIdStr = sharedPreferences!!.getString("dieIdStr","").toString()
         partIdStr = sharedPreferences!!.getString("partIdStr","").toString()
+        dieTypeStr= sharedPreferences!!.getString("dieTypeStr","").toString()
         isNewDie=sharedPreferences!!.getBoolean("IsNewDie",false)
+        isDieTop=sharedPreferences!!.getBoolean("isDieTop",false)
+        isDieBottom=sharedPreferences!!.getBoolean("isDieBottom",false)
 
         Log.d("TAG", "VideoPreviewActivity  sharedPreferences  dieIdStr $dieIdStr")
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  partIdStr $partIdStr")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  dieTypeStr $dieTypeStr")
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  IsNewDie $isNewDie")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieTop $isDieTop")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieBottom $isDieBottom")
 
 
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
@@ -206,21 +217,160 @@ class VideoPreviewActivity : AppCompatActivity() {
         videoSubmit!!.setOnClickListener {
 
             if(isNewDie){
-                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-                vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false))
+                if(isDieTop&&isDieBottom){
+                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                    vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr))
+                    val builder = AlertDialog.Builder(this@VideoPreviewActivity)
+                    builder.setCancelable(false)
+                    builder.setTitle(this@VideoPreviewActivity.getResources().getString(R.string.app_name))
+                    builder.setMessage("Die details are saved. Please use sync in dashboard to send the data to server")
+                    builder.setNeutralButton("Ok") { dialog, which ->
+
+                        val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                        intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+
+                        dialog.dismiss()
+                        if (alertDialog!!.isShowing) {
+                            alertDialog!!.dismiss()
+                        }
+                    }
+                    alertDialog = builder.create()
+                    if (!this@VideoPreviewActivity.isFinishing) {
+                        try {
+                            alertDialog?.show()
+                        } catch (e: WindowManager.BadTokenException) {
+                            Log.e("BadTokenException", e.toString())
+                        }
+                    }
+                }else if(isDieTop){
+                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                    vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr))
+                    val builder = android.app.AlertDialog.Builder(this)
+                    builder.setTitle(
+                        this.getResources().getString(R.string.app_name)
+                    )
+                    builder.setCancelable(false)
+                    builder.setMessage("Die top is recorded.Do you want to record die bottom?")
+                    builder.setPositiveButton(
+                        "Ok"
+                    ) { dialog, which ->
+                        val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                        editor.putBoolean("isDieBottom", true)
+                        editor.putString("dieTypeStr", "bottom")
+                        editor.apply()
+                        dialog.dismiss()
+                        if (alertDialog!!.isShowing) {
+                            alertDialog!!.dismiss()
+                        }
+                        val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                    builder.setNegativeButton(
+                        "Cancel"
+                    ) { dialog, which ->
+                        dialog.dismiss()
+                        val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                        intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+
+                    }
+                    alertDialog = builder.create()
+                    alertDialog?.show()
+                }else{
+                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                    vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr))
+                    val builder = android.app.AlertDialog.Builder(this)
+                    builder.setTitle(
+                        this.getResources().getString(R.string.app_name)
+                    )
+                    builder.setCancelable(false)
+                    builder.setMessage("Die top is recorded.Do you want to record die bottom?")
+                    builder.setPositiveButton(
+                        "Ok"
+                    ) { dialog, which ->
+                        val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                        editor.putBoolean("isDieTop", true)
+                        editor.putString("dieTypeStr", "top")
+                        editor.apply()
+                        dialog.dismiss()
+                        if (alertDialog!!.isShowing) {
+                            alertDialog!!.dismiss()
+                        }
+                        val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                    builder.setNegativeButton(
+                        "Cancel"
+                    ) { dialog, which ->
+                        dialog.dismiss()
+                        val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                        intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+
+                    }
+                    alertDialog = builder.create()
+                    alertDialog?.show()
+                }
+                /*if (dieTypeStr != null && dieTypeStr!!.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+                    var alertMessageStr =""
+                    var dieTypeStr1 =""
+                    if(dieTypeStr.equals("top",true)){
+                        alertMessageStr="Die top is recorded.Do you want to record die bottom?"
+                        dieTypeStr1="top"
+                    }else{
+                        alertMessageStr="Die bottom is recorded.Do you want to record die top?"
+                        dieTypeStr1="bottom"
+                    }
+                    println("dieTypeStr1  is $dieTypeStr1")
+                    println("alertMessageStr  is $alertMessageStr")
+
+                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                    vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr1))
+                    val builder = android.app.AlertDialog.Builder(this)
+                    builder.setTitle(
+                        this.getResources().getString(R.string.app_name)
+                    )
+                    builder.setCancelable(false)
+                    builder.setMessage(alertMessageStr)
+                    builder.setPositiveButton(
+                        "Ok"
+                    ) { dialog, which ->
+                        if (alertDialog!!.isShowing) {
+                            alertDialog!!.dismiss()
+                        }
+                        val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                    builder.setNegativeButton(
+                        "Cancel"
+                    ) { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    alertDialog = builder.create()
+                    alertDialog?.show()
+
+                }else{
                 val builder = AlertDialog.Builder(this@VideoPreviewActivity)
                 builder.setCancelable(false)
                 builder.setTitle(this@VideoPreviewActivity.getResources().getString(R.string.app_name))
                 builder.setMessage("Die details are saved. Please use sync in dashboard to send the data to server")
                 builder.setNeutralButton("Ok") { dialog, which ->
+
+                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                    vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr))
+
+                    val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                    intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+
                     dialog.dismiss()
                     if (alertDialog!!.isShowing) {
                         alertDialog!!.dismiss()
                     }
-                    dialog.dismiss()
-                    val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                    intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
                 }
                 alertDialog = builder.create()
                 if (!this@VideoPreviewActivity.isFinishing) {
@@ -231,6 +381,7 @@ class VideoPreviewActivity : AppCompatActivity() {
                     }
                 }
 
+                }*/
             }else{
 
             if (absPlayerInternal!!.isPlaying()) {
