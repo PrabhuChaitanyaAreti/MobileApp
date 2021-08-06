@@ -1,9 +1,5 @@
 package com.vsoft.goodmankotlin;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -11,10 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -23,9 +17,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,15 +27,19 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.vsoft.goodmankotlin.R;
 import com.vsoft.goodmankotlin.model.ChoiceListOperator;
 import com.vsoft.goodmankotlin.model.DieIdDetailsModel;
 import com.vsoft.goodmankotlin.model.DieIdResponse;
-import com.vsoft.goodmankotlin.utils.RetrofitApiInterface;
+import com.vsoft.goodmankotlin.utils.DialogUtils;
+import com.vsoft.goodmankotlin.utils.NetworkUtils;
 import com.vsoft.goodmankotlin.utils.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class OperatorSelectActivityJava extends Activity {
     private Button btnContinue;
@@ -57,6 +52,7 @@ public class OperatorSelectActivityJava extends Activity {
     private String sharedPrefFile = "kotlinsharedpreference";
     private SharedPreferences sharedPreferences;
     private ProgressDialog progressDialog;
+    private Boolean isDataSynced=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +71,10 @@ public class OperatorSelectActivityJava extends Activity {
                 hideSoftKeyboard(OperatorSelectActivityJava.this);
             }
         });
-
+        progressDialog = new ProgressDialog(OperatorSelectActivityJava.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Getting Die and Part data ...");
+        getDieAndPartData(false);
         operatorBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +86,11 @@ public class OperatorSelectActivityJava extends Activity {
         dieBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showdieIdListPopUpList();
+                if(isDataSynced) {
+                    showdieIdListPopUpList();
+                }else{
+                    getDieAndPartData(true);
+                }
             }
         });
 
@@ -128,29 +131,6 @@ public class OperatorSelectActivityJava extends Activity {
             }
 
 
-        });
-
-        Call<DieIdDetailsModel> call = new RetrofitClient().getMyApi().doGetListDieDetails();
-        call.enqueue(new Callback<DieIdDetailsModel>() {
-            @Override
-            public void onResponse(Call<DieIdDetailsModel> call, Response<DieIdDetailsModel> response) {
-
-                DieIdDetailsModel resourceData = response.body();
-
-                responses = resourceData.getResponse();
-                if(progressDialog.isShowing()){
-                    progressDialog.dismiss();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<DieIdDetailsModel> call, Throwable t) {
-                call.cancel();
-                if(progressDialog.isShowing()){
-                    progressDialog.dismiss();
-                }
-            }
         });
 
         btnContinue.setOnClickListener(new View.OnClickListener() {
@@ -199,9 +179,6 @@ public class OperatorSelectActivityJava extends Activity {
                             }
                         }
                     });
-
-
-
                 }else if(partBT.getText().toString().isEmpty()){
 
                     runOnUiThread(new Runnable() {
@@ -239,13 +216,46 @@ public class OperatorSelectActivityJava extends Activity {
 
             }
         });
-        progressDialog = new ProgressDialog(OperatorSelectActivityJava.this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("getting die and part data ...");
-        progressDialog.show();
-
     }
+    private void getDieAndPartData(Boolean open){
+        if(NetworkUtils.Companion.isNetworkAvailable(this) && !isDataSynced) {
+            progressDialog.show();
+            Call<DieIdDetailsModel> call = new RetrofitClient().getMyApi().doGetListDieDetails();
+            call.enqueue(new Callback<DieIdDetailsModel>() {
+                @Override
+                public void onResponse(Call<DieIdDetailsModel> call, Response<DieIdDetailsModel> response) {
+                    DieIdDetailsModel resourceData = response.body();
+                    responses = resourceData.getResponse();
+                    isDataSynced=true;
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    if(open){
+                        dieBT.performClick();
+                    }
+                }
 
+                @Override
+                public void onFailure(Call<DieIdDetailsModel> call, Throwable t) {
+                    call.cancel();
+                    isDataSynced=false;
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                }
+            });
+        }else{
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            isDataSynced=false;
+            DialogUtils.Companion.showNormalAlert(
+                    this,
+                    "Alert!!",
+                    "please check your internet connection and try again"
+            );
+        }
+    }
     private void showOperatorListPopUp() {
         try {
             ListView spinnerList;

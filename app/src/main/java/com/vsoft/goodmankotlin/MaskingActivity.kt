@@ -2,6 +2,7 @@ package com.vsoft.goodmankotlin
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.*
 import android.os.Build
 import android.os.Bundle
@@ -50,6 +51,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
     private lateinit var uniqueDiesDisplayed:ArrayList<Unique_results>
     private lateinit var dialogShowInfo:Dialog
     private lateinit var optionsMenu:Menu
+    private var alertDialog: android.app.AlertDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.hamburg_menu_icon);// set drawable icon
@@ -431,5 +433,31 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
 
     override fun onRightMenuItemClickCallBack(clickedPos: Int) {
         displayClickedDieDetails(uniqueRightMenuShapes[clickedPos])
+    }
+    override fun onBackPressed() {
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle(
+            this.getResources().getString(R.string.app_name)
+        )
+        builder.setCancelable(false)
+        builder.setMessage("Do you want to navigate to dashboard ?")
+        builder.setPositiveButton(
+            "Ok"
+        ) { dialog, which ->
+            if (alertDialog!!.isShowing) {
+                alertDialog!!.dismiss()
+            }
+            val mainIntent = Intent(this, DashBoardActivity::class.java)
+            mainIntent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(mainIntent)
+            //finish()
+        }
+        builder.setNegativeButton(
+            "Cancel"
+        ) { dialog, which ->
+            dialog.dismiss()
+        }
+        alertDialog = builder.create()
+        alertDialog?.show()
     }
 }
