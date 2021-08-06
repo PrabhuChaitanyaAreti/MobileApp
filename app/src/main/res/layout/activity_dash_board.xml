@@ -13,32 +13,33 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:orientation="vertical"
             android:gravity="center"
+            android:orientation="vertical"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1">
             <LinearLayout
-                android:id="@+id/addOperator"
+                android:id="@+id/skip"
                 android:layout_width="160dp"
                 android:background="@drawable/circular_background"
                 android:gravity="center"
                 android:padding="25dp"
                 android:layout_height="160dp" android:orientation="vertical">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:src="@drawable/add"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Operator"
-                android:layout_marginTop="5dp"
-                android:textAllCaps="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textStyle="bold"
-                android:textColor="@color/goodman_red"
-                android:gravity="center"/>
+                <ImageView
+                    android:tint="@color/daikin_fill"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:src="@drawable/assign"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Verify Die"
+                    android:textAllCaps="true"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textStyle="bold"
+                    android:textColor="@color/daikin_fill"
+                    android:gravity="center" />
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -56,6 +57,7 @@
             android:padding="25dp"
             android:layout_height="160dp" android:orientation="vertical">
             <ImageView
+                android:tint="@color/daikin_fill"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -68,7 +70,7 @@
                 android:textAllCaps="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textStyle="bold"
-                android:textColor="@color/goodman_red"
+                android:textColor="@color/daikin_fill"
                 android:gravity="center" />
         </LinearLayout>
         </LinearLayout>
@@ -79,60 +81,62 @@
             android:orientation="vertical"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1">
-        <LinearLayout
-            android:id="@+id/sync"
-            android:layout_width="160dp"
-            android:background="@drawable/circular_background"
-            android:gravity="center"
-            android:padding="25dp"
-            android:layout_height="160dp" android:orientation="vertical">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:src="@drawable/sync"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="Sync"
-                android:textAllCaps="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textStyle="bold"
-                android:textColor="@color/goodman_red"
-                android:gravity="center"/>
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/sync"
+                android:layout_width="160dp"
+                android:background="@drawable/circular_background"
+                android:gravity="center"
+                android:padding="25dp"
+                android:layout_height="160dp" android:orientation="vertical">
+                <ImageView
+                    android:tint="@color/daikin_fill"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:src="@drawable/sync"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Sync"
+                    android:textAllCaps="true"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textStyle="bold"
+                    android:textColor="@color/daikin_fill"
+                    android:gravity="center"/>
+            </LinearLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:gravity="center"
             android:orientation="vertical"
+            android:gravity="center"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1">
-        <LinearLayout
-            android:id="@+id/skip"
-            android:layout_width="160dp"
-            android:background="@drawable/circular_background"
-            android:gravity="center"
-            android:padding="25dp"
-            android:layout_height="160dp" android:orientation="vertical">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:src="@drawable/assign"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="Assign Die"
-                android:textAllCaps="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textStyle="bold"
-                android:textColor="@color/goodman_red"
-                android:gravity="center" />
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/addOperator"
+                android:layout_width="160dp"
+                android:background="@drawable/circular_background"
+                android:gravity="center"
+                android:padding="25dp"
+                android:layout_height="160dp" android:orientation="vertical">
+                <ImageView
+                    android:tint="@color/daikin_fill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:src="@drawable/add"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Operator"
+                    android:layout_marginTop="5dp"
+                    android:textAllCaps="true"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textStyle="bold"
+                    android:textColor="@color/daikin_fill"
+                    android:gravity="center"/>
+            </LinearLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -149,6 +153,7 @@
             android:padding="25dp"
             android:layout_height="160dp" android:orientation="vertical">
             <ImageView
+                android:tint="@color/daikin_fill"
                 android:padding="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -161,7 +166,7 @@
                 android:textAllCaps="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textStyle="bold"
-                android:textColor="@color/goodman_red"
+                android:textColor="@color/daikin_fill"
                 android:gravity="center" />
         </LinearLayout>
         </LinearLayout>
