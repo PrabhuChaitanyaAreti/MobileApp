@@ -716,7 +716,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
 
             if (mCamera != null) {
                 if (parameters != null) {
-                    mCamera!!.unlock()
+                   // mCamera!!.unlock()
                     // parameters!!.setPreviewSize(selectedWidth,selectedHeight);
                     //params.setPictureSize(previewSize.width, previewSize.height);
                     //   params.setPreviewSize(selectedWidth,selectedHeight);
@@ -743,9 +743,9 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                         "spinner ok click optimalSize!!.height ${optimalSize.height}"
                     )
 
-                    profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
-                    profile!!.videoFrameWidth = optimalSize.width
-                    profile!!.videoFrameHeight = optimalSize.height
+                  //  profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
+                    //profile!!.videoFrameWidth = optimalSize.width
+                    //profile!!.videoFrameHeight = optimalSize.height
 
                     // parameters!!.setPreviewSize(profile!!.videoFrameWidth, profile!!.videoFrameHeight)
                     //parameters!!.setPreviewSize( optimalSize.width,optimalSize.height)

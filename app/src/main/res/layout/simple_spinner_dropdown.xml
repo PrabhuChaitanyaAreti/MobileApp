@@ -4,7 +4,7 @@
     style="@style/spinnerDropDownItemStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textStyle="bold"
+    android:textStyle="normal"
     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
     android:ellipsize="marquee"
     android:paddingBottom="5dp"

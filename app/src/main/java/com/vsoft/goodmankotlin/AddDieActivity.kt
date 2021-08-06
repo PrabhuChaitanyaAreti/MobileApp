@@ -11,32 +11,42 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import kotlinx.android.synthetic.main.activity_add_die.*
 
 class AddDieActivity : AppCompatActivity() , View.OnClickListener , View.OnTouchListener {
 
     private var dieIdStr:String? =  ""
-    private  var partIdStr:String? = ""
+    private var partIdStr:String? = ""
+    private var dieTypeStr:String?=""
 
     private lateinit var alertDialog: AlertDialog
 
     private val sharedPrefFile = "kotlinsharedpreference"
     var sharedPreferences: SharedPreferences?=null
 
-
+    var dieTypeArray: Array<String> = arrayOf("Select Die Type", "Top", "Bottom")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_die)
 
+        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+            Context.MODE_PRIVATE)
 
         dieIdEditText.setOnTouchListener(this)
         partIdEditText.setOnTouchListener(this)
 
         continueButton.setOnClickListener(this)
 
-         sharedPreferences = this.getSharedPreferences(sharedPrefFile,
-            Context.MODE_PRIVATE)
+        val langAdapter1 = ArrayAdapter<CharSequence>(
+            this@AddDieActivity,
+            R.layout.spinner_text,
+            dieTypeArray
+        )
+        langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
+        dieTypeSpinner.adapter = langAdapter1
 
     }
 
@@ -55,21 +65,41 @@ class AddDieActivity : AppCompatActivity() , View.OnClickListener , View.OnTouch
         if(view == continueButton){
             dieIdStr = dieIdEditText!!.text.toString()
             partIdStr = partIdEditText!!.text.toString()
+            dieTypeStr = dieTypeSpinner.selectedItem.toString()
+
             if (dieIdStr != null && dieIdStr!!.isNotEmpty() && !TextUtils.isEmpty(dieIdStr) && dieIdStr != "null") {
                 if (partIdStr != null && partIdStr!!.isNotEmpty() && !TextUtils.isEmpty(partIdStr) && partIdStr != "null") {
+                    if (dieTypeStr != null && dieTypeStr!!.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+                        if(dieTypeStr!!.contains("Select")){
+                            validationAlert("Please Select Die Type")
+                        }else{
+                            Log.d("TAG", "AddDieActivity   dieIdStr $dieIdStr")
+                            Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
+                            Log.d("TAG", "AddDieActivity   dieTypeStr $dieTypeStr")
 
-                    Log.d("TAG", "AddDieActivity   dieIdStr $dieIdStr")
-                    Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
+                            val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                            editor.putString("dieIdStr", dieIdStr)
+                            editor.putString("partIdStr", partIdStr)
+                            editor.putBoolean("IsNewDie", true)
+                            if(dieTypeStr.equals("top",true)){
+                                editor.putString("dieTypeStr", "top")
+                                editor.putBoolean("isDieTop", true)
+                                editor.putBoolean("isDieBottom", false)
+                            }else{
+                                editor.putString("dieTypeStr", "bottom")
+                                editor.putBoolean("isDieTop", false)
+                                editor.putBoolean("isDieBottom", true)
+                            }
+                            editor.apply()
 
-                    val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
-                    editor.putString("dieIdStr",dieIdStr)
-                    editor.putString("partIdStr",partIdStr)
-                    editor.putBoolean("IsNewDie",true)
-                    editor.apply()
-
-                    val mainIntent = Intent(this@AddDieActivity, VideoRecordActivityNew::class.java)
-                    startActivity(mainIntent)
-                    finish()
+                            val mainIntent =
+                                Intent(this@AddDieActivity, VideoRecordActivityNew::class.java)
+                            startActivity(mainIntent)
+                            finish()
+                        }
+                    }else{
+                        validationAlert("Please Select Die Type")
+                    }
                 }else{
                     validationAlert("Please enter Part Id")
                 }

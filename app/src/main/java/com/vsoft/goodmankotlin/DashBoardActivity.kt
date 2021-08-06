@@ -185,10 +185,12 @@ private fun sync(){
     private fun save(context: Context,item:VideoModel) {
         Log.i("Id:", "${item.id}")
         Log.i("Status:", "${item.status}")
+        Log.i("video die type :", item.die_top_bottom)
         val jsonObject= JsonObject()
         val gson = Gson()
         jsonObject.addProperty("Die Id",item.die_id)
         jsonObject.addProperty("Part Id",item.part_id)
+        jsonObject.addProperty("top_bottom",item.die_top_bottom)
         val path=item.video_path;
         val filename: String = path.substring(path.lastIndexOf("/") + 1)
         jsonObject.addProperty("file_name",filename)
