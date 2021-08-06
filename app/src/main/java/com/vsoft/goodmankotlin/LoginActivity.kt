@@ -107,13 +107,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                 }
             } else {
                 if (empIdStr.length < minEmpIdDigits) {
-                    validationAlert("Please enter Emp Id with minimum 6 digits.")
+                    validationAlert("Username must be minimum 6 digits.")
                 } else {
-                    validationAlert("Please enter Emp Id with minimum 6 digits and maximum 8 digits.")
+                    validationAlert("Username must be minimum 6 digits and maximum 8 digits.")
                 }
             }
         } else {
-            validationAlert("Please enter Emp Id with minimum 6 digits and maximum 8 digits.")
+            validationAlert("Username must be minimum 6 digits and maximum 8 digits.")
         }
     }
     private fun screenNavigationWithPermissions() {
@@ -185,7 +185,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         }
     }
     private fun navigateToOperatorSelection() {
-        val mainIntent = Intent(this@LoginActivity, OperatorSelectActivity::class.java)
+        val mainIntent = Intent(this@LoginActivity, OperatorSelectActivityJava::class.java)
         startActivity(mainIntent)
         finish()
     }

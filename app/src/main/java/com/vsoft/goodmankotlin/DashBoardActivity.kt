@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.os.*
 import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -146,7 +147,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
         alertDialog?.show()
     }
     private fun navigateToOperatorSelection() {
-        val mainIntent = Intent(this, OperatorSelectActivityJava::class.java)
+        val mainIntent = Intent(this, OperatorSelectActivityWithWebservice::class.java)
         startActivity(mainIntent)
     }
     private fun navigateToLogin() {

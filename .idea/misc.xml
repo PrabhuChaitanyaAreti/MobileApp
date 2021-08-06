@@ -9,7 +9,8 @@
         <entry key="app/src/main/res/layout/activity_video_record_new.xml" value="0.192481884057971" />
 =======
         <entry key="app/src/main/res/drawable/background.xml" value="0.16171875" />
-        <entry key="app/src/main/res/layout/activity_dash_board.xml" value="0.134375" />
+        <entry key="app/src/main/res/layout/activity_dash_board.xml" value="0.125" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_video_record_new.xml" value="0.151171875" />
 >>>>>>> ca38a42806f1900b640672263c6054454b369f2f
       </map>
