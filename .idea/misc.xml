@@ -4,8 +4,15 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/background.xml" value="0.16171875" />
-        <entry key="app/src/main/res/layout/activity_dash_board.xml" value="0.125" />
+        <entry key="app/src/main/res/drawable/circular_background.xml" value="0.16328125" />
+        <entry key="app/src/main/res/layout-land/activity_dash_board.xml" value="0.17063492063492064" />
+        <entry key="app/src/main/res/layout-sw600dp-land/activity_dash_board.xml" value="0.2265807962529274" />
+        <entry key="app/src/main/res/layout-sw720dp-land/activity_dash_board.xml" value="0.2867132867132867" />
+        <entry key="app/src/main/res/layout-w600dp/activity_dash_board.xml" value="0.18896484375" />
+        <entry key="app/src/main/res/layout-w720dp/activity_dash_board.xml" value="0.18896484375" />
+        <entry key="app/src/main/res/layout/activity_dash_board.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_video_record_new.xml" value="0.151171875" />
       </map>
     </option>
