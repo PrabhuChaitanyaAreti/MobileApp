@@ -42,7 +42,7 @@ class SplashScreen : AppCompatActivity() {
                 if(sharedPreferences!!.getBoolean("loginStatus",false)){
                     navigateToDashBoard()
                 }else {
-                    navigateToDashBoard()
+                    navigateToLoginScreen()
                 }
             } else {
                 requestCameraPermission()
@@ -79,7 +79,7 @@ class SplashScreen : AppCompatActivity() {
                         if(sharedPreferences!!.getBoolean("loginStatus",false)){
                             navigateToDashBoard()
                         }else {
-                            navigateToDashBoard()
+                            navigateToLoginScreen()
                         }
                     } else if (report.isAnyPermissionPermanentlyDenied()) {
                         showPermissionsAlert()
