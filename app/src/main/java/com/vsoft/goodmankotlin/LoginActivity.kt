@@ -42,14 +42,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
     private lateinit var empIdEditText: EditText
     private lateinit var pinEditText: EditText
     private var empIdStr = ""
-    private  var pinStr:String? = ""
+    private var pinStr:String? = ""
     private val minEmpIdDigits = 6
-    private  var maxEmpIdDigits:Int = 8
-    private  var pinMaxDigits:Int = 4
+    private var maxEmpIdDigits:Int = 8
+    private var pinMaxDigits:Int = 4
     private lateinit var alertDialog: AlertDialog
     private lateinit var progressDialog: ProgressDialog
-    private val sharedPrefFile = "kotlinsharedpreference"
-    var sharedPreferences: SharedPreferences?=null
+    private var sharedPreferences: SharedPreferences?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -61,13 +61,15 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         empIdEditText = findViewById(R.id.empIdEditText)
         pinEditText = findViewById(R.id.pinEditText)
         loginButton = findViewById(R.id.loginButton)
-        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+        sharedPreferences = this.getSharedPreferences(CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE)
     }
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
-        progressDialog!!.setCancelable(false)
-        progressDialog!!.setMessage("Please wait .. Checking user details..")
+        progressDialog.setCancelable(false)
+        progressDialog.setMessage(this@LoginActivity.resources.getString(R.string.progress_dialog_message_login))
+
+
     }
     private fun initListeners(){
         empIdEditText.setOnTouchListener(this)
@@ -83,37 +85,37 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         if (view === empIdEditText) {
-            empIdEditText!!.isFocusable = true
-            empIdEditText!!.isFocusableInTouchMode = true
+            empIdEditText.isFocusable = true
+            empIdEditText.isFocusableInTouchMode = true
         } else if (view === pinEditText) {
-            pinEditText!!.isFocusable = true
-            pinEditText!!.isFocusableInTouchMode = true
+            pinEditText.isFocusable = true
+            pinEditText.isFocusableInTouchMode = true
         }
         return false
     }
     private fun validations() {
-        empIdStr = empIdEditText!!.text.toString()
-        pinStr = pinEditText!!.text.toString()
-        if (empIdStr != null && empIdStr.isNotEmpty() && !TextUtils.isEmpty(empIdStr) && empIdStr != "null") {
+        empIdStr = empIdEditText.text.toString()
+        pinStr = pinEditText.text.toString()
+        if (empIdStr.isNotEmpty() && !TextUtils.isEmpty(empIdStr) && empIdStr != "null") {
             if (empIdStr.length in minEmpIdDigits..maxEmpIdDigits) {
                 if (pinStr != null && pinStr!!.isNotEmpty() && !TextUtils.isEmpty(pinStr) && pinStr != "null") {
                     if (pinStr!!.length == pinMaxDigits) {
                         screenNavigationWithPermissions()
                     } else {
-                        validationAlert("Please enter 4 digits Pin.")
+                        validationAlert(this@LoginActivity.resources.getString(R.string.login_pin_validation_message))
                     }
                 } else {
-                    validationAlert("Please enter 4 digits Pin.")
+                    validationAlert(this@LoginActivity.resources.getString(R.string.login_pin_validation_message))
                 }
             } else {
                 if (empIdStr.length < minEmpIdDigits) {
-                    validationAlert("Username must be minimum 6 digits.")
+                    validationAlert(this@LoginActivity.resources.getString(R.string.login_username_validation_message_2))
                 } else {
-                    validationAlert("Username must be minimum 6 digits and maximum 8 digits.")
+                    validationAlert(this@LoginActivity.resources.getString(R.string.login_username_validation_message_1))
                 }
             }
         } else {
-            validationAlert("Username must be minimum 6 digits and maximum 8 digits.")
+            validationAlert(this@LoginActivity.resources.getString(R.string.login_username_validation_message_1))
         }
     }
     private fun screenNavigationWithPermissions() {
@@ -139,20 +141,20 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                         val statusCode=response.body()!!.statusCode
                             if(statusCode==200){
                                 val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
-                                editor.putBoolean("loginStatus",true)
+                                editor.putBoolean(CommonUtils.LOGIN_STATUS,true)
                                 editor.apply()
                                 navigateToDashBoard()
                             }else if(statusCode==401){
                                 DialogUtils.showNormalAlert(
                                     this@LoginActivity,
-                                    "Alert!!",
-                                    "Invalid Credentials"
+                                    this@LoginActivity.resources.getString(R.string.alert_title),
+                                    this@LoginActivity.resources.getString(R.string.login_alert_message)
                                 )
                             }else{
                                 DialogUtils.showNormalAlert(
                                     this@LoginActivity,
-                                    "Alert!!",
-                                    "Invalid Credentials"
+                                    this@LoginActivity.resources.getString(R.string.alert_title),
+                                    this@LoginActivity.resources.getString(R.string.login_alert_message)
                                 )
                             }
                         if (progressDialog!!.isShowing) {
@@ -168,8 +170,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                 override fun onFailure(call: Call<UserAuthResponse?>, t: Throwable) {
                     DialogUtils.showNormalAlert(
                         this@LoginActivity,
-                        "Alert!!",
-                        "Unable to communicate with server"
+                        this@LoginActivity.resources.getString(R.string.alert_title),
+                        this@LoginActivity.resources.getString(R.string.api_failure_alert_title)
                     )
                     if (progressDialog!!.isShowing) {
                         progressDialog!!.dismiss()
@@ -179,8 +181,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         } else {
             DialogUtils.showNormalAlert(
                 this@LoginActivity,
-                "Alert!!",
-                "Please check your internet connection and try again"
+                this@LoginActivity.resources.getString(R.string.alert_title),
+                this@LoginActivity.resources.getString(R.string.network_alert_message)
             )
         }
     }
@@ -197,9 +199,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
     private fun validationAlert(alertMessage: String) {
         val builder = AlertDialog.Builder(this@LoginActivity)
         builder.setCancelable(false)
-        builder.setTitle(this@LoginActivity.getResources().getString(R.string.app_name))
+        builder.setTitle(this@LoginActivity.resources.getString(R.string.app_name))
         builder.setMessage(alertMessage)
-        builder.setNeutralButton("Ok") { dialog, which ->
+        builder.setNeutralButton((this@LoginActivity.resources.getString(R.string.alert_ok))) { dialog, which ->
             dialog.dismiss()
             if (alertDialog!!.isShowing) {
                 alertDialog!!.dismiss()

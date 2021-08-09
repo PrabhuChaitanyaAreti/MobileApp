@@ -22,6 +22,7 @@ import com.vsoft.goodmankotlin.adapter.LeftMenuAdapter
 import com.vsoft.goodmankotlin.adapter.RightMenuAdapter
 import com.vsoft.goodmankotlin.interfaces.RightMenuItemClickCallBack
 import com.vsoft.goodmankotlin.model.*
+import com.vsoft.goodmankotlin.utils.CommonUtils
 import java.io.InputStream
 
 
@@ -66,10 +67,10 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         context=this
         loadLeftSidemenu()
         try {
-            val sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE)
-            if(sharedPreferences.contains("response")){
+            val sharedPreferences = getSharedPreferences(CommonUtils.SHARED_PREF_FILE, MODE_PRIVATE)
+            if(sharedPreferences.contains(CommonUtils.RESPONSE)){
                 val gson = Gson()
-                val json = sharedPreferences.getString("response", "")
+                val json = sharedPreferences.getString(CommonUtils.RESPONSE, "")
                 response = gson.fromJson(json, PunchResponse::class.java)
                 processData(response)
             }else{
@@ -115,15 +116,15 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         if(shapes?.size>0){
             if(shapes.size==uniqueResults.size) {
                 for (i in shapes.indices) {
-                    if(uniqueResults[i].correct==false && (uniqueResults[i].ground_truth.equals("NoPunch",false) && uniqueResults[i].prediction.equals("Punch",false))){
+                    if(uniqueResults[i].correct==false && (uniqueResults[i].ground_truth.equals(CommonUtils.NO_PUNCH,false) && uniqueResults[i].prediction.equals(CommonUtils.PUNCH,false))){
                         //Incorrect Punches
                         incorrectShapes.add(shapes[i])
                         uniqueIncorrectShapes.add(uniqueResults[i])
-                    }else if(uniqueResults[i].correct==false && (uniqueResults[i].ground_truth.equals("Punch",false) && uniqueResults[i].prediction.equals("NoPunch",false))){
+                    }else if(uniqueResults[i].correct==false && (uniqueResults[i].ground_truth.equals(CommonUtils.PUNCH,false) && uniqueResults[i].prediction.equals(CommonUtils.NO_PUNCH,false))){
                         //Missed Punches
                         missedShapes.add(shapes[i])
                         uniqueMissedShapes.add(uniqueResults[i])
-                    }else if(uniqueResults[i].correct==false && uniqueResults.get(i).prediction.equals("UNDETECTED",false)){
+                    }else if(uniqueResults[i].correct==false && uniqueResults.get(i).prediction.equals(CommonUtils.UNDETECTED,false)){
                         //Undetected Punches
                         undetectedShapes.add(shapes[i])
                         uniqueUndetectedShapes.add(uniqueResults[i])
@@ -237,10 +238,10 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         )
         leftMenu= ArrayList()
         //adding some dummy data to the list
-        leftMenu.add(LeftMenuDataModel("All Punches", ContextCompat.getColor(context,R.color.app_green),true,0))
-        leftMenu.add(LeftMenuDataModel("Missed Punches", ContextCompat.getColor(context,R.color.missed_punch_color),false,0))
-        leftMenu.add(LeftMenuDataModel("Incorrect Punches", ContextCompat.getColor(context,R.color.in_correct_punch_color),false,0))
-        leftMenu.add(LeftMenuDataModel("Undetected Punches", ContextCompat.getColor(context,R.color.un_detected_punch_color),false,0))
+        leftMenu.add(LeftMenuDataModel(CommonUtils.ALL_PUNCHES, ContextCompat.getColor(context,R.color.app_green),true,0))
+        leftMenu.add(LeftMenuDataModel(CommonUtils.MISSED_PUNCHES, ContextCompat.getColor(context,R.color.missed_punch_color),false,0))
+        leftMenu.add(LeftMenuDataModel(CommonUtils.INCORRECT_PUNCHES, ContextCompat.getColor(context,R.color.in_correct_punch_color),false,0))
+        leftMenu.add(LeftMenuDataModel(CommonUtils.UNDETECTED_PUNCHES, ContextCompat.getColor(context,R.color.un_detected_punch_color),false,0))
         //creating our adapter
         val adapter = LeftMenuAdapter(this,leftMenu,leftSideMenu)
         //now adding the adapter to recyclerview
@@ -248,7 +249,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
     }
     private fun updateCountInRecyclerView(allShapesCount:Int,missedShapesCount:Int,incorrectShapesCount:Int,undetectedShapesCount:Int){
         for(i in 0 until leftMenu.size){
-            var leftMenuDataModel=leftMenu[i]
+            val leftMenuDataModel=leftMenu[i]
             if(i==0)
             leftMenuDataModel.count=allShapesCount
             if(i==1)
@@ -276,14 +277,14 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         if(incorrectShapes.isNotEmpty() || missedShapes.isNotEmpty()) {
             if (incorrectShapes.isNotEmpty()) {
                 for (i in incorrectShapes) {
-                    val rightMenuDataModel = RightMenuDataModel("Incorrect Punch", i.label_id!!)
+                    val rightMenuDataModel = RightMenuDataModel(CommonUtils.INCORRECT_PUNCH, i.label_id!!)
                     rightMenuItems.add(rightMenuDataModel)
                 }
                 uniqueRightMenuShapes.addAll(uniqueIncorrectShapes)
             }
             if (missedShapes.isNotEmpty()) {
                 for (i in missedShapes) {
-                    val rightMenuDataModel = RightMenuDataModel("Missed Punch", i.label_id!!)
+                    val rightMenuDataModel = RightMenuDataModel(CommonUtils.MISSED_PUNCH, i.label_id!!)
                     rightMenuItems.add(rightMenuDataModel)
                 }
                 uniqueRightMenuShapes.addAll(uniqueMissedShapes)
@@ -332,7 +333,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
             MotionEvent.ACTION_UP ->{
                 rightSideMenu.visibility=View.GONE
                 leftSideMenu.visibility=View.GONE
-                var point = Point(motionEvent?.x.toInt() , motionEvent.y.toInt())
+                val point = Point(motionEvent?.x.toInt() , motionEvent.y.toInt())
             for ((clickedPos, r) in regionArrayList.withIndex()) {
                 if (r.contains(point.x, point.y)) {
 
@@ -363,12 +364,12 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         val correct: TextView = dialogView.findViewById(R.id.correct)
         val instructions: TextView = dialogView.findViewById(R.id.instructions)
         val llFeedBack: LinearLayout =dialogView.findViewById(R.id.llFeedBack)
-        labelId.text = Html.fromHtml("<b>Label : </b>" + uniqueDiesDisplayed.label_id)
+        labelId.text = Html.fromHtml(this@MaskingActivity.resources.getString(R.string.label) + uniqueDiesDisplayed.label_id)
         groundTruth.text = Html.fromHtml(
-            "<b>Ground Truth : </b>" + uniqueDiesDisplayed.ground_truth
+            this@MaskingActivity.resources.getString(R.string.ground_truth) + uniqueDiesDisplayed.ground_truth
         )
         correct.text =
-            Html.fromHtml("<b>Correct : </b>" + uniqueDiesDisplayed.correct)
+            Html.fromHtml(this@MaskingActivity.resources.getString(R.string.correct) + uniqueDiesDisplayed.correct)
         val decodedString: ByteArray =
             Base64.decode(uniqueDiesDisplayed.base64_image_segment, Base64.DEFAULT)
         var capturedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
@@ -380,23 +381,23 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
             ivOriginalDie.setImageBitmap(originalBitmap)
         }
         if (uniqueDiesDisplayed.correct==false && uniqueDiesDisplayed.prediction!!.trim()
-                .equals("Punch",true) && uniqueDiesDisplayed.ground_truth!!.trim()
-                .equals("NoPunch",true)
+                .equals(this@MaskingActivity.resources.getString(R.string.punch),true) && uniqueDiesDisplayed.ground_truth!!.trim()
+                .equals(this@MaskingActivity.resources.getString(R.string.no_punch),true)
         ) {
             //Incorrect Punch
             llFeedBack.setVisibility(View.VISIBLE)
             instructions.visibility = View.VISIBLE
             instructions.text =
-                Html.fromHtml("<b>Instructions :</b> Please remove the punch from the displayed die.")
+                Html.fromHtml(this@MaskingActivity.resources.getString(R.string.instructions))
         } else if (uniqueDiesDisplayed.correct==false && uniqueDiesDisplayed.prediction!!.trim()
-                .equals("NoPunch",true) && uniqueDiesDisplayed.ground_truth!!
-                .trim().equals("Punch",true)
+                .equals(this@MaskingActivity.resources.getString(R.string.no_punch),true) && uniqueDiesDisplayed.ground_truth!!
+                .trim().equals(this@MaskingActivity.resources.getString(R.string.punch),true)
         ) {
             //Missed Punch
             llFeedBack.setVisibility(View.VISIBLE)
             instructions.visibility = View.VISIBLE
             instructions.text =
-                Html.fromHtml("<b>Instructions :</b> Please insert a punch into the displayed die.")
+                Html.fromHtml(this@MaskingActivity.resources.getString(R.string.instructions))
         } else {
             llFeedBack.setVisibility(View.GONE)
             instructions.visibility = View.GONE
@@ -440,9 +441,9 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
             this.getResources().getString(R.string.app_name)
         )
         builder.setCancelable(false)
-        builder.setMessage("Do you want to navigate to dashboard ?")
+        builder.setMessage(this.getResources().getString(R.string.dashboard_navigation_alert_message))
         builder.setPositiveButton(
-            "Ok"
+            this.getResources().getString(R.string.alert_ok)
         ) { dialog, which ->
             if (alertDialog!!.isShowing) {
                 alertDialog!!.dismiss()
@@ -453,7 +454,7 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
             //finish()
         }
         builder.setNegativeButton(
-            "Cancel"
+            this.getResources().getString(R.string.alert_cancel)
         ) { dialog, which ->
             dialog.dismiss()
         }

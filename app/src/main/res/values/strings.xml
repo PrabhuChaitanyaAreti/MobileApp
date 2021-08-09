@@ -3,8 +3,121 @@
 
     <string name="btn_take_picture">Take Picture</string>
     <string name="btn_retake_picture">Retake Picture</string>
+    <string name="retake">Retake</string>
     <string name="btn_submit">Submit</string>
+    <string name="save">save</string>
     <string name="file_provider_authority">com.vsoft.goodmankotlin</string>
     <string name="btn_send_to_edge">Submit</string>
     <string name="capture">Capture</string>
+
+    <string name="verify_die">Verify Die</string>
+    <string name="die">Die</string>
+    <string name="sync">Sync</string>
+    <string name="operator">Operator</string>
+    <string name="logout">Logout</string>
+
+    <string name="enter_die_id">Enter Die ID</string>
+    <string name="enter_part_id">Enter Part ID</string>
+
+    <string name="operator_colon">Operator :</string>
+    <string name="enter_operator">Enter Operator</string>
+
+    <string name="die_id_colon">Die Id :</string>
+    <string name="enter_die_id_1">Enter Die Id</string>
+
+    <string name="part_id_colon">Part Id :</string>
+    <string name="enter_part_id_1">Enter Part Id</string>
+
+    <string name="die_type_colon">Die Type :</string>
+
+    <string name="enter_user_name">Enter Username</string>
+    <string name="enter_pin">Enter Pin</string>
+    <string name="login">Login</string>
+
+
+
+    <!--Common Messages-->
+    <string name="api_failure_alert_title">Unable to communicate with server.</string>
+    <string name="api_server_alert_message">Server Error.</string>
+    <string name="network_alert_message">Please check your internet connection and try again.</string>
+    <string name="alert_title">Alert!!</string>
+    <string name="alert_cancel">Cancel</string>
+    <string name="alert_ok">OK</string>
+    <string name="alert_exit">Exit</string>
+    <string name="continue_str">Continue</string>
+    <string name="settings_str">Settings</string>
+    <string name="dashboard_navigation_alert_message">Do you want to navigate to dash board?</string>
+
+    <!--Battery Messages-->
+    <string name="battery_alert_title">Low Battery</string>
+    <string name="battery_alert_message">15% of battery remaining.Please plugin charger</string>
+
+    <!--Permissions Messages-->
+    <string name="permissions_alert_title">Permissions required</string>
+    <string name="permissions_alert_message">These permissions are required to use this app. Please allow Camera and Audio permissions first.</string>
+    <string name="permissions_alert_option">Grant</string>
+
+
+    <!--Splash Screen-->
+    <string name="settings_title">Permissions required!</string>
+    <string name="settings_message">Camera needs few permissions to work properly. Grant them in settings.</string>
+    <string name="settings_option">GOTO SETTINGS</string>
+
+
+    <!--Login Screen-->
+    <string name="progress_dialog_message_login">Please wait .. Getting User Credentials</string>
+    <string name="login_pin_validation_message">Please enter 4 digits Pin.</string>
+    <string name="login_username_validation_message_1">Username must be minimum 6 digits and maximum 8 digits.</string>
+    <string name="login_username_validation_message_2">Username must be minimum 6 digits.</string>
+    <string name="login_alert_message">Invalid Credentials.</string>
+
+    <!--Dashboard Screen-->
+    <string name="progress_dialog_message_sync">Please wait .. Saving video will take time..</string>
+    <string name="add_operator_alert_message">Functionality will be updated soon..</string>
+    <string name="logout_alert_message">Do you want to logout?</string>
+    <string name="exit_app_alert_message">Do you want to exit app?</string>
+    <string name="sync_videos_alert_message">All available dies are synced successfully.</string>
+
+
+    <!--ADD DIE Screen-->
+    <string name="add_die_die_type_select">Select Die Type</string>
+    <string name="add_die_die_type_top">Top</string>
+    <string name="add_die_die_type_bottom">Bottom</string>
+    <string name="add_die_alert_die_type_select">Please Select Die Type</string>
+    <string name="add_die_alert_enter_part_id">Please enter Part Id</string>
+    <string name="add_die_alert_enter_die_id">Please enter Die Id</string>
+
+
+    <!--Operator Select Screen-->
+    <string name="progress_dialog_message_dies_parts">Please wait .. Fetching die and part data..</string>
+    <string name="op_se_alert_title_error">Error</string>
+    <string name="op_se_alert_message_die_id_part_id">Please enter die Id before select Part ID</string>
+    <string name="op_se_alert_message_operator">Please enter operator</string>
+    <string name="op_se_alert_message_part_id">Please enter Part ID</string>
+    <string name="op_se_alert_message_die_id">Please enter Die ID</string>
+
+    <!--Video Recording Screen-->
+    <string name="progress_dialog_message_video_recording">Please wait .. Video Record Start..</string>
+    <string name="video_recording_timer_alert_title">Timer</string>
+    <string name="video_recording_timer_alert_message">No activity detected. Video Recording screen will close.Select Continue option to continue video recording.</string>
+
+    <!--Video Preview Screen-->
+    <string name="video_preview_save_click_1">Die details are saved. Please use sync in dashboard to send the data to server.</string>
+    <string name="video_preview_save_click_2">Die top is recorded.Do you want to record die bottom?</string>
+    <string name="video_preview_save_click_3">Die bottom is recorded.Do you want to record die top?</string>
+    <string name="progress_dialog_message_video_preview">Please wait .. Processing video may take some time.</string>
+    <string name="video_preview_alert_message">You can use retake to retake a video after cancelling this dialog or press OK to navigate to Dashboard?</string>
+
+
+
+    <!--Masking Screen-->
+    <string name="instructions"><b>Instructions :</b> Please insert a punch into the displayed die.</string>
+    <string name="punch">Punch</string>
+    <string name="no_punch">NoPunch</string>
+    <string name="correct"><b>Correct : </b></string>
+    <string name="label"><b>Label : </b></string>
+    <string name="ground_truth"><b>Ground Truth : </b></string>
+
+
+
 </resources>

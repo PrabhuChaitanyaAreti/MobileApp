@@ -17,6 +17,7 @@ import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.database.subscribeOnBackground
 import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
+import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils.Companion.showNormalAlert
 import com.vsoft.goodmankotlin.utils.NetworkUtils
@@ -40,8 +41,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
     private var alertDialog: android.app.AlertDialog? = null
-    private val sharedPrefFile = "kotlinsharedpreference"
     var sharedPreferences: SharedPreferences?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
@@ -59,25 +60,26 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
         sync.setOnClickListener(this)
         skip.setOnClickListener(this)
         logout.setOnClickListener(this)
-        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+        sharedPreferences = this.getSharedPreferences(CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE)
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
     }
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
-        progressDialog!!.setCancelable(false)
-        progressDialog!!.setMessage("Please wait .. Saving video will take time..")
+        progressDialog.setCancelable(false)
+        progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_sync))
     }
     override fun onClick(v: View?) {
         if(v?.id==addOperator.id){
             DialogUtils.showNormalAlert(
                 this@DashBoardActivity,
-                "Alert!!",
-                "Functionality will be updated soon.."
+                this@DashBoardActivity.resources.getString(R.string.alert_title),
+                this@DashBoardActivity.resources.getString(R.string.add_operator_alert_message)
             )
         }
+
         if(v?.id==addDie.id){
-            val mainIntent = Intent(this@DashBoardActivity, AddDieActivity::class.java)
+            val mainIntent = Intent(this@DashBoardActivity, AddDieActivityNew::class.java)
             startActivity(mainIntent)
         }
         if(v?.id==sync.id){
@@ -89,12 +91,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
         if(v?.id==logout.id){
             val builder = android.app.AlertDialog.Builder(this)
             builder.setTitle(
-                this.getResources().getString(R.string.app_name)
+                this.resources.getString(R.string.app_name)
             )
+
             builder.setCancelable(false)
-            builder.setMessage("Do you want to logout ?")
+            builder.setMessage(this@DashBoardActivity.resources.getString(R.string.logout_alert_message))
             builder.setPositiveButton(
-                "Ok"
+                this@DashBoardActivity.resources.getString(R.string.alert_ok)
             ) { dialog, which ->
                 val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
                 editor.clear()
@@ -106,7 +109,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             builder.setNegativeButton(
-                "Cancel"
+                this@DashBoardActivity.resources.getString(R.string.alert_cancel)
             ) { dialog, which ->
                 dialog.dismiss()
             }
@@ -117,12 +120,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     override fun onBackPressed() {
         val builder = android.app.AlertDialog.Builder(this)
         builder.setTitle(
-            this.getResources().getString(R.string.app_name)
+            this.resources.getString(R.string.app_name)
         )
+
         builder.setCancelable(false)
-        builder.setMessage("Do you want to exit app ?")
+        builder.setMessage(this@DashBoardActivity.resources.getString(R.string.exit_app_alert_message))
         builder.setPositiveButton(
-            "Ok"
+            this@DashBoardActivity.resources.getString(R.string.alert_ok)
         ) { dialog, which ->
             dialog.dismiss()
             if (alertDialog!!.isShowing) {
@@ -131,7 +135,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
             super.onBackPressed()
         }
         builder.setNegativeButton(
-            "Cancel"
+            this@DashBoardActivity.resources.getString(R.string.alert_cancel)
         ) { dialog, which ->
             dialog.dismiss()
         }
@@ -164,8 +168,8 @@ private fun sync(){
            runOnUiThread(Runnable {
                DialogUtils.showNormalAlert(
                    this@DashBoardActivity,
-                   "Alert!!",
-                   "All available dies are synced successfully"
+                   this@DashBoardActivity.resources.getString(R.string.alert_title),
+                   this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message),
                )
            })
        }
@@ -180,31 +184,31 @@ private fun sync(){
         Log.i("video die type :", item.die_top_bottom)
         val jsonObject= JsonObject()
         val gson = Gson()
-        jsonObject.addProperty("Die Id",item.die_id)
-        jsonObject.addProperty("Part Id",item.part_id)
-        jsonObject.addProperty("top_bottom",item.die_top_bottom)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID,item.die_id)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID,item.part_id)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM,item.die_top_bottom)
         val path=item.video_path;
         val filename: String = path.substring(path.lastIndexOf("/") + 1)
-        jsonObject.addProperty("file_name",filename)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_FILE_NAME,filename)
 
-        var jsonString=  gson.toJson(jsonObject)
+        val jsonString=  gson.toJson(jsonObject)
 
-        Log.i("save jsonString ", "$jsonString")
-        Log.i("save path ", "$path")
+        Log.i("save jsonString ", jsonString)
+        Log.i("save path ", path)
         val rootFolder: File? = context.getExternalFilesDir(null)
         val jsonFile = File(rootFolder, "post.json")
         val writer = FileWriter(jsonFile)
         writer.write(jsonString)
         writer.close()
         val metaDataFilePart = MultipartBody.Part.createFormData(
-            "meta_data",
+            CommonUtils.SYNC_VIDEO_API_META_DATA,
             jsonFile.name,
             RequestBody.create(MediaType.parse("*/*"), jsonFile)
         )
 
         val file = File(path) // initialize file here
         val videoFilePart = MultipartBody.Part.createFormData(
-            "file",
+            CommonUtils.SYNC_VIDEO_API_FILE,
             file.name,
             RequestBody.create(MediaType.parse("image/*"), file)
         )
@@ -213,7 +217,7 @@ private fun sync(){
     private fun saveVideoToServer(item:VideoModel,metaData:MultipartBody.Part,videoFile:MultipartBody.Part){
         if (NetworkUtils.isNetworkAvailable(this)) {
             Handler(Looper.getMainLooper()).post {
-                progressDialog!!.show()
+                progressDialog.show()
             }
             val call: Call<videoUploadSaveRespose?>? =
                 RetrofitClient.getInstance()!!.getMyApi1()!!.saveVideo(metaData,videoFile)
@@ -228,7 +232,7 @@ private fun sync(){
                         if(statusCode==200){
                             runOnUiThread(Runnable {
                                 item.status=true
-                                var status:Int?= vm.update(item)
+                                val status: Int = vm.update(item)
                                 Log.i("response update status ", "$status")
                                 sync()
                             })
@@ -240,7 +244,7 @@ private fun sync(){
                         }else if(statusCode==401){
                             runOnUiThread(Runnable {
                                 item.status=true
-                                var status:Int?= vm.update(item)
+                                val status: Int = vm.update(item)
                                 Log.i("response update status ", "$status")
                                 sync()
                             })
@@ -252,28 +256,28 @@ private fun sync(){
                         }else{
                             DialogUtils.showNormalAlert(
                                 this@DashBoardActivity,
-                                "Alert!!",
-                                "Server Error"
+                                this@DashBoardActivity.resources.getString(R.string.alert_title),
+                                this@DashBoardActivity.resources.getString(R.string.api_server_alert_message)
                             )
                         }
-                        if (progressDialog!!.isShowing) {
-                            progressDialog!!.dismiss()
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        if (progressDialog!!.isShowing) {
-                            progressDialog!!.dismiss()
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
                         }
                     }
                 }
                 override fun onFailure(call: Call<videoUploadSaveRespose?>, t: Throwable) {
                     DialogUtils.showNormalAlert(
                         this@DashBoardActivity,
-                        "Alert!!",
-                        "Unable to communicate with server"
+                        this@DashBoardActivity.resources.getString(R.string.alert_title),
+                        this@DashBoardActivity.resources.getString(R.string.api_failure_alert_title)
                     )
-                    if (progressDialog!!.isShowing) {
-                        progressDialog!!.dismiss()
+                    if (progressDialog.isShowing) {
+                        progressDialog.dismiss()
                     }
                 }
             })
@@ -281,8 +285,8 @@ private fun sync(){
             runOnUiThread(Runnable {
                 DialogUtils.showNormalAlert(
                     this,
-                    "Alert!!",
-                    "Please check your internet connection and try again"
+                    this@DashBoardActivity.resources.getString(R.string.alert_title),
+                    this@DashBoardActivity.resources.getString(R.string.network_alert_message)
                 )
             })
 

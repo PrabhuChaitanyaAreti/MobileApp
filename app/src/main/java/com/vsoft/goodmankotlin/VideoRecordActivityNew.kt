@@ -103,7 +103,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
         progressDialog!!.setCancelable(false)
-        progressDialog!!.setMessage("Please wait .. Checking user details..")
+        progressDialog!!.setMessage(this@VideoRecordActivityNew.resources.getString(R.string.progress_dialog_message_video_recording))
     }
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onClick(v: View?) {
@@ -225,9 +225,9 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
     private fun batterLevelAlert() {
         val builder = android.app.AlertDialog.Builder(this@VideoRecordActivityNew)
         builder.setCancelable(false)
-        builder.setTitle("Low Battery")
-        builder.setMessage("15% of battery remaining.Please piugin charger")
-        builder.setNeutralButton("Exit") { dialog, which ->
+        builder.setTitle(this@VideoRecordActivityNew.resources.getString(R.string.battery_alert_title))
+        builder.setMessage(this@VideoRecordActivityNew.resources.getString(R.string.battery_alert_message))
+        builder.setNeutralButton(this@VideoRecordActivityNew.resources.getString(R.string.alert_exit)) { dialog, which ->
             dialog.dismiss()
             if (alertDialog!!.isShowing) {
                 alertDialog!!.dismiss()
@@ -297,10 +297,10 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
     }
 
     private fun permissionsNotGranted() {
-        AlertDialog.Builder(this).setTitle("Permissions required")
-            .setMessage("These permissions are required to use this app. Please allow Camera and Audio permissions first")
+        AlertDialog.Builder(this).setTitle(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_title))
+            .setMessage(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_message))
             .setCancelable(false)
-            .setPositiveButton("Grant") { dialog, which -> requestPermissions() }
+            .setPositiveButton(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_option)) { dialog, which -> requestPermissions() }
             .show()
     }
 
@@ -562,12 +562,12 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                 }
                 val builder = android.app.AlertDialog.Builder(this@VideoRecordActivityNew)
                 builder.setTitle(
-                    this@VideoRecordActivityNew.getResources().getString(R.string.app_name)
+                    this@VideoRecordActivityNew.resources.getString(R.string.video_recording_timer_alert_title)
                 )
                 builder.setCancelable(false)
-                builder.setMessage("No activity detected. Capture screen will close.Select Continue to continue capturing image.")
+                builder.setMessage( this@VideoRecordActivityNew.resources.getString(R.string.video_recording_timer_alert_message))
                 builder.setPositiveButton(
-                    "Continue"
+                    this@VideoRecordActivityNew.resources.getString(R.string.continue_str)
                 ) { dialog, which ->
                     dialog.dismiss()
                     if (alertDialog!!.isShowing) {
@@ -580,7 +580,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                     backgroundTimer()
                 }
                 builder.setNegativeButton(
-                    "Exit"
+                    this@VideoRecordActivityNew.resources.getString(R.string.alert_exit)
                 ) { dialog, which ->
                     dialog.dismiss()
                     try {
@@ -671,16 +671,16 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         langAdapter2.setDropDownViewResource(R.layout.simple_spinner_dropdown)
         spResolution2.adapter = langAdapter2
         val alert = AlertDialog.Builder(this)
-        alert.setTitle("Settings")
+        alert.setTitle(this@VideoRecordActivityNew.resources.getString(R.string.settings_str))
         alert.setView(alertLayout)
         alert.setCancelable(false)
         alert.setNegativeButton(
-            "Cancel"
+            this@VideoRecordActivityNew.resources.getString(R.string.alert_cancel)
         ) { dialog, which ->
             //Toast.makeText(getBaseContext(), "Cancel Clicked", Toast.LENGTH_SHORT).show();
         }
         alert.setPositiveButton(
-            "OK"
+            this@VideoRecordActivityNew.resources.getString(R.string.alert_ok)
         ) { dialog, which ->
             val size = spResolution1.selectedItem.toString()
             Log.d(TAG, "spinner ok click size $size")
@@ -825,9 +825,9 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
             this.getResources().getString(R.string.app_name)
         )
         builder.setCancelable(false)
-        builder.setMessage("Do you want to navigate to dash board?")
+        builder.setMessage(this@VideoRecordActivityNew.resources.getString(R.string.dashboard_navigation_alert_message))
         builder.setPositiveButton(
-            "Ok"
+            this@VideoRecordActivityNew.resources.getString(R.string.alert_ok)
         ) { dialog, which ->
             if (alertDialog!!.isShowing) {
                 alertDialog!!.dismiss()
@@ -837,7 +837,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
             startActivity(intent)
         }
         builder.setNegativeButton(
-            "Cancel"
+            this@VideoRecordActivityNew.resources.getString(R.string.alert_cancel)
         ) { dialog, which ->
             dialog.dismiss()
         }

@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="30dp"
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -42,7 +42,7 @@
                     android:layout_width="120dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/goodman"/>
                 <LinearLayout
                     android:id="@+id/spinner_lyt"
@@ -50,7 +50,7 @@
                     android:layout_height="40dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="15dp"
                     android:orientation="horizontal"
                     android:weightSum="100">
                     <TextView
@@ -85,7 +85,7 @@
                     android:layout_marginLeft="10dp"
                     android:gravity="center_vertical"
                     android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="15dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -118,7 +118,7 @@
                     android:layout_marginLeft="10dp"
                     android:gravity="center_vertical"
                     android:layout_gravity="center_horizontal|center_vertical"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="15dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -142,11 +142,55 @@
                         android:singleLine="true"
                         android:ems="10" />
                 </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/spinner_lyt4"
+                    android:layout_width="500dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="40"
+                        android:text="@string/die_type_colon"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        android:textStyle="bold" />
+
+
+                    <LinearLayout
+                        android:layout_width="0dip"
+                        android:layout_height="match_parent"
+                        android:layout_weight="60"
+                        android:background="@drawable/background"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="10dp">
+
+                        <Spinner
+                            android:id="@+id/dieTypeSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:prompt="@string/app_name"  />
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
                 <Button
                     android:id="@+id/btnContinue"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_gravity="center"
                     android:background="@drawable/button_bg"
                     android:text="@string/continue_str"

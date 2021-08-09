@@ -19,45 +19,47 @@ import com.vsoft.goodmankotlin.utils.CameraUtils
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
+import com.vsoft.goodmankotlin.utils.CommonUtils
 
 class SplashScreen : AppCompatActivity() {
-    private val sharedPrefFile = "kotlinsharedpreference"
-    var sharedPreferences: SharedPreferences?=null
+
+    private var sharedPreferences: SharedPreferences?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+
         AppCenter.start(
-            application, "41d26db7-77ac-4c92-bc27-5910ea601d14",
+            application, CommonUtils.APP_CENTER_ANALYTICS_SECRET_KEY,
             Analytics::class.java, Crashes::class.java
         )
-        AppCenter.start(
-            application, "41d26db7-77ac-4c92-bc27-5910ea601d14",
-            Analytics::class.java, Crashes::class.java
-        )
-        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+
+        sharedPreferences = this.getSharedPreferences(
+            CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE)
+
         Handler(Looper.getMainLooper()).postDelayed({
             // Your Code
             if (CameraUtils.checkPermissions(applicationContext)) {
-                if(sharedPreferences!!.getBoolean("loginStatus",false)){
+                if(sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS,false)){
                     navigateToDashBoard()
                 }else {
-                    navigateToDashBoard()
+                    navigateToLogin()
                 }
             } else {
                 requestCameraPermission()
             }
-        }, 1*1000)
+        }, CommonUtils.SPLASH_DURATION.toLong())
     }
 
-    private fun navigateToLoginScreen() {
-        val i = Intent(this, LoginActivity::class.java)
+    private fun navigateToDashBoard() {
+        val i = Intent(this, DashBoardActivity::class.java)
         startActivity(i)
         // close this activity
         finish()
     }
-    private fun navigateToDashBoard() {
-        val i = Intent(this, DashBoardActivity::class.java)
+    private fun navigateToLogin() {
+        val i = Intent(this, LoginActivity::class.java)
         startActivity(i)
         // close this activity
         finish()
@@ -76,10 +78,10 @@ class SplashScreen : AppCompatActivity() {
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
-                        if(sharedPreferences!!.getBoolean("loginStatus",false)){
+                        if(sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS,false)){
                             navigateToDashBoard()
                         }else {
-                            navigateToDashBoard()
+                            navigateToLogin()
                         }
                     } else if (report.isAnyPermissionPermanentlyDenied()) {
                         showPermissionsAlert()
@@ -101,13 +103,13 @@ class SplashScreen : AppCompatActivity() {
      */
     private fun showPermissionsAlert() {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        builder.setTitle("Permissions required!")
-            .setMessage("Camera needs few permissions to work properly. Grant them in settings.")
+        builder.setTitle(this@SplashScreen.resources.getString(R.string.settings_title))
+            .setMessage(this@SplashScreen.resources.getString(R.string.settings_message))
             .setPositiveButton(
-                "GOTO SETTINGS"
+                this@SplashScreen.resources.getString(R.string.settings_option)
             ) { dialog, which -> CameraUtils.openSettings(this@SplashScreen) }
             .setNegativeButton(
-                "CANCEL"
+                this@SplashScreen.resources.getString(R.string.alert_ok)
             ) { dialog, which -> }.show()
     }
 }

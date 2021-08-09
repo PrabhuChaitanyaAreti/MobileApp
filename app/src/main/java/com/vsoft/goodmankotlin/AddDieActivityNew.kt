@@ -1,5 +1,8 @@
 package com.vsoft.goodmankotlin
 
+
+
+
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
@@ -8,7 +11,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -19,14 +24,14 @@ import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils.Companion.showNormalAlert
 import com.vsoft.goodmankotlin.utils.NetworkUtils.Companion.isNetworkAvailable
 import com.vsoft.goodmankotlin.utils.RetrofitClient
-import kotlinx.android.synthetic.main.uom_spinner_list_layout.*
+import kotlinx.android.synthetic.main.activity_add_die_new.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
 
-class OperatorSelectActivityWithWebservice : Activity() {
+class AddDieActivityNew : Activity() {
 
     private lateinit var btnContinue: Button
     private lateinit var mainLyt: LinearLayout
@@ -37,13 +42,21 @@ class OperatorSelectActivityWithWebservice : Activity() {
     private lateinit var buttonSelect: Button
     private lateinit var customAlertDialogSpinner: AlertDialog
     private lateinit var progressDialog: ProgressDialog
-    private var sharedPreferences: SharedPreferences?=null
     private var responses: List<DieIdResponse> = java.util.ArrayList()
     private var isDataSynced = false
 
+    private lateinit var dieTypeStr:String
+   /* private var dieTypeArray: Array<String> = arrayOf(
+        this@AddDieActivityNew.resources.getString(R.string.add_die_die_type_select),
+        this@AddDieActivityNew.resources.getString(R.string.add_die_die_type_top),
+        this@AddDieActivityNew.resources.getString(R.string.add_die_die_type_bottom))*/
+   private var dieTypeArray: Array<String> = arrayOf(CommonUtils.DIE_TYPE_SELECT,CommonUtils.DIE_TYPE_TOP,CommonUtils.DIE_TYPE_BOTTOM)
+    private lateinit var alertDialog: AlertDialog
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_operator_select)
+        setContentView(R.layout.activity_add_die_new)
 
         sharedPreferences = this.getSharedPreferences(CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE)
@@ -56,10 +69,18 @@ class OperatorSelectActivityWithWebservice : Activity() {
         btnContinue = findViewById(R.id.btnContinue)
         progressDialog = ProgressDialog(this)
         progressDialog?.setCancelable(false)
-        progressDialog?.setMessage(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.progress_dialog_message_dies_parts))
+        progressDialog?.setMessage(this@AddDieActivityNew.resources.getString(R.string.progress_dialog_message_dies_parts))
         getDieAndPartData(false)
 
-        mainLyt?.setOnClickListener(View.OnClickListener { hideSoftKeyboard(this@OperatorSelectActivityWithWebservice) })
+        val langAdapter1 = ArrayAdapter<CharSequence>(
+            this@AddDieActivityNew,
+            R.layout.spinner_text,
+            dieTypeArray
+        )
+        langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
+        dieTypeSpinner.adapter = langAdapter1
+
+        mainLyt?.setOnClickListener(View.OnClickListener { hideSoftKeyboard(this@AddDieActivityNew) })
 
         operatorBT?.setOnClickListener { showUnitOfMeasureSpinnerList(CommonUtils.OPERATOR_SELECTION_OPERATOR) }
 
@@ -72,10 +93,10 @@ class OperatorSelectActivityWithWebservice : Activity() {
             else{
                 if (!isFinishing) {
                     AlertDialog.Builder(this)
-                        .setTitle(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.op_se_alert_title_error))
-                        .setMessage(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.op_se_alert_message_die_id_part_id))
+                        .setTitle(this@AddDieActivityNew.resources.getString(R.string.op_se_alert_title_error))
+                        .setMessage(this@AddDieActivityNew.resources.getString(R.string.op_se_alert_message_die_id_part_id))
                         .setCancelable(false)
-                        .setPositiveButton(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.alert_ok)) { dialog, which ->
+                        .setPositiveButton(this@AddDieActivityNew.resources.getString(R.string.alert_ok)) { dialog, which ->
                             // Whatever...
                         }.show()
                 }
@@ -83,14 +104,17 @@ class OperatorSelectActivityWithWebservice : Activity() {
         }
 
         btnContinue?.setOnClickListener(View.OnClickListener {
+            val dieIdStr=dieBT!!.text.toString()
+            val partIdStr=partBT!!.text.toString()
+            dieTypeStr = dieTypeSpinner.selectedItem.toString()
             if (operatorBT?.text.toString().isEmpty()) {
                 runOnUiThread {
                     if (!isFinishing) {
-                        AlertDialog.Builder(this@OperatorSelectActivityWithWebservice)
-                            .setTitle(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.op_se_alert_title_error))
-                            .setMessage(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.op_se_alert_message_operator))
+                        AlertDialog.Builder(this@AddDieActivityNew)
+                            .setTitle(this@AddDieActivityNew.resources.getString(R.string.op_se_alert_title_error))
+                            .setMessage(this@AddDieActivityNew.resources.getString(R.string.op_se_alert_message_operator))
                             .setCancelable(false)
-                            .setPositiveButton(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.alert_ok)) { dialog, which ->
+                            .setPositiveButton(this@AddDieActivityNew.resources.getString(R.string.alert_ok)) { dialog, which ->
                                 // Whatever...
                             }.show()
                     }
@@ -98,11 +122,11 @@ class OperatorSelectActivityWithWebservice : Activity() {
             } else if (dieBT?.text.toString().isEmpty()) {
                 runOnUiThread {
                     if (!isFinishing) {
-                        AlertDialog.Builder(this@OperatorSelectActivityWithWebservice)
-                            .setTitle(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.op_se_alert_title_error))
-                            .setMessage(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.op_se_alert_message_die_id))
+                        AlertDialog.Builder(this@AddDieActivityNew)
+                            .setTitle(this@AddDieActivityNew.resources.getString(R.string.op_se_alert_title_error))
+                            .setMessage(this@AddDieActivityNew.resources.getString(R.string.op_se_alert_message_die_id))
                             .setCancelable(false)
-                            .setPositiveButton(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.alert_ok)) { dialog, which ->
+                            .setPositiveButton(this@AddDieActivityNew.resources.getString(R.string.alert_ok)) { dialog, which ->
                                 // Whatever...
                             }.show()
                     }
@@ -110,16 +134,48 @@ class OperatorSelectActivityWithWebservice : Activity() {
             } else if (partBT?.text.toString().isEmpty()) {
                 runOnUiThread {
                     if (!isFinishing) {
-                        AlertDialog.Builder(this@OperatorSelectActivityWithWebservice)
-                            .setTitle(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.op_se_alert_title_error))
-                            .setMessage(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.op_se_alert_message_part_id))
+                        AlertDialog.Builder(this@AddDieActivityNew)
+                            .setTitle(this@AddDieActivityNew.resources.getString(R.string.op_se_alert_title_error))
+                            .setMessage(this@AddDieActivityNew.resources.getString(R.string.op_se_alert_message_part_id))
                             .setCancelable(false)
-                            .setPositiveButton(this@OperatorSelectActivityWithWebservice.resources.getString(R.string.alert_ok)) { dialog, which ->
+                            .setPositiveButton(this@AddDieActivityNew.resources.getString(R.string.alert_ok)) { dialog, which ->
                                 // Whatever...
                             }.show()
                     }
                 }
-            } else {
+            }else if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+                    if(dieTypeStr.contains(CommonUtils.ADD_DIE_SELECT)){
+                        validationAlert(this@AddDieActivityNew.resources.getString(R.string.add_die_alert_die_type_select))
+                    }else{
+                        Log.d("TAG", "AddDieActivity   dieIdStr $dieIdStr")
+                        Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
+                        Log.d("TAG", "AddDieActivity   dieTypeStr $dieTypeStr")
+
+                        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                        editor.putString(CommonUtils.SAVE_DIE_ID, dieIdStr)
+                        editor.putString(CommonUtils.SAVE_PART_ID, partIdStr)
+                        editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE, true)
+
+                        if(dieTypeStr.equals(CommonUtils.ADD_DIE_TOP,true)){
+                            editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
+                            editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
+                            editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, false)
+                        }else{
+                            editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
+                            editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, false)
+                            editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
+                        }
+                        editor.apply()
+
+                        val mainIntent =
+                            Intent(this@AddDieActivityNew, VideoRecordActivityNew::class.java)
+                        startActivity(mainIntent)
+                    }
+                }else{
+                    validationAlert(this@AddDieActivityNew.resources.getString(R.string.add_die_alert_die_type_select))
+                }
+          /*  else
+            } {
                 val dieIdStr=dieBT!!.text.toString()
                 val partIdStr=partBT!!.text.toString()
 
@@ -129,20 +185,40 @@ class OperatorSelectActivityWithWebservice : Activity() {
                 editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE,false)
                 editor.apply()
                 val mainIntent =
-                    Intent(this@OperatorSelectActivityWithWebservice, VideoRecordActivityNew::class.java)
+                    Intent(this@AddDieActivityNew, VideoRecordActivityNew::class.java)
                 startActivity(mainIntent)
                 //finish();
-            }
+            }*/
         })
     }
-
+    private fun validationAlert(alertMessage: String) {
+        val builder = AlertDialog.Builder(this@AddDieActivityNew)
+        builder.setCancelable(false)
+        builder.setTitle(this@AddDieActivityNew.resources.getString(R.string.app_name))
+        builder.setMessage(alertMessage)
+        builder.setNeutralButton(this@AddDieActivityNew.resources.getString(R.string.alert_ok)) { dialog, which ->
+            dialog.dismiss()
+            if (alertDialog.isShowing) {
+                alertDialog.dismiss()
+            }
+            dialog.dismiss()
+        }
+        alertDialog = builder.create()
+        if (!this@AddDieActivityNew.isFinishing) {
+            try {
+                alertDialog.show()
+            } catch (e: WindowManager.BadTokenException) {
+                Log.e("BadTokenException", e.toString())
+            }
+        }
+    }
     private fun showUnitOfMeasureSpinnerList(dataFrom: String) {
         try {
             val spinnerList: ListView
             val close_spinner_popup: ImageView
-            val inflater = LayoutInflater.from(this@OperatorSelectActivityWithWebservice)
+            val inflater = LayoutInflater.from(this@AddDieActivityNew)
             val dialogLayout = inflater.inflate(R.layout.uom_spinner_list_layout, null)
-            val builder = AlertDialog.Builder(this@OperatorSelectActivityWithWebservice)
+            val builder = AlertDialog.Builder(this@AddDieActivityNew)
             builder.setView(dialogLayout)
             spinnerList = dialogLayout.findViewById(R.id.spinnerList)
             close_spinner_popup = dialogLayout.findViewById(R.id.close_uom_spinner_popup)
@@ -167,8 +243,8 @@ class OperatorSelectActivityWithWebservice : Activity() {
             } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_PART_ID)) {
                 if(dieBT.text.isNotEmpty()){
                     val iterator = responses!!.listIterator()
-                while (iterator.hasNext()){
-                    val dieIdItem=iterator.next()
+                    while (iterator.hasNext()){
+                        val dieIdItem=iterator.next()
                         if(dieIdItem.dieId.equals(dieBT.text.toString())){
                             val partIdList=dieIdItem.partId
                             val partIdListIterator = partIdList!!.listIterator()
@@ -331,8 +407,8 @@ class OperatorSelectActivityWithWebservice : Activity() {
             isDataSynced = false
             showNormalAlert(
                 this,
-                this@OperatorSelectActivityWithWebservice.resources.getString(R.string.alert_title),
-                this@OperatorSelectActivityWithWebservice.resources.getString(R.string.network_alert_message)
+                this@AddDieActivityNew.resources.getString(R.string.alert_title),
+                this@AddDieActivityNew.resources.getString(R.string.network_alert_message)
             )
         }
     }
