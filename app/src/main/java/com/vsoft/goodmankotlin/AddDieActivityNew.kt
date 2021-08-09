@@ -32,7 +32,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class AddDieActivityNew : Activity() {
-
     private lateinit var btnContinue: Button
     private lateinit var mainLyt: LinearLayout
     private lateinit var searchET: EditText

@@ -106,7 +106,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener,CustomDialog
         finish()
     }
     private fun navigateToAddDie(){
-        val mainIntent = Intent(this@DashBoardActivity, AddDieActivity::class.java)
+        val mainIntent = Intent(this@DashBoardActivity, AddDieActivityNew::class.java)
         startActivity(mainIntent)
     }
 private fun sync(){
