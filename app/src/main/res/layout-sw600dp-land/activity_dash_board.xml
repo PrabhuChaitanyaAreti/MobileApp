@@ -8,38 +8,38 @@
             android:layout_height="0dp"
             android:layout_weight="95"
             android:background="@drawable/bg_scr"
-            android:columnCount="5"
-            android:rowCount="1">
+            android:columnCount="3"
+            android:rowCount="2">
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:orientation="vertical"
                 android:gravity="center"
+                android:orientation="vertical"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1">
                 <LinearLayout
-                    android:id="@+id/addOperator"
-                    android:layout_width="185dp"
+                    android:id="@+id/skip"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="185dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
-                        android:tint="@color/daikin_fill"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:src="@drawable/add"/>
+                        android:tint="@color/daikin_fill"
+                        android:src="@drawable/assign"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Operator"
                         android:layout_marginTop="5dp"
+                        android:text="Verify Die"
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
                         android:textColor="@color/daikin_fill"
-                        android:gravity="center"/>
+                        android:gravity="center" />
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -51,11 +51,11 @@
                 android:layout_rowWeight="1">
                 <LinearLayout
                     android:id="@+id/addDie"
-                    android:layout_width="185dp"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="185dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
                         android:tint="@color/daikin_fill"
                         android:layout_width="match_parent"
@@ -83,11 +83,11 @@
                 android:layout_rowWeight="1">
                 <LinearLayout
                     android:id="@+id/sync"
-                    android:layout_width="185dp"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="185dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
                         android:tint="@color/daikin_fill"
                         android:layout_width="match_parent"
@@ -109,33 +109,33 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:gravity="center"
                 android:orientation="vertical"
+                android:gravity="center"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1">
                 <LinearLayout
-                    android:id="@+id/skip"
-                    android:layout_width="185dp"
+                    android:id="@+id/addOperator"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="185dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
                         android:tint="@color/daikin_fill"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:src="@drawable/assign"/>
+                        android:src="@drawable/add"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="Operator"
                         android:layout_marginTop="5dp"
-                        android:text="Assign Die"
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
                         android:textColor="@color/daikin_fill"
-                        android:gravity="center" />
+                        android:gravity="center"/>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -147,11 +147,11 @@
                 android:layout_rowWeight="1">
                 <LinearLayout
                     android:id="@+id/logout"
-                    android:layout_width="185dp"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="185dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
                         android:tint="@color/daikin_fill"
                         android:padding="10dp"

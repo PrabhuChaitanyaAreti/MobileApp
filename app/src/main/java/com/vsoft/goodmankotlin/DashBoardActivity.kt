@@ -84,15 +84,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
                 sync()
         }
         if(v?.id==skip.id){
-            if(NetworkUtils.isNetworkAvailable(this))
             navigateToOperatorSelection()
-            else{
-                showNormalAlert(
-                    this,
-                    "Alert!!",
-                    "please check your internet connection and try again"
-                )
-            }
         }
         if(v?.id==logout.id){
             val builder = android.app.AlertDialog.Builder(this)

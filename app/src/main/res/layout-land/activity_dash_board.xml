@@ -19,11 +19,11 @@
                 android:layout_rowWeight="1">
                 <LinearLayout
                     android:id="@+id/skip"
-                    android:layout_width="160dp"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="160dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -51,11 +51,11 @@
                 android:layout_rowWeight="1">
                 <LinearLayout
                     android:id="@+id/addDie"
-                    android:layout_width="160dp"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="160dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
                         android:tint="@color/daikin_fill"
                         android:layout_width="match_parent"
@@ -83,11 +83,11 @@
                 android:layout_rowWeight="1">
                 <LinearLayout
                     android:id="@+id/sync"
-                    android:layout_width="160dp"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="160dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
                         android:tint="@color/daikin_fill"
                         android:layout_width="match_parent"
@@ -115,11 +115,11 @@
                 android:layout_rowWeight="1">
                 <LinearLayout
                     android:id="@+id/addOperator"
-                    android:layout_width="160dp"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="160dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
                         android:tint="@color/daikin_fill"
                         android:layout_width="wrap_content"
@@ -147,11 +147,11 @@
                 android:layout_rowWeight="1">
                 <LinearLayout
                     android:id="@+id/logout"
-                    android:layout_width="160dp"
+                    android:layout_width="@dimen/dashboard_icon_radius"
                     android:background="@drawable/circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="160dp" android:orientation="vertical">
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
                         android:tint="@color/daikin_fill"
                         android:padding="10dp"

@@ -40,9 +40,9 @@ class SplashScreen : AppCompatActivity() {
             // Your Code
             if (CameraUtils.checkPermissions(applicationContext)) {
                 if(sharedPreferences!!.getBoolean("loginStatus",false)){
-                    navigationToDashBoard()
+                    navigateToDashBoard()
                 }else {
-                    navigationToLoginScreen()
+                    navigateToDashBoard()
                 }
             } else {
                 requestCameraPermission()
@@ -50,13 +50,13 @@ class SplashScreen : AppCompatActivity() {
         }, 1*1000)
     }
 
-    private fun navigationToLoginScreen() {
+    private fun navigateToLoginScreen() {
         val i = Intent(this, LoginActivity::class.java)
         startActivity(i)
         // close this activity
         finish()
     }
-    private fun navigationToDashBoard() {
+    private fun navigateToDashBoard() {
         val i = Intent(this, DashBoardActivity::class.java)
         startActivity(i)
         // close this activity
@@ -77,9 +77,9 @@ class SplashScreen : AppCompatActivity() {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
                         if(sharedPreferences!!.getBoolean("loginStatus",false)){
-                            navigationToDashBoard()
+                            navigateToDashBoard()
                         }else {
-                            navigationToLoginScreen()
+                            navigateToDashBoard()
                         }
                     } else if (report.isAnyPermissionPermanentlyDenied()) {
                         showPermissionsAlert()

@@ -43,7 +43,7 @@ abstract class VideoDataBase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try {
                     Log.e("MIGRATION_1_2", "start")
-                    database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'die_top_bottom' TEXT")
+                    database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'die_top_bottom' TEXT NOT NULL DEFAULT 'Unknown'")
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
