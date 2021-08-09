@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent" android:layout_height="match_parent"
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android" android:fillViewport="true">
     <LinearLayout
         android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:gravity="center">
@@ -28,13 +29,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
-                        android:tint="@color/daikin_fill"
+                        app:tint="@color/daikin_fill"
                         android:src="@drawable/assign"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="Verify Die"
+                        android:text="@string/verify_die"
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
@@ -57,7 +58,7 @@
                     android:padding="25dp"
                     android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
-                        android:tint="@color/daikin_fill"
+                        app:tint="@color/daikin_fill"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
@@ -65,7 +66,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Die"
+                        android:text="@string/die"
                         android:layout_marginTop="5dp"
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -89,7 +90,7 @@
                     android:padding="25dp"
                     android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
-                        android:tint="@color/daikin_fill"
+                        app:tint="@color/daikin_fill"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
@@ -98,7 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="Sync"
+                        android:text="@string/sync"
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
@@ -121,7 +122,7 @@
                     android:padding="25dp"
                     android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
-                        android:tint="@color/daikin_fill"
+                        app:tint="@color/daikin_fill"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
@@ -129,7 +130,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Operator"
+                        android:text="@string/operator"
                         android:layout_marginTop="5dp"
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -153,15 +154,15 @@
                     android:padding="25dp"
                     android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <ImageView
-                        android:tint="@color/daikin_fill"
                         android:padding="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/logout"/>
+                        android:src="@drawable/logout"
+                        app:tint="@color/daikin_fill" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Logout"
+                        android:text="@string/logout"
                         android:layout_marginTop="5dp"
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"

@@ -11,13 +11,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.TextUtils
 import android.util.Log
 import android.view.WindowManager
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
@@ -30,6 +28,7 @@ import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.google.gson.Gson
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.model.PunchResponse
@@ -46,7 +45,8 @@ import java.util.*
 
 
 class VideoPreviewActivity : AppCompatActivity() {
-    val TAG = VideoPreviewActivity::class.java.simpleName
+
+    private val TAG = VideoPreviewActivity::class.java.simpleName
     private var path= ""
     private  var videofilename: String? = null
     private var isplay = false
@@ -54,7 +54,6 @@ class VideoPreviewActivity : AppCompatActivity() {
     private  var total_duration: Long =0
     private var mHandler: Handler? = null
     private  var handler: Handler? = null
-    //private var isVisible = true
     private var absPlayerInternal: SimpleExoPlayer? = null
 
     private var progressDialog: ProgressDialog? = null
@@ -72,8 +71,7 @@ class VideoPreviewActivity : AppCompatActivity() {
     private lateinit var vm: VideoViewModel
 
 
-    private val sharedPrefFile = "kotlinsharedpreference"
-    var sharedPreferences: SharedPreferences?=null
+    private var sharedPreferences: SharedPreferences?=null
 
     private var dieIdStr=  ""
     private  var partIdStr = ""
@@ -87,16 +85,16 @@ class VideoPreviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_preview)
 
-        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+        sharedPreferences = this.getSharedPreferences(CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE)
 
 
-        dieIdStr = sharedPreferences!!.getString("dieIdStr","").toString()
-        partIdStr = sharedPreferences!!.getString("partIdStr","").toString()
-        dieTypeStr= sharedPreferences!!.getString("dieTypeStr","").toString()
-        isNewDie=sharedPreferences!!.getBoolean("IsNewDie",false)
-        isDieTop=sharedPreferences!!.getBoolean("isDieTop",false)
-        isDieBottom=sharedPreferences!!.getBoolean("isDieBottom",false)
+        dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID,"").toString()
+        partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID,"").toString()
+        dieTypeStr= sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE,"").toString()
+        isNewDie=sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_NEW_DIE,false)
+        isDieTop=sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_TOP,false)
+        isDieBottom=sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM,false)
 
         Log.d("TAG", "VideoPreviewActivity  sharedPreferences  dieIdStr $dieIdStr")
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  partIdStr $partIdStr")
@@ -107,20 +105,6 @@ class VideoPreviewActivity : AppCompatActivity() {
 
 
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
-
-       /* vm.insert(VideoModel("dieid1", "partid1", "filepath","2000",false))
-        vm.insert(VideoModel("dieid1", "partid1", "filepath","2000",false))
-
-        vm.getAllVideos().observe(this, Observer {
-            Log.i("Videos observed size", "${it.size}")
-
-        })
-
-
-      //  vm.update(VideoEntity("dieid1", "partid1", "filepath","2000",false))
-        //vm.delete( VideoEntity("dieid1", "partid1", "filepath","2000",false))
-       // vm.deleteAllVideos()
-*/
 
         pv_main=findViewById(R.id.pv_main)
         current=findViewById(R.id.current)
@@ -136,7 +120,7 @@ class VideoPreviewActivity : AppCompatActivity() {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         path = intent.extras!!.getString("videoSavingFilePath").toString()
         Log.d(TAG, "VideoPreviewActivity onCreate $path")
-        videofilename = CommonUtils.getFileName(path!!)
+        videofilename = CommonUtils.getFileName(path)
         println("VideoPreviewActivity videofilename is $videofilename")
         try {
             val retriever = MediaMetadataRetriever()
@@ -210,9 +194,9 @@ class VideoPreviewActivity : AppCompatActivity() {
         }
          videoSubmit = findViewById<TextView>(R.id.videoSubmit)
             if(isNewDie){
-                videoSubmit!!.text="Save"
+                videoSubmit!!.text=this@VideoPreviewActivity.resources.getString(R.string.save)
             }else{
-                videoSubmit!!.text="Submit"
+                videoSubmit!!.text=this@VideoPreviewActivity.resources.getString(R.string.btn_submit)
             }
         videoSubmit!!.setOnClickListener {
 
@@ -222,9 +206,9 @@ class VideoPreviewActivity : AppCompatActivity() {
                     vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr))
                     val builder = AlertDialog.Builder(this@VideoPreviewActivity)
                     builder.setCancelable(false)
-                    builder.setTitle(this@VideoPreviewActivity.getResources().getString(R.string.app_name))
-                    builder.setMessage("Die details are saved. Please use sync in dashboard to send the data to server")
-                    builder.setNeutralButton("Ok") { dialog, which ->
+                    builder.setTitle(this@VideoPreviewActivity.resources.getString(R.string.app_name))
+                    builder.setMessage(this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1))
+                    builder.setNeutralButton(this@VideoPreviewActivity.resources.getString(R.string.alert_ok)) { dialog, which ->
 
                         val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
                         intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -251,13 +235,13 @@ class VideoPreviewActivity : AppCompatActivity() {
                         this.getResources().getString(R.string.app_name)
                     )
                     builder.setCancelable(false)
-                    builder.setMessage("Die top is recorded.Do you want to record die bottom?")
+                    builder.setMessage(this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_2))
                     builder.setPositiveButton(
-                        "Ok"
+                        this@VideoPreviewActivity.resources.getString(R.string.alert_ok)
                     ) { dialog, which ->
                         val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-                        editor.putBoolean("isDieBottom", true)
-                        editor.putString("dieTypeStr", "bottom")
+                        editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
+                        editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
                         editor.apply()
                         dialog.dismiss()
                         if (alertDialog!!.isShowing) {
@@ -268,7 +252,7 @@ class VideoPreviewActivity : AppCompatActivity() {
                         finish()
                     }
                     builder.setNegativeButton(
-                        "Cancel"
+                        this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)
                     ) { dialog, which ->
                         dialog.dismiss()
                         val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
@@ -286,13 +270,13 @@ class VideoPreviewActivity : AppCompatActivity() {
                         this.getResources().getString(R.string.app_name)
                     )
                     builder.setCancelable(false)
-                    builder.setMessage("Die top is recorded.Do you want to record die bottom?")
+                    builder.setMessage(this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_3))
                     builder.setPositiveButton(
-                        "Ok"
+                        this@VideoPreviewActivity.resources.getString(R.string.alert_ok)
                     ) { dialog, which ->
                         val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-                        editor.putBoolean("isDieTop", true)
-                        editor.putString("dieTypeStr", "top")
+                        editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
+                        editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
                         editor.apply()
                         dialog.dismiss()
                         if (alertDialog!!.isShowing) {
@@ -303,7 +287,7 @@ class VideoPreviewActivity : AppCompatActivity() {
                         finish()
                     }
                     builder.setNegativeButton(
-                        "Cancel"
+                        this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)
                     ) { dialog, which ->
                         dialog.dismiss()
                         val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
@@ -314,74 +298,7 @@ class VideoPreviewActivity : AppCompatActivity() {
                     alertDialog = builder.create()
                     alertDialog?.show()
                 }
-                /*if (dieTypeStr != null && dieTypeStr!!.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
-                    var alertMessageStr =""
-                    var dieTypeStr1 =""
-                    if(dieTypeStr.equals("top",true)){
-                        alertMessageStr="Die top is recorded.Do you want to record die bottom?"
-                        dieTypeStr1="top"
-                    }else{
-                        alertMessageStr="Die bottom is recorded.Do you want to record die top?"
-                        dieTypeStr1="bottom"
-                    }
-                    println("dieTypeStr1  is $dieTypeStr1")
-                    println("alertMessageStr  is $alertMessageStr")
 
-                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-                    vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr1))
-                    val builder = android.app.AlertDialog.Builder(this)
-                    builder.setTitle(
-                        this.getResources().getString(R.string.app_name)
-                    )
-                    builder.setCancelable(false)
-                    builder.setMessage(alertMessageStr)
-                    builder.setPositiveButton(
-                        "Ok"
-                    ) { dialog, which ->
-                        if (alertDialog!!.isShowing) {
-                            alertDialog!!.dismiss()
-                        }
-                        val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-                    builder.setNegativeButton(
-                        "Cancel"
-                    ) { dialog, which ->
-                        dialog.dismiss()
-                    }
-                    alertDialog = builder.create()
-                    alertDialog?.show()
-
-                }else{
-                val builder = AlertDialog.Builder(this@VideoPreviewActivity)
-                builder.setCancelable(false)
-                builder.setTitle(this@VideoPreviewActivity.getResources().getString(R.string.app_name))
-                builder.setMessage("Die details are saved. Please use sync in dashboard to send the data to server")
-                builder.setNeutralButton("Ok") { dialog, which ->
-
-                    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-                    vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr))
-
-                    val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                    intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-
-                    dialog.dismiss()
-                    if (alertDialog!!.isShowing) {
-                        alertDialog!!.dismiss()
-                    }
-                }
-                alertDialog = builder.create()
-                if (!this@VideoPreviewActivity.isFinishing) {
-                    try {
-                        alertDialog?.show()
-                    } catch (e: WindowManager.BadTokenException) {
-                        Log.e("BadTokenException", e.toString())
-                    }
-                }
-
-                }*/
             }else{
 
             if (absPlayerInternal!!.isPlaying()) {
@@ -394,7 +311,7 @@ class VideoPreviewActivity : AppCompatActivity() {
             Log.d("TAG", "btnSendEdge onClick imagePath::: $path")
             progressDialog = ProgressDialog(this@VideoPreviewActivity)
             progressDialog!!.setCancelable(false)
-            progressDialog!!.setMessage("Please wait .. Processing image may take some time.")
+            progressDialog!!.setMessage(this@VideoPreviewActivity.resources.getString(R.string.progress_dialog_message_video_preview))
             if (NetworkUtils.isNetworkAvailable(this@VideoPreviewActivity)) {
                 Handler(Looper.getMainLooper()).post {
                     progressDialog!!.show()
@@ -421,36 +338,26 @@ class VideoPreviewActivity : AppCompatActivity() {
                                 "TAG",
                                 "submit onClick onResponse code ::: " + response.code()
                             )
+                            // Storing data into SharedPreferences
+                            val sharedPreferences =
+                                getSharedPreferences(CommonUtils.SHARED_PREF_FILE, MODE_PRIVATE)
+                            // Creating an Editor object to edit(write to the file)
+                            val myEdit = sharedPreferences.edit()
+                            // Storing the key and its value as the data fetched from edittext
+                            // Once the changes have been made,
+                            // we need to commit to apply those changes made,
+                            // otherwise, it will throw an error
+                            val gson = Gson()
+                            val json: String = gson.toJson(response.body())
+                            myEdit.putString(CommonUtils.RESPONSE, json)
+                            myEdit.apply()
                             val intent = Intent(
                                 this@VideoPreviewActivity,
                                 MaskingActivity::class.java
                             )
                             startActivity(intent)
                             finish()
-                            /*if (response.isSuccessful()) {
-                                    // Storing data into SharedPreferences
-                                    SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-                                    // Creating an Editor object to edit(write to the file)
-                                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                                    // Storing the key and its value as the data fetched from edittext
-                                    // Once the changes have been made,
-                                    // we need to commit to apply those changes made,
-                                    // otherwise, it will throw an error
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(response.body());
-                                    myEdit.putString("response", json);
-                                    myEdit.apply();
-                                    if (progressDialog != null && progressDialog.isShowing())
-                                        progressDialog.dismiss();
-                                    Intent intent = new Intent(VideoPreviewActivity.this, HamburgerMenuActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    if (progressDialog.isShowing()) {
-                                        progressDialog.dismiss();
-                                    }
-                                    DialogUtils.showNormalAlert(VideoPreviewActivity.this, "Error!!", "Data mismatch, Take an image and try again.");
-                                }*/
+
                         } catch (e: Exception) {
                             e.printStackTrace()
                             if (progressDialog!!.isShowing) {
@@ -473,8 +380,8 @@ class VideoPreviewActivity : AppCompatActivity() {
             } else {
                 DialogUtils.showNormalAlert(
                     this@VideoPreviewActivity,
-                    "Alert!!",
-                    "Please check your internet connection and try again"
+                    this@VideoPreviewActivity.resources.getString(R.string.alert_title),
+                    this@VideoPreviewActivity.resources.getString(R.string.network_alert_message)
                 )
             }
             }
@@ -515,9 +422,9 @@ class VideoPreviewActivity : AppCompatActivity() {
     private fun batterLevelAlert() {
         val builder = android.app.AlertDialog.Builder(this@VideoPreviewActivity)
         builder.setCancelable(false)
-        builder.setTitle("Low Battery")
-        builder.setMessage("15% of battery remaining.Please piugin charger")
-        builder.setNeutralButton("Exit") { dialog, which ->
+        builder.setTitle(this@VideoPreviewActivity.resources.getString(R.string.battery_alert_title))
+        builder.setMessage(this@VideoPreviewActivity.resources.getString(R.string.battery_alert_message))
+        builder.setNeutralButton(this@VideoPreviewActivity.resources.getString(R.string.alert_exit)) { dialog, which ->
             dialog.dismiss()
             if (alertDialog!!.isShowing) {
                 alertDialog!!.dismiss()
@@ -590,27 +497,7 @@ class VideoPreviewActivity : AppCompatActivity() {
         }
         return songTime
     }
-//
-//    // hide progress when the video is playing
-//    fun hideLayout() {
-//        val runnable = Runnable {
-//            showProgress!!.visibility = View.VISIBLE
-//            isVisible = false
-//        }
-//        handler!!.postDelayed(runnable, 5000)
-//        relative!!.setOnClickListener {
-//            mHandler!!.removeCallbacks(runnable)
-//            if (isVisible) {
-//                showProgress!!.visibility = View.VISIBLE
-//                isVisible = false
-//            } else {
-//                showProgress!!.visibility = View.VISIBLE
-//                mHandler!!.postDelayed(runnable, 5000)
-//                isVisible = true
-//            }
-//        }
-//    }
-//
+
 
     override fun onPause() {
         super.onPause()
@@ -625,37 +512,16 @@ class VideoPreviewActivity : AppCompatActivity() {
             absPlayerInternal!!.stop()
         }
     }
-   /* val TAG = VideoPreviewActivity::class.java.simpleName
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_video_preview)
 
-        val videoRecordingFilePath = intent.getStringExtra("videoRecordingFilePath")
-        Log.d(TAG, "onCreate videoRecordingFilePath $videoRecordingFilePath")
-
-        videoView1.setVideoPath(
-            videoRecordingFilePath)
-
-        videoView1.start()
-
-        submit.setOnClickListener(View.OnClickListener {
-            val intent = Intent(
-                this@VideoPreviewActivity,
-                MaskingActivity::class.java
-            )
-            startActivity(intent)
-            finish()
-        })
-    }*/
    override fun onBackPressed() {
        val builder = android.app.AlertDialog.Builder(this)
        builder.setTitle(
            this.getResources().getString(R.string.app_name)
        )
        builder.setCancelable(false)
-       builder.setMessage("You can use retake to retake a video after cancelling this dialog or press Ok to navigate to dashboard ?")
+       builder.setMessage(    this@VideoPreviewActivity.resources.getString(R.string.video_preview_alert_message))
        builder.setPositiveButton(
-           "Ok"
+           this@VideoPreviewActivity.resources.getString(R.string.alert_ok)
        ) { dialog, which ->
            if (alertDialog!!.isShowing) {
                alertDialog!!.dismiss()
@@ -665,7 +531,7 @@ class VideoPreviewActivity : AppCompatActivity() {
            startActivity(mainIntent)
        }
        builder.setNegativeButton(
-           "Cancel"
+           this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)
        ) { dialog, which ->
            dialog.dismiss()
        }

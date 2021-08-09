@@ -18,6 +18,7 @@ import com.vsoft.goodmankotlin.database.subscribeOnBackground
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
+import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils
 import com.vsoft.goodmankotlin.utils.NetworkUtils
 import com.vsoft.goodmankotlin.utils.RetrofitClient
@@ -41,6 +42,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener,CustomDialog
     private lateinit var vm: VideoViewModel
     private val sharedPrefFile = "kotlinsharedpreference"
     var sharedPreferences: SharedPreferences?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
@@ -58,19 +60,20 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener,CustomDialog
         sync.setOnClickListener(this)
         skip.setOnClickListener(this)
         logout.setOnClickListener(this)
-        sharedPreferences = this.getSharedPreferences(sharedPrefFile,
+        sharedPreferences = this.getSharedPreferences(CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE)
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
     }
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
-        progressDialog!!.setCancelable(false)
-        progressDialog!!.setMessage("Please wait .. Saving video will take time..")
+        progressDialog.setCancelable(false)
+        progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_sync))
     }
     override fun onClick(v: View?) {
         if(v?.id==addOperator.id){
             showCustomAlert("Functionality will be updated soon..","noOperatorFunctionalityDialog", listOf("Ok"))
         }
+
         if(v?.id==addDie.id){
             navigateToAddDie()
         }
@@ -143,31 +146,31 @@ private fun sync(){
         Log.i("video die type :", item.die_top_bottom)
         val jsonObject= JsonObject()
         val gson = Gson()
-        jsonObject.addProperty("Die Id",item.die_id)
-        jsonObject.addProperty("Part Id",item.part_id)
-        jsonObject.addProperty("top_bottom",item.die_top_bottom)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID,item.die_id)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID,item.part_id)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM,item.die_top_bottom)
         val path=item.video_path;
         val filename: String = path.substring(path.lastIndexOf("/") + 1)
-        jsonObject.addProperty("file_name",filename)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_FILE_NAME,filename)
 
-        var jsonString=  gson.toJson(jsonObject)
+        val jsonString=  gson.toJson(jsonObject)
 
-        Log.i("save jsonString ", "$jsonString")
-        Log.i("save path ", "$path")
+        Log.i("save jsonString ", jsonString)
+        Log.i("save path ", path)
         val rootFolder: File? = context.getExternalFilesDir(null)
         val jsonFile = File(rootFolder, "post.json")
         val writer = FileWriter(jsonFile)
         writer.write(jsonString)
         writer.close()
         val metaDataFilePart = MultipartBody.Part.createFormData(
-            "meta_data",
+            CommonUtils.SYNC_VIDEO_API_META_DATA,
             jsonFile.name,
             RequestBody.create(MediaType.parse("*/*"), jsonFile)
         )
 
         val file = File(path) // initialize file here
         val videoFilePart = MultipartBody.Part.createFormData(
-            "file",
+            CommonUtils.SYNC_VIDEO_API_FILE,
             file.name,
             RequestBody.create(MediaType.parse("image/*"), file)
         )
@@ -176,7 +179,7 @@ private fun sync(){
     private fun saveVideoToServer(item:VideoModel,metaData:MultipartBody.Part,videoFile:MultipartBody.Part){
         if (NetworkUtils.isNetworkAvailable(this)) {
             Handler(Looper.getMainLooper()).post {
-                progressDialog!!.show()
+                progressDialog.show()
             }
             val call: Call<videoUploadSaveRespose?>? =
                 RetrofitClient.getInstance()!!.getMyApi1()!!.saveVideo(metaData,videoFile)
@@ -191,38 +194,38 @@ private fun sync(){
                         if(statusCode==200){
                             runOnUiThread(Runnable {
                                 item.status=true
-                                var status:Int?= vm.update(item)
+                                val status: Int = vm.update(item)
                                 Log.i("response update status ", "$status")
                                 sync()
                             })
                         }else if(statusCode==401){
                             runOnUiThread(Runnable {
                                 item.status=true
-                                var status:Int?= vm.update(item)
+                                val status: Int = vm.update(item)
                                 Log.i("response update status ", "$status")
                                 sync()
                             })
                         }else{
                             showCustomAlert("Server Error","webServiceError", listOf("Ok"))
                         }
-                        if (progressDialog!!.isShowing) {
-                            progressDialog!!.dismiss()
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        if (progressDialog!!.isShowing) {
-                            progressDialog!!.dismiss()
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
                         }
                     }
                 }
                 override fun onFailure(call: Call<videoUploadSaveRespose?>, t: Throwable) {
                     DialogUtils.showNormalAlert(
                         this@DashBoardActivity,
-                        "Alert!!",
-                        "Unable to communicate with server"
+                        this@DashBoardActivity.resources.getString(R.string.alert_title),
+                        this@DashBoardActivity.resources.getString(R.string.api_failure_alert_title)
                     )
-                    if (progressDialog!!.isShowing) {
-                        progressDialog!!.dismiss()
+                    if (progressDialog.isShowing) {
+                        progressDialog.dismiss()
                     }
                 }
             })

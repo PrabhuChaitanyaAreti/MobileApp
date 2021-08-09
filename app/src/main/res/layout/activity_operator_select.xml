@@ -126,6 +126,7 @@
                         android:text="Continue"
                         android:textColor="@color/white" />
                 </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
