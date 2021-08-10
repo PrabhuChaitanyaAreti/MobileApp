@@ -82,11 +82,10 @@ import java.util.*
           * Open device app settings to allow user to enable permissions
           */
          fun openSettings(context: Context) {
-             val intent = Intent()
-             intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-             intent.data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-             context.startActivity(intent)
+             context.startActivity(Intent().apply {
+                 action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                 data = Uri.fromParts("package", context.packageName, null)
+             })
          }
 
          @RequiresApi(api = Build.VERSION_CODES.KITKAT)

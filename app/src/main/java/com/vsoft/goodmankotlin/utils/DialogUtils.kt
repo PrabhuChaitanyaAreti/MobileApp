@@ -44,6 +44,7 @@ class DialogUtils {
                 while (buttonListIterator.hasNext()) run {
                     var button = Button(context);
                     button.text = buttonListIterator.next()
+                    button.setPadding(20,0,20,0)
                     button.setTextAppearance(context, R.style.TextAppearance_AppCompat_Medium)
                     button.background=context?.resources?.getDrawable(R.drawable.button_bg)
                     button.setTextColor(Color.parseColor("#FFFFFF"))

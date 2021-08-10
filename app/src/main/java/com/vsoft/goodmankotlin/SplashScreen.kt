@@ -19,9 +19,12 @@ import com.vsoft.goodmankotlin.utils.CameraUtils
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
+import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
+import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.utils.CommonUtils
+import com.vsoft.goodmankotlin.utils.DialogUtils
 
-class SplashScreen : AppCompatActivity() {
+class SplashScreen : AppCompatActivity(), CustomDialogCallback {
 
     private var sharedPreferences: SharedPreferences?=null
 
@@ -37,7 +40,10 @@ class SplashScreen : AppCompatActivity() {
         sharedPreferences = this.getSharedPreferences(
             CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE)
+    }
 
+    override fun onStart() {
+        super.onStart()
         Handler(Looper.getMainLooper()).postDelayed({
             // Your Code
             if (CameraUtils.checkPermissions(applicationContext)) {
@@ -51,7 +57,6 @@ class SplashScreen : AppCompatActivity() {
             }
         }, CommonUtils.SPLASH_DURATION.toLong())
     }
-
     private fun navigateToDashBoard() {
         val i = Intent(this, DashBoardActivity::class.java)
         startActivity(i)
@@ -83,7 +88,7 @@ class SplashScreen : AppCompatActivity() {
                         }else {
                             navigateToLogin()
                         }
-                    } else if (report.isAnyPermissionPermanentlyDenied()) {
+                    } else if (report.isAnyPermissionPermanentlyDenied) {
                         showPermissionsAlert()
                     }
                 }
@@ -102,14 +107,21 @@ class SplashScreen : AppCompatActivity() {
      * to enable necessary permissions
      */
     private fun showPermissionsAlert() {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        builder.setTitle(this@SplashScreen.resources.getString(R.string.settings_title))
-            .setMessage(this@SplashScreen.resources.getString(R.string.settings_message))
-            .setPositiveButton(
-                this@SplashScreen.resources.getString(R.string.settings_option)
-            ) { dialog, which -> CameraUtils.openSettings(this@SplashScreen) }
-            .setNegativeButton(
-                this@SplashScreen.resources.getString(R.string.alert_ok)
-            ) { dialog, which -> }.show()
+        DialogUtils.showCustomAlert(this, CustomDialogModel(this.resources.getString(R.string.app_name),this@SplashScreen.resources.getString(R.string.settings_message),null,
+            listOf(this@SplashScreen.resources.getString(R.string.settings_option),this@SplashScreen.resources.getString(R.string.alert_ok))),this,"permissionDialog")
+    }
+
+    override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
+        if (buttonName.equals("Ok", true)) {
+            if (functionality.equals("permissionDialog", true)) {
+                //No action required, just display
+                super.onBackPressed()
+            }
+        }
+        if (buttonName.equals(this@SplashScreen.resources.getString(R.string.settings_option), true)) {
+            if (functionality.equals("permissionDialog", true)) {
+                CameraUtils.openSettings(this@SplashScreen)
+            }
+        }
     }
 }

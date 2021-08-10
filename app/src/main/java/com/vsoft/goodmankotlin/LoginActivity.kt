@@ -40,13 +40,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
     private lateinit var empIdEditText: EditText
     private lateinit var pinEditText: EditText
     private var empIdStr = ""
-    private var pinStr:String? = ""
+    private var pinStr: String? = ""
     private val minEmpIdDigits = 6
-    private var maxEmpIdDigits:Int = 8
-    private var pinMaxDigits:Int = 4
-    private lateinit var alertDialog: AlertDialog
+    private var maxEmpIdDigits: Int = 8
+    private var pinMaxDigits: Int = 4
     private lateinit var progressDialog: ProgressDialog
-    private var sharedPreferences: SharedPreferences?=null
+    private var sharedPreferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,26 +54,32 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         initProgress()
         initListeners()
     }
-    private fun init(){
+
+    private fun init() {
         empIdEditText = findViewById(R.id.empIdEditText)
         pinEditText = findViewById(R.id.pinEditText)
         loginButton = findViewById(R.id.loginButton)
-        sharedPreferences = this.getSharedPreferences(CommonUtils.SHARED_PREF_FILE,
-            Context.MODE_PRIVATE)
+        sharedPreferences = this.getSharedPreferences(
+            CommonUtils.SHARED_PREF_FILE,
+            Context.MODE_PRIVATE
+        )
     }
-    private fun initProgress(){
+
+    private fun initProgress() {
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setMessage(this@LoginActivity.resources.getString(R.string.progress_dialog_message_login))
 
 
     }
-    private fun initListeners(){
+
+    private fun initListeners() {
         empIdEditText.setOnTouchListener(this)
         pinEditText.setOnTouchListener(this)
 
         loginButton?.setOnClickListener(this)
     }
+
     override fun onClick(view: View?) {
         if (view === loginButton) {
             validations()
@@ -91,6 +96,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         }
         return false
     }
+
     private fun validations() {
         empIdStr = empIdEditText.text.toString()
         pinStr = pinEditText.text.toString()
@@ -100,61 +106,66 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                     if (pinStr!!.length == pinMaxDigits) {
                         screenNavigationWithPermissions()
                     } else {
-                        validationAlert("Please enter 4 digits Pin.",listOf<String>("Ok"))
+                        validationAlert("Please enter 4 digits Pin.", listOf<String>("Ok"))
                     }
                 } else {
-                    validationAlert("Please enter 4 digits Pin.",listOf<String>("Ok"))
+                    validationAlert("Please enter 4 digits Pin.", listOf<String>("Ok"))
                 }
             } else {
                 if (empIdStr.length < minEmpIdDigits) {
-                    validationAlert("Username must be minimum 6 digits.",listOf<String>("Ok"))
+                    validationAlert("Username must be minimum 6 digits.", listOf<String>("Ok"))
                 } else {
-                    validationAlert("Username must be minimum 6 digits and maximum 8 digits.",listOf<String>("Ok"))
+                    validationAlert(
+                        "Username must be minimum 6 digits and maximum 8 digits.",
+                        listOf<String>("Ok")
+                    )
                 }
             }
         } else {
-            validationAlert("Username must be minimum 6 digits and maximum 8 digits.",listOf<String>("Ok"))
+            validationAlert(
+                "Username must be minimum 6 digits and maximum 8 digits.",
+                listOf<String>("Ok")
+            )
         }
     }
+
     private fun screenNavigationWithPermissions() {
         if (CameraUtils.checkPermissions(applicationContext)) {
-            validateUser(empIdStr,pinStr!!)
+            validateUser(empIdStr, pinStr!!)
         } else {
             requestCameraPermission()
         }
     }
-    private fun validateUser(userId:String,password:String){
+
+    private fun validateUser(userId: String, password: String) {
         if (NetworkUtils.isNetworkAvailable(this@LoginActivity)) {
             Handler(Looper.getMainLooper()).post {
                 progressDialog!!.show()
             }
             val call: Call<UserAuthResponse?>? =
-                RetrofitClient.getInstance()!!.getMyApi()!!.authenticate(UserAuthRequest(userId,password))
+                RetrofitClient.getInstance()!!.getMyApi()!!
+                    .authenticate(UserAuthRequest(userId, password))
             call!!.enqueue(object : Callback<UserAuthResponse?> {
                 override fun onResponse(
                     call: Call<UserAuthResponse?>,
                     response: Response<UserAuthResponse?>
                 ) {
                     try {
-                        val statusCode=response.body()!!.statusCode
-                            if(statusCode==200){
-                                val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
-                                editor.putBoolean(CommonUtils.LOGIN_STATUS,true)
-                                editor.apply()
-                                navigateToDashBoard()
-                            }else if(statusCode==401){
-                                DialogUtils.showNormalAlert(
-                                    this@LoginActivity,
-                                    this@LoginActivity.resources.getString(R.string.alert_title),
-                                    this@LoginActivity.resources.getString(R.string.login_alert_message)
-                                )
-                            }else{
-                                DialogUtils.showNormalAlert(
-                                    this@LoginActivity,
-                                    this@LoginActivity.resources.getString(R.string.alert_title),
-                                    this@LoginActivity.resources.getString(R.string.login_alert_message)
-                                )
-                            }
+                        val statusCode = response.body()!!.statusCode
+                        if (statusCode == 200) {
+                            val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                            editor.putBoolean(CommonUtils.LOGIN_STATUS, true)
+                            editor.apply()
+                            navigateToDashBoard()
+                        } else if (statusCode == 401) {
+                            showCustomAlert(
+                                this@LoginActivity.resources.getString(R.string.login_alert_message),
+                                "networkError401Dialog",
+                                listOf("Ok")
+                            )
+                        } else {
+                            showCustomAlert("Server Error", "webServiceErrorDialog", listOf("Ok"))
+                        }
                         if (progressDialog!!.isShowing) {
                             progressDialog!!.dismiss()
                         }
@@ -165,11 +176,12 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<UserAuthResponse?>, t: Throwable) {
-                    DialogUtils.showNormalAlert(
-                        this@LoginActivity,
-                        this@LoginActivity.resources.getString(R.string.alert_title),
-                        this@LoginActivity.resources.getString(R.string.api_failure_alert_title)
+                    showCustomAlert(
+                        this@LoginActivity.resources.getString(R.string.api_failure_alert_title),
+                        "networkFailureDialog",
+                        listOf("Ok")
                     )
                     if (progressDialog!!.isShowing) {
                         progressDialog!!.dismiss()
@@ -177,28 +189,34 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                 }
             })
         } else {
-            showCustomAlert("Please check your internet connection and try again","internetConnectionErrorDialog",
-                listOf("Ok"))
+            showCustomAlert(
+                "Please check your internet connection and try again",
+                "internetConnectionErrorDialog",
+                listOf("Ok")
+            )
         }
     }
-    private fun navigateToOperatorSelection() {
-        val mainIntent = Intent(this@LoginActivity, OperatorSelectActivityJava::class.java)
-        startActivity(mainIntent)
-        finish()
-    }
+
     private fun navigateToDashBoard() {
         val mainIntent = Intent(this@LoginActivity, DashBoardActivity::class.java)
         startActivity(mainIntent)
         finish()
     }
-    private fun validationAlert(alertMessage: String,buttonList:List<String>) {
-        showCustomAlert(alertMessage,"validationDialog",buttonList)
+
+    private fun validationAlert(alertMessage: String, buttonList: List<String>) {
+        showCustomAlert(alertMessage, "validationDialog", buttonList)
     }
-    private fun showCustomAlert(alertMessage: String, functionality: String,buttonList:List<String>){
-        var customDialogModel= CustomDialogModel(getString(R.string.app_name),alertMessage,null,
+
+    private fun showCustomAlert(
+        alertMessage: String,
+        functionality: String,
+        buttonList: List<String>
+    ) {
+        var customDialogModel = CustomDialogModel(
+            getString(R.string.app_name), alertMessage, null,
             buttonList
         )
-        DialogUtils.showCustomAlert(this,customDialogModel,this,functionality)
+        DialogUtils.showCustomAlert(this, customDialogModel, this, functionality)
     }
 
     /**
@@ -215,7 +233,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
-                        validateUser(empIdStr,pinStr!!)
+                        validateUser(empIdStr, pinStr!!)
                     } else if (report.isAnyPermissionPermanentlyDenied) {
                         CommonUtils.showPermissionsAlert(this@LoginActivity)
                     }
@@ -230,13 +248,22 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
             }).check()
     }
 
-    override fun onCustomDialogButtonClicked(buttonName: String,functionality:String) {
-        if(buttonName.equals("Ok",true)){
-            if(functionality.equals("validationDialog",true)){
+    override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
+        if (buttonName.equals("Ok", true)) {
+            if (functionality.equals("validationDialog", true)) {
                 //No action required, just display
             }
-            if(functionality.equals("internetConnectionErrorDialog",true)){
+            if (functionality.equals("internetConnectionErrorDialog", true)) {
                 //No action required on internet connection error
+            }
+            if (functionality.equals("networkError401Dialog", true)) {
+                //No action required
+            }
+            if (functionality.equals("networkFailureDialog", true)) {
+                //No action required
+            }
+            if (functionality.equals("webServiceErrorDialog", true)) {
+                //No action required
             }
         }
     }
