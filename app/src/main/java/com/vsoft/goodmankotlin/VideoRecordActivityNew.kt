@@ -18,15 +18,20 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
+import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.utils.BatteryUtil
+import com.vsoft.goodmankotlin.utils.CommonUtils
+import com.vsoft.goodmankotlin.utils.DialogUtils
 import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.system.exitProcess
 
 
 class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureListener,
-    View.OnClickListener {
+    View.OnClickListener, CustomDialogCallback {
     private var mCamera: Camera? = null
     private var mMediaRecorder: MediaRecorder? = null
     private var mOutputFile: File? = null
@@ -71,13 +76,21 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_record_new)
 
+     /*   val finish= intent.getBooleanExtra("finish", false)
+        if(finish) {
+            finish();
+            return;
+        }*/
+
         surface_view = findViewById(R.id.surface_view)
         settingsImgIcon = findViewById(R.id.settingsImgIcon)
         videoOnlineImageButton = findViewById(R.id.videoOnlineImageButton)
         videoRecordPlayPause = findViewById(R.id.videoRecordPlayPause)
         flashImgIcon = findViewById(R.id.flashImgIcon)
         timeleftTxt = findViewById(R.id.timeleftTxt)
+
         initProgress()
+
         val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoRecordActivityNew)
 
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
@@ -97,7 +110,9 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
             settingsImgIcon!!.setOnClickListener(this)
             videoRecordPlayPause!!.setOnClickListener(this)
         } else {
-            batterLevelAlert()
+            showCustomAlert(this@VideoRecordActivityNew.resources.getString(R.string.battery_alert_title),
+                this@VideoRecordActivityNew.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
+                listOf(this@VideoRecordActivityNew.resources.getString(R.string.alert_exit)))
         }
     }
     private fun initProgress(){
@@ -222,35 +237,6 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         }
     }
 
-    private fun batterLevelAlert() {
-        val builder = android.app.AlertDialog.Builder(this@VideoRecordActivityNew)
-        builder.setCancelable(false)
-        builder.setTitle(this@VideoRecordActivityNew.resources.getString(R.string.battery_alert_title))
-        builder.setMessage(this@VideoRecordActivityNew.resources.getString(R.string.battery_alert_message))
-        builder.setNeutralButton(this@VideoRecordActivityNew.resources.getString(R.string.alert_exit)) { dialog, which ->
-            dialog.dismiss()
-            if (alertDialog!!.isShowing) {
-                alertDialog!!.dismiss()
-            }
-            dialog.dismiss()
-            try {
-                val previewIntent = Intent()
-                setResult(RESULT_CANCELED, previewIntent)
-                finish()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        alertDialog = builder.create()
-        if (!this@VideoRecordActivityNew.isFinishing()) {
-            try {
-                alertDialog!!.show()
-            } catch (e: WindowManager.BadTokenException) {
-                Log.e("BadTokenException", e.toString())
-            }
-        }
-    }
-
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this,
@@ -290,19 +276,14 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                 if (allPermissionsGranted) {
                     surface_view!!.surfaceTextureListener = this
                 } else {
-                    permissionsNotGranted()
+                    showCustomAlert(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_title),
+                        this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_message),CommonUtils.PERMISSIONS_DIALOG,
+                        listOf(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_option)))
                 }
             }
         }
     }
 
-    private fun permissionsNotGranted() {
-        AlertDialog.Builder(this).setTitle(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_title))
-            .setMessage(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_message))
-            .setCancelable(false)
-            .setPositiveButton(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_option)) { dialog, which -> requestPermissions() }
-            .show()
-    }
 
     override fun onPause() {
         super.onPause()
@@ -492,8 +473,6 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                 "onSurfaceTextureAvailable surface_view!!.height::: " + surface_view!!.height
             )
 
-
-
             profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
             profile!!.videoFrameWidth = optimalSize!!.width
             profile!!.videoFrameHeight = optimalSize.height
@@ -560,45 +539,10 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                     Counter!!.cancel()
                     Counter = null
                 }
-                val builder = android.app.AlertDialog.Builder(this@VideoRecordActivityNew)
-                builder.setTitle(
-                    this@VideoRecordActivityNew.resources.getString(R.string.video_recording_timer_alert_title)
-                )
-                builder.setCancelable(false)
-                builder.setMessage( this@VideoRecordActivityNew.resources.getString(R.string.video_recording_timer_alert_message))
-                builder.setPositiveButton(
-                    this@VideoRecordActivityNew.resources.getString(R.string.continue_str)
-                ) { dialog, which ->
-                    dialog.dismiss()
-                    if (alertDialog!!.isShowing) {
-                        alertDialog!!.dismiss()
-                    }
-                    if (Counter != null) {
-                        Counter!!.cancel()
-                        Counter = null
-                    }
-                    backgroundTimer()
-                }
-                builder.setNegativeButton(
-                    this@VideoRecordActivityNew.resources.getString(R.string.alert_exit)
-                ) { dialog, which ->
-                    dialog.dismiss()
-                    try {
-                        val previewIntent = Intent()
-                        setResult(RESULT_CANCELED, previewIntent)
-                        finish()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-                alertDialog = builder.create()
-                if (!this@VideoRecordActivityNew.isFinishing()) {
-                    try {
-                        alertDialog!!.show()
-                    } catch (e: WindowManager.BadTokenException) {
-                        Log.e("BadTokenException", e.toString())
-                    }
-                }
+                showCustomAlert(this@VideoRecordActivityNew.resources.getString(R.string.video_recording_timer_alert_title),
+                    this@VideoRecordActivityNew.resources.getString(R.string.video_recording_timer_alert_message),CommonUtils.TIMER_DIALOG,
+                    listOf(this@VideoRecordActivityNew.resources.getString(R.string.continue_str),
+                        this@VideoRecordActivityNew.resources.getString(R.string.alert_exit)))
             }
         }
         Counter!!.start()
@@ -758,38 +702,6 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         dialog.show()
     }
 
-    /* private fun getBestSize(
-         targetWidth: Int,
-         targetHeight: Int,
-         sizeList: List<Camera.Size>
-     ): Camera.Size? {
-         var bestSize: Camera.Size? = null
-         for (size in sizeList) {
-             if (size.width == targetHeight && size.height == targetWidth) {
-                 bestSize = size
-                 return bestSize
-             }
-             val isVer = size.height > size.width // Whether it is vertical
-             val small = if (isVer) size.width else size.height // one with a small width
-             if (small > targetWidth) {
-                 if (bestSize == null || bestSize.width > small) {
-                     bestSize = size
-                 }
-             }
-         }
-         //LogUtil.e("Optimal size:" + bestSize!!.height + " * " + bestSize.width)
-         return bestSize
-     }
- */
-    var supportedNum: Int = 0
-    private fun getBestSize(sizeList: List<Camera.Size>): Camera.Size? {
-        var bestSize: Camera.Size? = null
-        if (supportedNum >= sizeList.size) {
-            return bestSize
-        }
-        bestSize = sizeList[supportedNum++]
-        return bestSize
-    }
 
 
     fun choosePreviewSize(parms: Camera.Parameters, width: Int, height: Int): Camera.Size? {
@@ -820,28 +732,69 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         // else use whatever the default size is
     }
     override fun onBackPressed() {
-        val builder = android.app.AlertDialog.Builder(this)
-        builder.setTitle(
-            this.getResources().getString(R.string.app_name)
-        )
-        builder.setCancelable(false)
-        builder.setMessage(this@VideoRecordActivityNew.resources.getString(R.string.dashboard_navigation_alert_message))
-        builder.setPositiveButton(
-            this@VideoRecordActivityNew.resources.getString(R.string.alert_ok)
-        ) { dialog, which ->
-            if (alertDialog!!.isShowing) {
-                alertDialog!!.dismiss()
-            }
-            val intent = Intent(this, DashBoardActivity::class.java)
-            intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-        }
-        builder.setNegativeButton(
-            this@VideoRecordActivityNew.resources.getString(R.string.alert_cancel)
-        ) { dialog, which ->
-            dialog.dismiss()
-        }
-        alertDialog = builder.create()
-        alertDialog?.show()
+        showCustomAlert(this@VideoRecordActivityNew.resources.getString(R.string.app_name),
+            this@VideoRecordActivityNew.resources.getString(R.string.dashboard_navigation_alert_message),
+            CommonUtils.BACK_PRESSED_DIALOG,
+            listOf(this@VideoRecordActivityNew.resources.getString(R.string.alert_ok),
+                this@VideoRecordActivityNew.resources.getString(R.string.alert_cancel)))
+
     }
+
+
+    private fun showCustomAlert(alertTitle: String,alertMessage: String, functionality: String,buttonList:List<String>){
+        val customDialogModel= CustomDialogModel(alertTitle,alertMessage,null,
+            buttonList
+        )
+        DialogUtils.showCustomAlert(this,customDialogModel,this,functionality)
+    }
+
+    override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
+        Log.d("",
+            "onCustomDialogButtonClicked buttonName::: $buttonName:::: functionality:::: $functionality"
+        )
+        if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.alert_exit),true)) {
+            if (functionality.equals(CommonUtils.BATTERY_DIALOG, true)) {
+                try {
+                    val previewIntent = Intent()
+                    setResult(RESULT_CANCELED, previewIntent)
+                    finishAffinity()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }else if(functionality.equals(CommonUtils.TIMER_DIALOG, true)){
+                try {
+                   // val intent = Intent(this@VideoRecordActivityNew, VideoRecordActivityNew::class.java)
+                    //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    //intent.putExtra("finish", true)
+                  //  finish()
+                    val previewIntent = Intent()
+                    setResult(RESULT_CANCELED, previewIntent)
+                    finishAffinity()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }else if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_option),true)) {
+            if (functionality.equals(CommonUtils.PERMISSIONS_DIALOG, true)) {
+                requestPermissions()
+            }
+        }else if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.continue_str),true)) {
+            if (functionality.equals(CommonUtils.TIMER_DIALOG, true)) {
+                if (Counter != null) {
+                    Counter!!.cancel()
+                    Counter = null
+                }
+                backgroundTimer()
+            }
+        }else if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.alert_ok),true)) {
+            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
+                val intent = Intent(this, DashBoardActivity::class.java)
+                intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }else if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.alert_cancel),true)) {
+                //No action required. Just exit dialog.
+        }
+    }
+
 }

@@ -1,12 +1,10 @@
 package com.vsoft.goodmankotlin
 
-
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -31,6 +29,8 @@ import com.google.android.exoplayer2.util.Util
 import com.google.gson.Gson
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
+import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
+import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.PunchResponse
 import com.vsoft.goodmankotlin.utils.*
 import okhttp3.MediaType
@@ -43,8 +43,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-class VideoPreviewActivity : AppCompatActivity() {
+class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
     private val TAG = VideoPreviewActivity::class.java.simpleName
     private var path= ""
@@ -122,19 +121,7 @@ class VideoPreviewActivity : AppCompatActivity() {
         Log.d(TAG, "VideoPreviewActivity onCreate $path")
         videofilename = CommonUtils.getFileName(path)
         println("VideoPreviewActivity videofilename is $videofilename")
-        try {
-            val retriever = MediaMetadataRetriever()
-            retriever.setDataSource(path)
-            val width =
-                Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH))
-            val height =
-                Integer.valueOf(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT))
-            retriever.release()
-            println("video width  is $width")
-            println("video height  is $height")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+
         val appNameStringRes = R.string.app_name
         val trackSelectorDef: TrackSelector = DefaultTrackSelector()
         //absPlayerInternal =
@@ -199,106 +186,33 @@ class VideoPreviewActivity : AppCompatActivity() {
                 videoSubmit!!.text=this@VideoPreviewActivity.resources.getString(R.string.btn_submit)
             }
         videoSubmit!!.setOnClickListener {
-
             if(isNewDie){
                 if(isDieTop&&isDieBottom){
                     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
                     vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr))
-                    val builder = AlertDialog.Builder(this@VideoPreviewActivity)
-                    builder.setCancelable(false)
-                    builder.setTitle(this@VideoPreviewActivity.resources.getString(R.string.app_name))
-                    builder.setMessage(this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1))
-                    builder.setNeutralButton(this@VideoPreviewActivity.resources.getString(R.string.alert_ok)) { dialog, which ->
 
-                        val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                        intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
+                    showCustomAlert( this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1),CommonUtils.DIE_BOTH_DIALOG,
+                        listOf( this@VideoPreviewActivity.resources.getString(R.string.alert_ok)))
 
-                        dialog.dismiss()
-                        if (alertDialog!!.isShowing) {
-                            alertDialog!!.dismiss()
-                        }
-                    }
-                    alertDialog = builder.create()
-                    if (!this@VideoPreviewActivity.isFinishing) {
-                        try {
-                            alertDialog?.show()
-                        } catch (e: WindowManager.BadTokenException) {
-                            Log.e("BadTokenException", e.toString())
-                        }
-                    }
                 }else if(isDieTop){
                     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
                     vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr))
-                    val builder = android.app.AlertDialog.Builder(this)
-                    builder.setTitle(
-                        this.getResources().getString(R.string.app_name)
-                    )
-                    builder.setCancelable(false)
-                    builder.setMessage(this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_2))
-                    builder.setPositiveButton(
-                        this@VideoPreviewActivity.resources.getString(R.string.alert_ok)
-                    ) { dialog, which ->
-                        val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-                        editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
-                        editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
-                        editor.apply()
-                        dialog.dismiss()
-                        if (alertDialog!!.isShowing) {
-                            alertDialog!!.dismiss()
-                        }
-                        val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-                    builder.setNegativeButton(
-                        this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)
-                    ) { dialog, which ->
-                        dialog.dismiss()
-                        val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                        intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
 
-                    }
-                    alertDialog = builder.create()
-                    alertDialog?.show()
+                    showCustomAlert( this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_2),CommonUtils.DIE_TOP_DIALOG,
+                        listOf( this@VideoPreviewActivity.resources.getString(R.string.alert_ok),
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)))
+
                 }else{
                     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
                     vm.insert(VideoModel(dieIdStr, partIdStr, path,timeStamp,false,dieTypeStr))
-                    val builder = android.app.AlertDialog.Builder(this)
-                    builder.setTitle(
-                        this.getResources().getString(R.string.app_name)
-                    )
-                    builder.setCancelable(false)
-                    builder.setMessage(this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_3))
-                    builder.setPositiveButton(
-                        this@VideoPreviewActivity.resources.getString(R.string.alert_ok)
-                    ) { dialog, which ->
-                        val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-                        editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
-                        editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
-                        editor.apply()
-                        dialog.dismiss()
-                        if (alertDialog!!.isShowing) {
-                            alertDialog!!.dismiss()
-                        }
-                        val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-                    builder.setNegativeButton(
-                        this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)
-                    ) { dialog, which ->
-                        dialog.dismiss()
-                        val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                        intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
 
-                    }
-                    alertDialog = builder.create()
-                    alertDialog?.show()
+                    showCustomAlert( this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_3),CommonUtils.DIE_BOTTOM_DIALOG,
+                        listOf( this@VideoPreviewActivity.resources.getString(R.string.alert_ok),
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)))
                 }
-
             }else{
 
             if (absPlayerInternal!!.isPlaying()) {
@@ -378,11 +292,9 @@ class VideoPreviewActivity : AppCompatActivity() {
                     }
                 })
             } else {
-                DialogUtils.showNormalAlert(
-                    this@VideoPreviewActivity,
-                    this@VideoPreviewActivity.resources.getString(R.string.alert_title),
-                    this@VideoPreviewActivity.resources.getString(R.string.network_alert_message)
-                )
+                showCustomAlert( this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                    this@VideoPreviewActivity.resources.getString(R.string.network_alert_message),CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                    listOf( this@VideoPreviewActivity.resources.getString(R.string.alert_ok)))
             }
             }
         }
@@ -416,37 +328,12 @@ class VideoPreviewActivity : AppCompatActivity() {
             override fun onSeekProcessed() {}
         })
         } else {
-            batterLevelAlert()
+            showCustomAlert(this@VideoPreviewActivity.resources.getString(R.string.battery_alert_title),
+                this@VideoPreviewActivity.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
+                listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_exit)))
         }
     }
-    private fun batterLevelAlert() {
-        val builder = android.app.AlertDialog.Builder(this@VideoPreviewActivity)
-        builder.setCancelable(false)
-        builder.setTitle(this@VideoPreviewActivity.resources.getString(R.string.battery_alert_title))
-        builder.setMessage(this@VideoPreviewActivity.resources.getString(R.string.battery_alert_message))
-        builder.setNeutralButton(this@VideoPreviewActivity.resources.getString(R.string.alert_exit)) { dialog, which ->
-            dialog.dismiss()
-            if (alertDialog!!.isShowing) {
-                alertDialog!!.dismiss()
-            }
-            dialog.dismiss()
-            try {
-                val previewIntent = Intent()
-                setResult(RESULT_CANCELED, previewIntent)
-                finish()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        alertDialog = builder.create()
-        if (!this@VideoPreviewActivity.isFinishing()) {
-            try {
-                alertDialog!!.show()
-            } catch (e: WindowManager.BadTokenException) {
-                Log.e("BadTokenException", e.toString())
-            }
-        }
-    }
+
     // display video progress
     fun setVideoProgress() {
         //get the video duration
@@ -481,8 +368,6 @@ class VideoPreviewActivity : AppCompatActivity() {
             }
         })
     }
-
-
     //time conversion
     fun timeConversion(value: Long): String? {
         val songTime: String
@@ -497,7 +382,6 @@ class VideoPreviewActivity : AppCompatActivity() {
         }
         return songTime
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -514,28 +398,74 @@ class VideoPreviewActivity : AppCompatActivity() {
     }
 
    override fun onBackPressed() {
-       val builder = android.app.AlertDialog.Builder(this)
-       builder.setTitle(
-           this.getResources().getString(R.string.app_name)
-       )
-       builder.setCancelable(false)
-       builder.setMessage(    this@VideoPreviewActivity.resources.getString(R.string.video_preview_alert_message))
-       builder.setPositiveButton(
-           this@VideoPreviewActivity.resources.getString(R.string.alert_ok)
-       ) { dialog, which ->
-           if (alertDialog!!.isShowing) {
-               alertDialog!!.dismiss()
-           }
-           val mainIntent = Intent(this, DashBoardActivity::class.java)
-           mainIntent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-           startActivity(mainIntent)
-       }
-       builder.setNegativeButton(
-           this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)
-       ) { dialog, which ->
-           dialog.dismiss()
-       }
-       alertDialog = builder.create()
-       alertDialog?.show()
+       showCustomAlert(this@VideoPreviewActivity.resources.getString(R.string.app_name),
+           this@VideoPreviewActivity.resources.getString(R.string.video_preview_alert_message),
+           CommonUtils.BACK_PRESSED_DIALOG,
+           listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok),
+               this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)))
    }
+
+    private fun showCustomAlert(alertTitle: String,alertMessage: String, functionality: String,buttonList:List<String>){
+        val customDialogModel= CustomDialogModel(alertTitle,alertMessage,null,
+            buttonList
+        )
+        DialogUtils.showCustomAlert(this,customDialogModel,this,functionality)
+    }
+
+    override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
+        Log.d("",
+            "onCustomDialogButtonClicked buttonName::: $buttonName:::: functionality:::: $functionality"
+        )
+        if(buttonName.equals(this@VideoPreviewActivity.resources.getString(R.string.alert_exit),true)) {
+            if (functionality.equals(CommonUtils.BATTERY_DIALOG, true)) {
+                try {
+                    val previewIntent = Intent()
+                    setResult(RESULT_CANCELED, previewIntent)
+                    finishAffinity()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }else if(buttonName.equals(this@VideoPreviewActivity.resources.getString(R.string.alert_ok),true)) {
+            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
+                val intent = Intent(this, DashBoardActivity::class.java)
+                intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }else if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
+                //No action required. Just exit dialog.
+            }else if (functionality.equals(CommonUtils.DIE_BOTH_DIALOG, true)) {
+                val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }else if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
+                editor.apply()
+
+                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
+                startActivity(intent)
+                finish()
+            }else if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
+                editor.apply()
+
+                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }else if(buttonName.equals(this@VideoPreviewActivity.resources.getString(R.string.alert_cancel),true)) {
+            if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
+                val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }else if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
+                val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        }
+    }
 }

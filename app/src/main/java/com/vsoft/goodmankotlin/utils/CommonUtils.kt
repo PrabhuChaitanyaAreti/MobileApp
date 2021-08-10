@@ -8,6 +8,17 @@ import com.microsoft.appcenter.AppCenter
 class CommonUtils {
     companion object {
 
+
+        const val BATTERY_DIALOG = "batteryDialog"
+        const val PERMISSIONS_DIALOG = "permissionsDialog"
+        const val TIMER_DIALOG = "timerDialog"
+        const val BACK_PRESSED_DIALOG = "backPressedDialog"
+        const val INTERNET_CONNECTION_ERROR_DIALOG = "internetConnectionErrorDialog"
+        const val DIE_BOTH_DIALOG = "dieBoth"
+        const val DIE_TOP_DIALOG = "dieTop"
+        const val DIE_BOTTOM_DIALOG = "dieBottom"
+
+
         const val SHARED_PREF_FILE = "goodman_shared_preference"
         const val APP_CENTER_ANALYTICS_SECRET_KEY="41d26db7-77ac-4c92-bc27-5910ea601d14"
         const val LOGIN_STATUS="loginStatus"
