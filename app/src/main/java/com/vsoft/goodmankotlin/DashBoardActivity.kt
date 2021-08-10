@@ -32,7 +32,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 
-class DashBoardActivity : AppCompatActivity(), View.OnClickListener,CustomDialogCallback {
+class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback {
     private lateinit var addOperator: LinearLayout
     private lateinit var addDie: LinearLayout
     private lateinit var sync: LinearLayout
@@ -40,8 +40,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener,CustomDialog
     private lateinit var logout: LinearLayout
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
-    private val sharedPrefFile = "kotlinsharedpreference"
-    var sharedPreferences: SharedPreferences?=null
+    private var sharedPreferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,111 +48,136 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener,CustomDialog
         init()
         initProgress()
     }
-    private fun init(){
-        addOperator=findViewById(R.id.addOperator)
-        addDie=findViewById(R.id.addDie)
-        sync=findViewById(R.id.sync)
-        skip=findViewById(R.id.skip)
-        logout=findViewById(R.id.logout)
+
+    private fun init() {
+        addOperator = findViewById(R.id.addOperator)
+        addDie = findViewById(R.id.addDie)
+        sync = findViewById(R.id.sync)
+        skip = findViewById(R.id.skip)
+        logout = findViewById(R.id.logout)
         addOperator.setOnClickListener(this)
         addDie.setOnClickListener(this)
         sync.setOnClickListener(this)
         skip.setOnClickListener(this)
         logout.setOnClickListener(this)
-        sharedPreferences = this.getSharedPreferences(CommonUtils.SHARED_PREF_FILE,
-            Context.MODE_PRIVATE)
+        sharedPreferences = this.getSharedPreferences(
+            CommonUtils.SHARED_PREF_FILE,
+            Context.MODE_PRIVATE
+        )
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
     }
-    private fun initProgress(){
+
+    private fun initProgress() {
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_sync))
     }
+
     override fun onClick(v: View?) {
-        if(v?.id==addOperator.id){
-            showCustomAlert("Functionality will be updated soon..","noOperatorFunctionalityDialog", listOf("Ok"))
+        if (v?.id == addOperator.id) {
+            showCustomAlert(
+                "Functionality will be updated soon..",
+                "noOperatorFunctionalityDialog",
+                listOf("Ok")
+            )
         }
 
-        if(v?.id==addDie.id){
+        if (v?.id == addDie.id) {
             navigateToAddDie()
         }
-        if(v?.id==sync.id){
-                sync()
+        if (v?.id == sync.id) {
+            sync()
         }
-        if(v?.id==skip.id){
+        if (v?.id == skip.id) {
             navigateToOperatorSelection()
         }
-        if(v?.id==logout.id){
-            showCustomAlert("Would you like to logout of the app?","logoutDialog", listOf("Ok","Cancel"))
+        if (v?.id == logout.id) {
+            showCustomAlert(
+                "Would you like to logout of the app?",
+                "logoutDialog",
+                listOf("Ok", "Cancel")
+            )
         }
     }
-    private fun showCustomAlert(alertMessage: String, functionality: String,buttonList:List<String>){
-        var customDialogModel= CustomDialogModel(getString(R.string.app_name),alertMessage,null,
+
+    private fun showCustomAlert(
+        alertMessage: String,
+        functionality: String,
+        buttonList: List<String>
+    ) {
+        var customDialogModel = CustomDialogModel(
+            getString(R.string.app_name), alertMessage, null,
             buttonList
         )
-        DialogUtils.showCustomAlert(this,customDialogModel,this,functionality)
+        DialogUtils.showCustomAlert(this, customDialogModel, this, functionality)
     }
+
     override fun onBackPressed() {
-        showCustomAlert("Do you want to exit app ?","backPressedDialog", listOf("Ok","Cancel"))
+        showCustomAlert("Do you want to exit app ?", "backPressedDialog", listOf("Ok", "Cancel"))
     }
+
     private fun navigateToOperatorSelection() {
         val mainIntent = Intent(this, OperatorSelectActivityWithWebservice::class.java)
         startActivity(mainIntent)
     }
+
     private fun navigateToLogin() {
         val mainIntent = Intent(this, LoginActivity::class.java)
         startActivity(mainIntent)
         finish()
     }
-    private fun navigateToAddDie(){
+
+    private fun navigateToAddDie() {
         val mainIntent = Intent(this@DashBoardActivity, AddDieActivityNew::class.java)
         startActivity(mainIntent)
     }
-private fun sync(){
-    var  videosList: List<VideoModel>? =null
-    subscribeOnBackground {
-        videosList=vm.getVideos()
-        if(videosList!!.isEmpty()){
-            runOnUiThread(Runnable {
-                showCustomAlert(
-                    "No video data available to sync !!", "videoSyncSuccessDialog",
-                    listOf("Ok")
-                )
-            })
-        }else {
-            Log.i("Videos observed size", "${videosList?.size}")
-            val iterator = videosList!!.listIterator()
-            if (iterator.hasNext()) {
-                val item = iterator.next()
-                if (!item.status) {
-                    save(this, item)
-                }
-            } else {
+
+    private fun sync() {
+        var videosList: List<VideoModel>? = null
+        subscribeOnBackground {
+            videosList = vm.getVideos()
+            if (videosList!!.isEmpty()) {
                 runOnUiThread(Runnable {
                     showCustomAlert(
-                        "All available dies are synced successfully", "videoSyncSuccessDialog",
+                        "No video data available to sync !!", "videoSyncSuccessDialog",
                         listOf("Ok")
                     )
                 })
+            } else {
+                Log.i("Videos observed size", "${videosList?.size}")
+                val iterator = videosList!!.listIterator()
+                if (iterator.hasNext()) {
+                    val item = iterator.next()
+                    if (!item.status) {
+                        save(this, item)
+                    }
+                } else {
+                    runOnUiThread(Runnable {
+                        showCustomAlert(
+                            "All available dies are synced successfully", "videoSyncSuccessDialog",
+                            listOf("Ok")
+                        )
+                    })
+                }
             }
         }
     }
-}
+
     @Throws(IOException::class)
-    private fun save(context: Context,item:VideoModel) {
+    private fun save(context: Context, item: VideoModel) {
         Log.i("Id:", "${item.id}")
         Log.i("Status:", "${item.status}")
         Log.i("video die type :", item.die_top_bottom)
-        val jsonObject= JsonObject()
+        val jsonObject = JsonObject()
         val gson = Gson()
-        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID,item.die_id)
-        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID,item.part_id)
-        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM,item.die_top_bottom)
-        val path=item.video_path;
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID, item.die_id)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID, item.part_id)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM, item.die_top_bottom)
+        val path = item.video_path;
         val filename: String = path.substring(path.lastIndexOf("/") + 1)
-        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_FILE_NAME,filename)
+        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_FILE_NAME, filename)
 
-        val jsonString=  gson.toJson(jsonObject)
+        val jsonString = gson.toJson(jsonObject)
 
         Log.i("save jsonString ", jsonString)
         Log.i("save path ", path)
@@ -174,15 +198,19 @@ private fun sync(){
             file.name,
             RequestBody.create(MediaType.parse("image/*"), file)
         )
-        saveVideoToServer(item,metaDataFilePart,videoFilePart)
+        saveVideoToServer(item, metaDataFilePart, videoFilePart)
     }
-    private fun saveVideoToServer(item:VideoModel,metaData:MultipartBody.Part,videoFile:MultipartBody.Part){
+
+    private fun saveVideoToServer(
+        item: VideoModel,
+        metaData: MultipartBody.Part,
+        videoFile: MultipartBody.Part) {
         if (NetworkUtils.isNetworkAvailable(this)) {
             Handler(Looper.getMainLooper()).post {
                 progressDialog.show()
             }
             val call: Call<videoUploadSaveRespose?>? =
-                RetrofitClient.getInstance()!!.getMyApi1()!!.saveVideo(metaData,videoFile)
+                RetrofitClient.getInstance()!!.getMyApi1()!!.saveVideo(metaData, videoFile)
             call!!.enqueue(object : Callback<videoUploadSaveRespose?> {
                 override fun onResponse(
                     call: Call<videoUploadSaveRespose?>,
@@ -190,23 +218,23 @@ private fun sync(){
                 ) {
                     try {
                         Log.i("response  ", "$response")
-                        val statusCode=response.body()!!.statusCode
-                        if(statusCode==200){
+                        val statusCode = response.body()!!.statusCode
+                        if (statusCode == 200) {
                             runOnUiThread(Runnable {
-                                item.status=true
+                                item.status = true
                                 val status: Int = vm.update(item)
                                 Log.i("response update status ", "$status")
                                 sync()
                             })
-                        }else if(statusCode==401){
+                        } else if (statusCode == 401) {
                             runOnUiThread(Runnable {
-                                item.status=true
+                                item.status = true
                                 val status: Int = vm.update(item)
                                 Log.i("response update status ", "$status")
                                 sync()
                             })
-                        }else{
-                            showCustomAlert("Server Error","webServiceError", listOf("Ok"))
+                        } else {
+                            showCustomAlert("Server Error", "webServiceError", listOf("Ok"))
                         }
                         if (progressDialog.isShowing) {
                             progressDialog.dismiss()
@@ -218,12 +246,10 @@ private fun sync(){
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<videoUploadSaveRespose?>, t: Throwable) {
-                    DialogUtils.showNormalAlert(
-                        this@DashBoardActivity,
-                        this@DashBoardActivity.resources.getString(R.string.alert_title),
-                        this@DashBoardActivity.resources.getString(R.string.api_failure_alert_title)
-                    )
+                    showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_failure_alert_title),"networkFailureDialog",
+                        listOf("Ok"))
                     if (progressDialog.isShowing) {
                         progressDialog.dismiss()
                     }
@@ -231,38 +257,44 @@ private fun sync(){
             })
         } else {
             runOnUiThread(Runnable {
-                showCustomAlert("Please check your internet connection and try again","internetConnectionErrorDialog",
-                    listOf("Ok"))
+                showCustomAlert(
+                    "Please check your internet connection and try again",
+                    "internetConnectionErrorDialog",
+                    listOf("Ok")
+                )
             })
 
         }
     }
 
-    override fun onCustomDialogButtonClicked(buttonName: String,functionality:String) {
-        if(buttonName.equals("Ok",true)){
-            if(functionality.equals("noOperatorFunctionalityDialog",true)){
+    override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
+        if (buttonName.equals("Ok", true)) {
+            if (functionality.equals("noOperatorFunctionalityDialog", true)) {
                 //No action required.
             }
-            if(functionality.equals("backPressedDialog",true)){
+            if (functionality.equals("backPressedDialog", true)) {
                 super.onBackPressed()
             }
-            if(functionality.equals("logoutDialog",true)){
-                val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
+            if (functionality.equals("logoutDialog", true)) {
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.clear()
                 editor.apply()
                 navigateToLogin()
             }
-            if(functionality.equals("videoSyncSuccessDialog",true)){
+            if (functionality.equals("videoSyncSuccessDialog", true)) {
                 //No action required on sync
             }
-            if(functionality.equals("webServiceError",true)){
+            if (functionality.equals("webServiceError", true)) {
                 //No action required on sync
             }
-            if(functionality.equals("internetConnectionErrorDialog",true)){
+            if (functionality.equals("internetConnectionErrorDialog", true)) {
                 //No action required on internet connection error
             }
+            if(functionality.equals("networkFailureDialog",true)){
+                //No action required
+            }
         }
-        if(buttonName.equals("Cancel",true)){
+        if (buttonName.equals("Cancel", true)) {
             //No action required. Just exit dialog.
         }
     }
