@@ -24,20 +24,18 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.vsoft.goodmankotlin.model.PunchResponse
+import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
+import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.UserAuthRequest
 import com.vsoft.goodmankotlin.model.UserAuthResponse
 import com.vsoft.goodmankotlin.utils.*
 import kotlinx.android.synthetic.main.activity_add_die.*
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.File
 
-class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchListener {
+class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchListener,
+    CustomDialogCallback {
     private lateinit var loginButton: Button
     private lateinit var empIdEditText: EditText
     private lateinit var pinEditText: EditText
@@ -102,20 +100,20 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                     if (pinStr!!.length == pinMaxDigits) {
                         screenNavigationWithPermissions()
                     } else {
-                        validationAlert(this@LoginActivity.resources.getString(R.string.login_pin_validation_message))
+                        validationAlert("Please enter 4 digits Pin.",listOf<String>("Ok"))
                     }
                 } else {
-                    validationAlert(this@LoginActivity.resources.getString(R.string.login_pin_validation_message))
+                    validationAlert("Please enter 4 digits Pin.",listOf<String>("Ok"))
                 }
             } else {
                 if (empIdStr.length < minEmpIdDigits) {
-                    validationAlert(this@LoginActivity.resources.getString(R.string.login_username_validation_message_2))
+                    validationAlert("Username must be minimum 6 digits.",listOf<String>("Ok"))
                 } else {
-                    validationAlert(this@LoginActivity.resources.getString(R.string.login_username_validation_message_1))
+                    validationAlert("Username must be minimum 6 digits and maximum 8 digits.",listOf<String>("Ok"))
                 }
             }
         } else {
-            validationAlert(this@LoginActivity.resources.getString(R.string.login_username_validation_message_1))
+            validationAlert("Username must be minimum 6 digits and maximum 8 digits.",listOf<String>("Ok"))
         }
     }
     private fun screenNavigationWithPermissions() {
@@ -179,11 +177,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                 }
             })
         } else {
-            DialogUtils.showNormalAlert(
-                this@LoginActivity,
-                this@LoginActivity.resources.getString(R.string.alert_title),
-                this@LoginActivity.resources.getString(R.string.network_alert_message)
-            )
+            showCustomAlert("Please check your internet connection and try again","internetConnectionErrorDialog",
+                listOf("Ok"))
         }
     }
     private fun navigateToOperatorSelection() {
@@ -196,26 +191,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         startActivity(mainIntent)
         finish()
     }
-    private fun validationAlert(alertMessage: String) {
-        val builder = AlertDialog.Builder(this@LoginActivity)
-        builder.setCancelable(false)
-        builder.setTitle(this@LoginActivity.resources.getString(R.string.app_name))
-        builder.setMessage(alertMessage)
-        builder.setNeutralButton((this@LoginActivity.resources.getString(R.string.alert_ok))) { dialog, which ->
-            dialog.dismiss()
-            if (alertDialog!!.isShowing) {
-                alertDialog!!.dismiss()
-            }
-            dialog.dismiss()
-        }
-        alertDialog = builder.create()
-        if (!this@LoginActivity.isFinishing) {
-            try {
-                alertDialog?.show()
-            } catch (e: WindowManager.BadTokenException) {
-                Log.e("BadTokenException", e.toString())
-            }
-        }
+    private fun validationAlert(alertMessage: String,buttonList:List<String>) {
+        showCustomAlert(alertMessage,"validationDialog",buttonList)
+    }
+    private fun showCustomAlert(alertMessage: String, functionality: String,buttonList:List<String>){
+        var customDialogModel= CustomDialogModel(getString(R.string.app_name),alertMessage,null,
+            buttonList
+        )
+        DialogUtils.showCustomAlert(this,customDialogModel,this,functionality)
     }
 
     /**
@@ -245,5 +228,16 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                     token.continuePermissionRequest()
                 }
             }).check()
+    }
+
+    override fun onCustomDialogButtonClicked(buttonName: String,functionality:String) {
+        if(buttonName.equals("Ok",true)){
+            if(functionality.equals("validationDialog",true)){
+                //No action required, just display
+            }
+            if(functionality.equals("internetConnectionErrorDialog",true)){
+                //No action required on internet connection error
+            }
+        }
     }
 }

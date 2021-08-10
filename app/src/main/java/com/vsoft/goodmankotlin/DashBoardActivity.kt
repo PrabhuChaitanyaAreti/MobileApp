@@ -8,7 +8,6 @@ import android.os.*
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.google.gson.Gson
@@ -16,10 +15,11 @@ import com.google.gson.JsonObject
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.database.subscribeOnBackground
+import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
+import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
 import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils
-import com.vsoft.goodmankotlin.utils.DialogUtils.Companion.showNormalAlert
 import com.vsoft.goodmankotlin.utils.NetworkUtils
 import com.vsoft.goodmankotlin.utils.RetrofitClient
 import okhttp3.MediaType
@@ -32,7 +32,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 
-class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
+class DashBoardActivity : AppCompatActivity(), View.OnClickListener,CustomDialogCallback {
     private lateinit var addOperator: LinearLayout
     private lateinit var addDie: LinearLayout
     private lateinit var sync: LinearLayout
@@ -40,7 +40,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var logout: LinearLayout
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
-    private var alertDialog: android.app.AlertDialog? = null
+    private val sharedPrefFile = "kotlinsharedpreference"
     var sharedPreferences: SharedPreferences?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,16 +71,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
     }
     override fun onClick(v: View?) {
         if(v?.id==addOperator.id){
-            DialogUtils.showNormalAlert(
-                this@DashBoardActivity,
-                this@DashBoardActivity.resources.getString(R.string.alert_title),
-                this@DashBoardActivity.resources.getString(R.string.add_operator_alert_message)
-            )
+            showCustomAlert("Functionality will be updated soon..","noOperatorFunctionalityDialog", listOf("Ok"))
         }
 
         if(v?.id==addDie.id){
-            val mainIntent = Intent(this@DashBoardActivity, AddDieActivityNew::class.java)
-            startActivity(mainIntent)
+            navigateToAddDie()
         }
         if(v?.id==sync.id){
                 sync()
@@ -89,58 +84,17 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
             navigateToOperatorSelection()
         }
         if(v?.id==logout.id){
-            val builder = android.app.AlertDialog.Builder(this)
-            builder.setTitle(
-                this.resources.getString(R.string.app_name)
-            )
-
-            builder.setCancelable(false)
-            builder.setMessage(this@DashBoardActivity.resources.getString(R.string.logout_alert_message))
-            builder.setPositiveButton(
-                this@DashBoardActivity.resources.getString(R.string.alert_ok)
-            ) { dialog, which ->
-                val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
-                editor.clear()
-                editor.apply()
-                navigateToLogin()
-                dialog.dismiss()
-                if (alertDialog!!.isShowing) {
-                    alertDialog!!.dismiss()
-                }
-            }
-            builder.setNegativeButton(
-                this@DashBoardActivity.resources.getString(R.string.alert_cancel)
-            ) { dialog, which ->
-                dialog.dismiss()
-            }
-            alertDialog = builder.create()
-            alertDialog?.show()
+            showCustomAlert("Would you like to logout of the app?","logoutDialog", listOf("Ok","Cancel"))
         }
     }
-    override fun onBackPressed() {
-        val builder = android.app.AlertDialog.Builder(this)
-        builder.setTitle(
-            this.resources.getString(R.string.app_name)
+    private fun showCustomAlert(alertMessage: String, functionality: String,buttonList:List<String>){
+        var customDialogModel= CustomDialogModel(getString(R.string.app_name),alertMessage,null,
+            buttonList
         )
-
-        builder.setCancelable(false)
-        builder.setMessage(this@DashBoardActivity.resources.getString(R.string.exit_app_alert_message))
-        builder.setPositiveButton(
-            this@DashBoardActivity.resources.getString(R.string.alert_ok)
-        ) { dialog, which ->
-            dialog.dismiss()
-            if (alertDialog!!.isShowing) {
-                alertDialog!!.dismiss()
-            }
-            super.onBackPressed()
-        }
-        builder.setNegativeButton(
-            this@DashBoardActivity.resources.getString(R.string.alert_cancel)
-        ) { dialog, which ->
-            dialog.dismiss()
-        }
-        alertDialog = builder.create()
-        alertDialog?.show()
+        DialogUtils.showCustomAlert(this,customDialogModel,this,functionality)
+    }
+    override fun onBackPressed() {
+        showCustomAlert("Do you want to exit app ?","backPressedDialog", listOf("Ok","Cancel"))
     }
     private fun navigateToOperatorSelection() {
         val mainIntent = Intent(this, OperatorSelectActivityWithWebservice::class.java)
@@ -151,31 +105,39 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(mainIntent)
         finish()
     }
+    private fun navigateToAddDie(){
+        val mainIntent = Intent(this@DashBoardActivity, AddDieActivityNew::class.java)
+        startActivity(mainIntent)
+    }
 private fun sync(){
     var  videosList: List<VideoModel>? =null
-//    vm.getAllVideos().observe(this, Observer {
-//        videosList=it
     subscribeOnBackground {
         videosList=vm.getVideos()
-        Log.i("Videos observed size", "${videosList?.size}")
-        val iterator = videosList!!.listIterator()
-       if(iterator.hasNext()){
-          val item=iterator.next()
-           if(!item.status){
-               save(this, item)
-           }
-       }else{
-           runOnUiThread(Runnable {
-               DialogUtils.showNormalAlert(
-                   this@DashBoardActivity,
-                   this@DashBoardActivity.resources.getString(R.string.alert_title),
-                   this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message),
-               )
-           })
-       }
+        if(videosList!!.isEmpty()){
+            runOnUiThread(Runnable {
+                showCustomAlert(
+                    "No video data available to sync !!", "videoSyncSuccessDialog",
+                    listOf("Ok")
+                )
+            })
+        }else {
+            Log.i("Videos observed size", "${videosList?.size}")
+            val iterator = videosList!!.listIterator()
+            if (iterator.hasNext()) {
+                val item = iterator.next()
+                if (!item.status) {
+                    save(this, item)
+                }
+            } else {
+                runOnUiThread(Runnable {
+                    showCustomAlert(
+                        "All available dies are synced successfully", "videoSyncSuccessDialog",
+                        listOf("Ok")
+                    )
+                })
+            }
+        }
     }
-
-   // })
 }
     @Throws(IOException::class)
     private fun save(context: Context,item:VideoModel) {
@@ -236,11 +198,6 @@ private fun sync(){
                                 Log.i("response update status ", "$status")
                                 sync()
                             })
-//                            DialogUtils.showNormalAlert(
-//                                this@DashBoardActivity,
-//                                "Alert!!",
-//                                "Data saved successfully"
-//                            )
                         }else if(statusCode==401){
                             runOnUiThread(Runnable {
                                 item.status=true
@@ -248,17 +205,8 @@ private fun sync(){
                                 Log.i("response update status ", "$status")
                                 sync()
                             })
-//                            DialogUtils.showNormalAlert(
-//                                this@DashBoardActivity,
-//                                "Alert!!",
-//                                "File Exists"
-//                            )
                         }else{
-                            DialogUtils.showNormalAlert(
-                                this@DashBoardActivity,
-                                this@DashBoardActivity.resources.getString(R.string.alert_title),
-                                this@DashBoardActivity.resources.getString(R.string.api_server_alert_message)
-                            )
+                            showCustomAlert("Server Error","webServiceError", listOf("Ok"))
                         }
                         if (progressDialog.isShowing) {
                             progressDialog.dismiss()
@@ -283,13 +231,39 @@ private fun sync(){
             })
         } else {
             runOnUiThread(Runnable {
-                DialogUtils.showNormalAlert(
-                    this,
-                    this@DashBoardActivity.resources.getString(R.string.alert_title),
-                    this@DashBoardActivity.resources.getString(R.string.network_alert_message)
-                )
+                showCustomAlert("Please check your internet connection and try again","internetConnectionErrorDialog",
+                    listOf("Ok"))
             })
 
+        }
+    }
+
+    override fun onCustomDialogButtonClicked(buttonName: String,functionality:String) {
+        if(buttonName.equals("Ok",true)){
+            if(functionality.equals("noOperatorFunctionalityDialog",true)){
+                //No action required.
+            }
+            if(functionality.equals("backPressedDialog",true)){
+                super.onBackPressed()
+            }
+            if(functionality.equals("logoutDialog",true)){
+                val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
+                editor.clear()
+                editor.apply()
+                navigateToLogin()
+            }
+            if(functionality.equals("videoSyncSuccessDialog",true)){
+                //No action required on sync
+            }
+            if(functionality.equals("webServiceError",true)){
+                //No action required on sync
+            }
+            if(functionality.equals("internetConnectionErrorDialog",true)){
+                //No action required on internet connection error
+            }
+        }
+        if(buttonName.equals("Cancel",true)){
+            //No action required. Just exit dialog.
         }
     }
 }
