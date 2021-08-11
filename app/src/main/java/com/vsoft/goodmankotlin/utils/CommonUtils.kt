@@ -9,6 +9,8 @@ class CommonUtils {
     companion object {
 
 
+        const val IS_NEW_DIE = "is_new_die"
+
         const val BATTERY_DIALOG = "batteryDialog"
         const val PERMISSIONS_DIALOG = "permissionsDialog"
         const val TIMER_DIALOG = "timerDialog"
@@ -17,6 +19,12 @@ class CommonUtils {
         const val DIE_BOTH_DIALOG = "dieBoth"
         const val DIE_TOP_DIALOG = "dieTop"
         const val DIE_BOTTOM_DIALOG = "dieBottom"
+
+
+        const val VALIDATION_OPERATOR_SELECT_DIALOG = "validation_alert_select_dialog"
+
+
+
 
 
         const val SHARED_PREF_FILE = "goodman_shared_preference"

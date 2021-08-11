@@ -34,7 +34,6 @@
     <string name="login">Login</string>
 
 
-
     <!--Common Messages-->
     <string name="api_failure_alert_title">Unable to communicate with server.</string>
     <string name="api_server_alert_message">Server Error.</string>
@@ -108,7 +107,6 @@
     <string name="video_preview_alert_message">You can use retake to retake a video after cancelling this dialog or press OK to navigate to Dashboard?</string>
 
 
-
     <!--Masking Screen-->
     <string name="instructions"><b>Instructions :</b> Please insert a punch into the displayed die.</string>
     <string name="punch">Punch</string>
@@ -116,7 +114,6 @@
     <string name="correct"><b>Correct : </b></string>
     <string name="label"><b>Label : </b></string>
     <string name="ground_truth"><b>Ground Truth : </b></string>
-
 
 
 </resources>

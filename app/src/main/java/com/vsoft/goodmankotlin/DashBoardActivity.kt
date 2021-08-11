@@ -117,7 +117,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     private fun navigateToOperatorSelection() {
-        val mainIntent = Intent(this, OperatorSelectActivityWithWebservice::class.java)
+        /*val mainIntent = Intent(this, OperatorSelectActivityWithWebservice::class.java)
+        startActivity(mainIntent)*/
+
+        val mainIntent = Intent(this, AddDieOperatorSelectActivity::class.java)
+        mainIntent.putExtra(CommonUtils.IS_NEW_DIE,false)
         startActivity(mainIntent)
     }
 
@@ -128,7 +132,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     private fun navigateToAddDie() {
-        val mainIntent = Intent(this@DashBoardActivity, AddDieActivityNew::class.java)
+      /*  val mainIntent = Intent(this@DashBoardActivity, AddDieActivityNew::class.java)
+        startActivity(mainIntent)*/
+
+        val mainIntent = Intent(this, AddDieOperatorSelectActivity::class.java)
+        mainIntent.putExtra(CommonUtils.IS_NEW_DIE,true)
         startActivity(mainIntent)
     }
 
