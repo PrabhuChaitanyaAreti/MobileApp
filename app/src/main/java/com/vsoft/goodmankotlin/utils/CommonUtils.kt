@@ -19,7 +19,13 @@ class CommonUtils {
         const val DIE_BOTH_DIALOG = "dieBoth"
         const val DIE_TOP_DIALOG = "dieTop"
         const val DIE_BOTTOM_DIALOG = "dieBottom"
-
+        const val VALIDATION_DIALOG="validationDialog"
+        const val WEB_SERVICE_RESPONSE_CODE_401="webServiceResponseCode401"
+        const val WEB_SERVICE_RESPONSE_CODE_NON_401="webServiceResponseCodeNon401"
+        const val WEB_SERVICE_CALL_FAILED="webServiceCallFailed"
+        const val VIDEO_SYNC_DIALOG="videoSyncDialog"
+        const val LOGOUT_DIALOG="logoutDialog"
+        const val NO_OPERATOR_FUNCTIONALITY_IMPLEMENTED_DIALOG="noOperatorFunctionalityImplementedDialog"
 
         const val VALIDATION_OPERATOR_SELECT_DIALOG = "validation_alert_select_dialog"
 

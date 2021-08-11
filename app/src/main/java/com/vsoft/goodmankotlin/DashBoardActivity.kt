@@ -76,9 +76,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     override fun onClick(v: View?) {
         if (v?.id == addOperator.id) {
             showCustomAlert(
-                "Functionality will be updated soon..",
-                "noOperatorFunctionalityDialog",
-                listOf("Ok")
+                this@DashBoardActivity.resources.getString(R.string.add_operator_alert_message),
+                CommonUtils.NO_OPERATOR_FUNCTIONALITY_IMPLEMENTED_DIALOG,
+                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
             )
         }
 
@@ -93,9 +93,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
         if (v?.id == logout.id) {
             showCustomAlert(
-                "Would you like to logout of the app?",
-                "logoutDialog",
-                listOf("Ok", "Cancel")
+                this@DashBoardActivity.resources.getString(R.string.logout_alert_message),
+                CommonUtils.LOGOUT_DIALOG,
+                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok), this@DashBoardActivity.resources.getString(R.string.alert_cancel))
             )
         }
     }
@@ -113,7 +113,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     override fun onBackPressed() {
-        showCustomAlert("Do you want to exit app ?", "backPressedDialog", listOf("Ok", "Cancel"))
+        showCustomAlert(this@DashBoardActivity.resources.getString(R.string.exit_app_alert_message), CommonUtils.BACK_PRESSED_DIALOG, listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok), this@DashBoardActivity.resources.getString(R.string.alert_cancel)))
     }
 
     private fun navigateToOperatorSelection() {
@@ -147,8 +147,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             if (videosList!!.isEmpty()) {
                 runOnUiThread(Runnable {
                     showCustomAlert(
-                        "No video data available to sync !!", "videoSyncSuccessDialog",
-                        listOf("Ok")
+                        this@DashBoardActivity.resources.getString(R.string.no_videos_available), CommonUtils.VIDEO_SYNC_DIALOG,
+                        listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                     )
                 })
             } else {
@@ -162,8 +162,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 } else {
                     runOnUiThread(Runnable {
                         showCustomAlert(
-                            "All available dies are synced successfully", "videoSyncSuccessDialog",
-                            listOf("Ok")
+                            this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success), CommonUtils.VIDEO_SYNC_DIALOG,
+                            listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                         )
                     })
                 }
@@ -242,7 +242,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                                 sync()
                             })
                         } else {
-                            showCustomAlert("Server Error", "webServiceError", listOf("Ok"))
+                            showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_server_alert_message), CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
                         }
                         if (progressDialog.isShowing) {
                             progressDialog.dismiss()
@@ -256,8 +256,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 }
 
                 override fun onFailure(call: Call<videoUploadSaveRespose?>, t: Throwable) {
-                    showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_failure_alert_title),"networkFailureDialog",
-                        listOf("Ok"))
+                    showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_failure_alert_title),CommonUtils.WEB_SERVICE_CALL_FAILED,
+                        listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
                     if (progressDialog.isShowing) {
                         progressDialog.dismiss()
                     }
@@ -266,9 +266,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         } else {
             runOnUiThread(Runnable {
                 showCustomAlert(
-                    "Please check your internet connection and try again",
-                    "internetConnectionErrorDialog",
-                    listOf("Ok")
+                    this@DashBoardActivity.resources.getString(R.string.network_alert_message),
+                    CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                    listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                 )
             })
 
@@ -276,33 +276,33 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
-        if (buttonName.equals("Ok", true)) {
-            if (functionality.equals("noOperatorFunctionalityDialog", true)) {
+        if (buttonName.equals(this@DashBoardActivity.resources.getString(R.string.alert_ok), true)) {
+            if (functionality.equals(CommonUtils.NO_OPERATOR_FUNCTIONALITY_IMPLEMENTED_DIALOG, true)) {
                 //No action required.
             }
-            if (functionality.equals("backPressedDialog", true)) {
+            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
                 super.onBackPressed()
             }
-            if (functionality.equals("logoutDialog", true)) {
+            if (functionality.equals(CommonUtils.LOGOUT_DIALOG, true)) {
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.clear()
                 editor.apply()
                 navigateToLogin()
             }
-            if (functionality.equals("videoSyncSuccessDialog", true)) {
+            if (functionality.equals(CommonUtils.VIDEO_SYNC_DIALOG, true)) {
                 //No action required on sync
             }
-            if (functionality.equals("webServiceError", true)) {
+            if (functionality.equals(CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, true)) {
                 //No action required on sync
             }
-            if (functionality.equals("internetConnectionErrorDialog", true)) {
+            if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
                 //No action required on internet connection error
             }
-            if(functionality.equals("networkFailureDialog",true)){
+            if(functionality.equals(CommonUtils.WEB_SERVICE_CALL_FAILED,true)){
                 //No action required
             }
         }
-        if (buttonName.equals("Cancel", true)) {
+        if (buttonName.equals(this@DashBoardActivity.resources.getString(R.string.alert_cancel), true)) {
             //No action required. Just exit dialog.
         }
     }

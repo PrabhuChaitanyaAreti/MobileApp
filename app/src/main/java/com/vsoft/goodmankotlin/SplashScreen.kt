@@ -16,7 +16,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.vsoft.goodmankotlin.utils.CameraUtils
-import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
@@ -108,18 +108,18 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
      */
     private fun showPermissionsAlert() {
         DialogUtils.showCustomAlert(this, CustomDialogModel(this.resources.getString(R.string.app_name),this@SplashScreen.resources.getString(R.string.settings_message),null,
-            listOf(this@SplashScreen.resources.getString(R.string.settings_option),this@SplashScreen.resources.getString(R.string.alert_ok))),this,"permissionDialog")
+            listOf(this@SplashScreen.resources.getString(R.string.settings_option),this@SplashScreen.resources.getString(R.string.alert_ok))),this,CommonUtils.PERMISSIONS_DIALOG)
     }
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
-        if (buttonName.equals("Ok", true)) {
-            if (functionality.equals("permissionDialog", true)) {
+        if (buttonName.equals(this@SplashScreen.resources.getString(R.string.alert_ok), true)) {
+            if (functionality.equals(CommonUtils.PERMISSIONS_DIALOG, true)) {
                 //No action required, just display
                 super.onBackPressed()
             }
         }
         if (buttonName.equals(this@SplashScreen.resources.getString(R.string.settings_option), true)) {
-            if (functionality.equals("permissionDialog", true)) {
+            if (functionality.equals(CommonUtils.PERMISSIONS_DIALOG, true)) {
                 CameraUtils.openSettings(this@SplashScreen)
             }
         }

@@ -3,6 +3,7 @@ package com.vsoft.goodmankotlin
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.*
 import android.os.Build
 import android.os.Bundle
@@ -20,13 +21,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.vsoft.goodmankotlin.adapter.LeftMenuAdapter
 import com.vsoft.goodmankotlin.adapter.RightMenuAdapter
+import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.interfaces.RightMenuItemClickCallBack
 import com.vsoft.goodmankotlin.model.*
 import com.vsoft.goodmankotlin.utils.CommonUtils
+import com.vsoft.goodmankotlin.utils.DialogUtils
 import java.io.InputStream
 
 
-class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemClickCallBack {
+class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemClickCallBack,
+    CustomDialogCallback {
     private lateinit var ivCapturedDie: ImageView
     private lateinit var ivOriginalDie: ImageView
     private lateinit var regionArrayList: ArrayList<Region>
@@ -436,29 +440,23 @@ class MaskingActivity : AppCompatActivity(),View.OnTouchListener,RightMenuItemCl
         displayClickedDieDetails(uniqueRightMenuShapes[clickedPos])
     }
     override fun onBackPressed() {
-        val builder = android.app.AlertDialog.Builder(this)
-        builder.setTitle(
-            this.getResources().getString(R.string.app_name)
-        )
-        builder.setCancelable(false)
-        builder.setMessage(this.getResources().getString(R.string.dashboard_navigation_alert_message))
-        builder.setPositiveButton(
-            this.getResources().getString(R.string.alert_ok)
-        ) { dialog, which ->
-            if (alertDialog!!.isShowing) {
-                alertDialog!!.dismiss()
+        DialogUtils.showCustomAlert(this, CustomDialogModel(this.resources.getString(R.string.app_name),this.resources.getString(R.string.dashboard_navigation_alert_message),null,
+            listOf(this.resources.getString(R.string.alert_ok),this.resources.getString(R.string.alert_cancel))),this,CommonUtils.BACK_PRESSED_DIALOG)
+    }
+
+    override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
+        if (buttonName.equals(this.resources.getString(R.string.alert_ok), true)) {
+            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
+                navigateToDashBoard()
             }
-            val mainIntent = Intent(this, DashBoardActivity::class.java)
+        }
+        if (buttonName.equals(this.resources.getString(R.string.alert_cancel), true)) {
+            //No action required. Just exit dialog.
+        }
+    }
+    fun navigateToDashBoard(){
+        val mainIntent = Intent(this, DashBoardActivity::class.java)
             mainIntent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(mainIntent)
-            //finish()
-        }
-        builder.setNegativeButton(
-            this.getResources().getString(R.string.alert_cancel)
-        ) { dialog, which ->
-            dialog.dismiss()
-        }
-        alertDialog = builder.create()
-        alertDialog?.show()
     }
 }
