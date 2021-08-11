@@ -106,25 +106,25 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                     if (pinStr!!.length == pinMaxDigits) {
                         screenNavigationWithPermissions()
                     } else {
-                        validationAlert("Please enter 4 digits Pin.", listOf<String>("Ok"))
+                        validationAlert(this.resources.getString(R.string.login_pin_validation_message), listOf<String>(this.resources.getString(R.string.alert_ok)))
                     }
                 } else {
-                    validationAlert("Please enter 4 digits Pin.", listOf<String>("Ok"))
+                    validationAlert(this.resources.getString(R.string.login_pin_validation_message), listOf<String>(this.resources.getString(R.string.alert_ok)))
                 }
             } else {
                 if (empIdStr.length < minEmpIdDigits) {
-                    validationAlert("Username must be minimum 6 digits.", listOf<String>("Ok"))
+                    validationAlert(this.resources.getString(R.string.login_username_validation_message_min), listOf<String>(this.resources.getString(R.string.alert_ok)))
                 } else {
                     validationAlert(
-                        "Username must be minimum 6 digits and maximum 8 digits.",
-                        listOf<String>("Ok")
+                        this.resources.getString(R.string.login_username_validation_message_range),
+                        listOf<String>(this.resources.getString(R.string.alert_ok))
                     )
                 }
             }
         } else {
             validationAlert(
-                "Username must be minimum 6 digits and maximum 8 digits.",
-                listOf<String>("Ok")
+                this.resources.getString(R.string.login_username_validation_message_range),
+                listOf<String>(this.resources.getString(R.string.alert_ok))
             )
         }
     }
@@ -160,11 +160,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                         } else if (statusCode == 401) {
                             showCustomAlert(
                                 this@LoginActivity.resources.getString(R.string.login_alert_message),
-                                "networkError401Dialog",
-                                listOf("Ok")
+                                CommonUtils.WEB_SERVICE_RESPONSE_CODE_401,
+                                listOf(this@LoginActivity.resources.getString(R.string.alert_ok))
                             )
                         } else {
-                            showCustomAlert("Server Error", "webServiceErrorDialog", listOf("Ok"))
+                            showCustomAlert(this@LoginActivity.resources.getString(R.string.api_server_alert_message), CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, listOf(this@LoginActivity.resources.getString(R.string.alert_ok)))
                         }
                         if (progressDialog!!.isShowing) {
                             progressDialog!!.dismiss()
@@ -180,8 +180,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                 override fun onFailure(call: Call<UserAuthResponse?>, t: Throwable) {
                     showCustomAlert(
                         this@LoginActivity.resources.getString(R.string.api_failure_alert_title),
-                        "networkFailureDialog",
-                        listOf("Ok")
+                        CommonUtils.WEB_SERVICE_CALL_FAILED,
+                        listOf(this@LoginActivity.resources.getString(R.string.alert_ok))
                     )
                     if (progressDialog!!.isShowing) {
                         progressDialog!!.dismiss()
@@ -190,9 +190,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
             })
         } else {
             showCustomAlert(
-                "Please check your internet connection and try again",
-                "internetConnectionErrorDialog",
-                listOf("Ok")
+                this.resources.getString(R.string.network_alert_message),
+                CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                listOf(this.resources.getString(R.string.alert_ok))
             )
         }
     }
@@ -204,7 +204,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
     }
 
     private fun validationAlert(alertMessage: String, buttonList: List<String>) {
-        showCustomAlert(alertMessage, "validationDialog", buttonList)
+        showCustomAlert(alertMessage, CommonUtils.VALIDATION_DIALOG, buttonList)
     }
 
     private fun showCustomAlert(
@@ -249,20 +249,20 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
     }
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
-        if (buttonName.equals("Ok", true)) {
-            if (functionality.equals("validationDialog", true)) {
+        if (buttonName.equals(this.resources.getString(R.string.alert_ok), true)) {
+            if (functionality.equals(CommonUtils.VALIDATION_DIALOG, true)) {
                 //No action required, just display
             }
-            if (functionality.equals("internetConnectionErrorDialog", true)) {
+            if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
                 //No action required on internet connection error
             }
-            if (functionality.equals("networkError401Dialog", true)) {
+            if (functionality.equals(CommonUtils.WEB_SERVICE_RESPONSE_CODE_401, true)) {
                 //No action required
             }
-            if (functionality.equals("networkFailureDialog", true)) {
+            if (functionality.equals(CommonUtils.WEB_SERVICE_CALL_FAILED, true)) {
                 //No action required
             }
-            if (functionality.equals("webServiceErrorDialog", true)) {
+            if (functionality.equals(CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, true)) {
                 //No action required
             }
         }
