@@ -176,7 +176,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 if (absPlayerInternal!!.isPlaying()) {
                     absPlayerInternal!!.stop()
                 }
-                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
+                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)
                 finish()
             }
@@ -517,7 +517,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
                 editor.apply()
 
-                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
+                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)
                 finish()
             } else if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
@@ -526,7 +526,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
                 editor.apply()
 
-                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivityNew::class.java)
+                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)
                 finish()
             }

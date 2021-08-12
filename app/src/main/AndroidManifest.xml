@@ -48,30 +48,11 @@
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".OperatorSelectActivity"
-            android:fitsSystemWindows="true"
-            android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".OperatorSelectActivityJava"
-            android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name=".OperatorSelectActivityWithWebservice"
-            android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
             android:name=".CameraActivity"
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".VideoRecordingActivity"
-            android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".VideoRecordActivityNew"
+            android:name=".VideoRecordActivity"
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
@@ -83,20 +64,10 @@
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.GoodManKotlin" />
         <activity
-            android:name=".AddDieActivity"
-            android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
             android:name=".DashBoardActivity"
             android:exported="true"
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".AddDieActivityNew"
-            android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-
         <activity
             android:name=".AddDieOperatorSelectActivity"
             android:exported="true"

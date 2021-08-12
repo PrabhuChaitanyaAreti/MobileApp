@@ -63,9 +63,11 @@
 
 
     <!--Login Screen-->
-    <string name="progress_dialog_message_login">Please wait .. Getting User Credentials</string>
+    <string name="progress_dialog_message_login">Please wait .. Validating Credentials</string>
     <string name="login_pin_validation_message">Please enter 4 digits Pin.</string>
     <string name="login_username_validation_message_range">Username must be minimum 6 digits and maximum 8 digits.</string>
+    <string name="login_username_validation_message_empty">Username should not be empty.</string>
+    <string name="login_password_validation_message_empty">Pin should not be empty.</string>
     <string name="login_username_validation_message_min">Username must be minimum 6 digits.</string>
     <string name="login_alert_message">Invalid Credentials.</string>
 

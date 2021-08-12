@@ -23,7 +23,7 @@ import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils
 import com.vsoft.goodmankotlin.utils.NetworkUtils.Companion.isNetworkAvailable
 import com.vsoft.goodmankotlin.utils.RetrofitClient
-import kotlinx.android.synthetic.main.activity_add_die_new.*
+import kotlinx.android.synthetic.main.activity_add_die_operator_select.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -51,7 +51,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_die_new)
+        setContentView(R.layout.activity_add_die_operator_select)
 
         isNewDie = intent.getBooleanExtra(CommonUtils.IS_NEW_DIE,false)
         Log.e("isNewDie", ""+isNewDie)
@@ -161,7 +161,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                         editor.apply()
 
                         val mainIntent =
-                            Intent(this@AddDieOperatorSelectActivity, VideoRecordActivityNew::class.java)
+                            Intent(this@AddDieOperatorSelectActivity, VideoRecordActivity::class.java)
                         startActivity(mainIntent)
                     }
                 }else{
@@ -179,7 +179,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE,false)
                 editor.apply()
                 val mainIntent =
-                    Intent(this@AddDieOperatorSelectActivity, VideoRecordActivityNew::class.java)
+                    Intent(this@AddDieOperatorSelectActivity, VideoRecordActivity::class.java)
                 startActivity(mainIntent)
                 //finish();
             }

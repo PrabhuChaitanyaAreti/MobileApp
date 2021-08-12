@@ -27,10 +27,9 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.system.exitProcess
 
 
-class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureListener,
+class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
     View.OnClickListener, CustomDialogCallback {
     private var mCamera: Camera? = null
     private var mMediaRecorder: MediaRecorder? = null
@@ -41,7 +40,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
     private var parameters: Camera.Parameters? = null;
     private var profile: CamcorderProfile? = null
 
-    private val TAG = VideoRecordActivityNew::class.java.simpleName
+    private val TAG = VideoRecordActivity::class.java.simpleName
 
     private var CAMERA_PERMISSION = Manifest.permission.CAMERA
     private var RECORD_AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
@@ -54,7 +53,6 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
     private var Counter: CountDownTimer? = null
     private val minutesToGo: Long = 1
     private val initialMillisToGo = minutesToGo * 1000 * 60
-    private var alertDialog: android.app.AlertDialog? = null
 
     private var recordDynamicTimer: Long = 20000
     private var recordmCountDown: CountDownTimer? = null
@@ -74,7 +72,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_video_record_new)
+        setContentView(R.layout.activity_video_record)
 
      /*   val finish= intent.getBooleanExtra("finish", false)
         if(finish) {
@@ -91,7 +89,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
 
         initProgress()
 
-        val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoRecordActivityNew)
+        val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoRecordActivity)
 
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
 
@@ -103,22 +101,22 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                 requestPermissions()
             }
             videoRecordPlayPause!!.visibility = View.GONE
-            settingsImgIcon!!.visibility = View.VISIBLE
+            settingsImgIcon!!.visibility = View.GONE
 
             videoOnlineImageButton!!.setOnClickListener(this)
             flashImgIcon!!.setOnClickListener(this)
             settingsImgIcon!!.setOnClickListener(this)
             videoRecordPlayPause!!.setOnClickListener(this)
         } else {
-            showCustomAlert(this@VideoRecordActivityNew.resources.getString(R.string.battery_alert_title),
-                this@VideoRecordActivityNew.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
-                listOf(this@VideoRecordActivityNew.resources.getString(R.string.alert_exit)))
+            showCustomAlert(this@VideoRecordActivity.resources.getString(R.string.battery_alert_title),
+                this@VideoRecordActivity.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
+                listOf(this@VideoRecordActivity.resources.getString(R.string.alert_exit)))
         }
     }
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
         progressDialog!!.setCancelable(false)
-        progressDialog!!.setMessage(this@VideoRecordActivityNew.resources.getString(R.string.progress_dialog_message_video_recording))
+        progressDialog!!.setMessage(this@VideoRecordActivity.resources.getString(R.string.progress_dialog_message_video_recording))
     }
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onClick(v: View?) {
@@ -225,7 +223,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
             isRecording = false
             releaseCamera()
             Log.d(TAG, "onVideoSaved ${mOutputFile.toString()}")
-            val i = Intent(this@VideoRecordActivityNew, VideoPreviewActivity::class.java)
+            val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
             i.putExtra("videoSavingFilePath", mOutputFile.toString())
             startActivity(i)
         } catch (e: RuntimeException) {
@@ -276,9 +274,9 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                 if (allPermissionsGranted) {
                     surface_view!!.surfaceTextureListener = this
                 } else {
-                    showCustomAlert(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_title),
-                        this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_message),CommonUtils.PERMISSIONS_DIALOG,
-                        listOf(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_option)))
+                    showCustomAlert(this@VideoRecordActivity.resources.getString(R.string.permissions_alert_title),
+                        this@VideoRecordActivity.resources.getString(R.string.permissions_alert_message),CommonUtils.PERMISSIONS_DIALOG,
+                        listOf(this@VideoRecordActivity.resources.getString(R.string.permissions_alert_option)))
                 }
             }
         }
@@ -539,10 +537,10 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                     Counter!!.cancel()
                     Counter = null
                 }
-                showCustomAlert(this@VideoRecordActivityNew.resources.getString(R.string.video_recording_timer_alert_title),
-                    this@VideoRecordActivityNew.resources.getString(R.string.video_recording_timer_alert_message),CommonUtils.TIMER_DIALOG,
-                    listOf(this@VideoRecordActivityNew.resources.getString(R.string.continue_str),
-                        this@VideoRecordActivityNew.resources.getString(R.string.alert_exit)))
+                showCustomAlert(this@VideoRecordActivity.resources.getString(R.string.video_recording_timer_alert_title),
+                    this@VideoRecordActivity.resources.getString(R.string.video_recording_timer_alert_message),CommonUtils.TIMER_DIALOG,
+                    listOf(this@VideoRecordActivity.resources.getString(R.string.continue_str),
+                        this@VideoRecordActivity.resources.getString(R.string.alert_exit)))
             }
         }
         Counter!!.start()
@@ -600,7 +598,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         val alertLayout: View = inflater.inflate(R.layout.camera_settings_dialog, null)
         val spResolution1 = alertLayout.findViewById<Spinner>(R.id.spResolution)
         val langAdapter1 = ArrayAdapter<CharSequence>(
-            this@VideoRecordActivityNew,
+            this@VideoRecordActivity,
             R.layout.spinner_text,
             cameraSizesArray
         )
@@ -608,23 +606,23 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         spResolution1.adapter = langAdapter1
         val spResolution2 = alertLayout.findViewById<Spinner>(R.id.spFPS)
         val langAdapter2 = ArrayAdapter<CharSequence>(
-            this@VideoRecordActivityNew,
+            this@VideoRecordActivity,
             R.layout.spinner_text,
             cameraFPSArray!!
         )
         langAdapter2.setDropDownViewResource(R.layout.simple_spinner_dropdown)
         spResolution2.adapter = langAdapter2
         val alert = AlertDialog.Builder(this)
-        alert.setTitle(this@VideoRecordActivityNew.resources.getString(R.string.settings_str))
+        alert.setTitle(this@VideoRecordActivity.resources.getString(R.string.settings_str))
         alert.setView(alertLayout)
         alert.setCancelable(false)
         alert.setNegativeButton(
-            this@VideoRecordActivityNew.resources.getString(R.string.alert_cancel)
+            this@VideoRecordActivity.resources.getString(R.string.alert_cancel)
         ) { dialog, which ->
             //Toast.makeText(getBaseContext(), "Cancel Clicked", Toast.LENGTH_SHORT).show();
         }
         alert.setPositiveButton(
-            this@VideoRecordActivityNew.resources.getString(R.string.alert_ok)
+            this@VideoRecordActivity.resources.getString(R.string.alert_ok)
         ) { dialog, which ->
             val size = spResolution1.selectedItem.toString()
             Log.d(TAG, "spinner ok click size $size")
@@ -732,11 +730,11 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         // else use whatever the default size is
     }
     override fun onBackPressed() {
-        showCustomAlert(this@VideoRecordActivityNew.resources.getString(R.string.app_name),
-            this@VideoRecordActivityNew.resources.getString(R.string.dashboard_navigation_alert_message),
+        showCustomAlert(this@VideoRecordActivity.resources.getString(R.string.app_name),
+            this@VideoRecordActivity.resources.getString(R.string.dashboard_navigation_alert_message),
             CommonUtils.BACK_PRESSED_DIALOG,
-            listOf(this@VideoRecordActivityNew.resources.getString(R.string.alert_ok),
-                this@VideoRecordActivityNew.resources.getString(R.string.alert_cancel)))
+            listOf(this@VideoRecordActivity.resources.getString(R.string.alert_ok),
+                this@VideoRecordActivity.resources.getString(R.string.alert_cancel)))
 
     }
 
@@ -752,7 +750,7 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
         Log.d("",
             "onCustomDialogButtonClicked buttonName::: $buttonName:::: functionality:::: $functionality"
         )
-        if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.alert_exit),true)) {
+        if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.alert_exit),true)) {
             if (functionality.equals(CommonUtils.BATTERY_DIALOG, true)) {
                 try {
                     val previewIntent = Intent()
@@ -774,11 +772,11 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                     e.printStackTrace()
                 }
             }
-        }else if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.permissions_alert_option),true)) {
+        }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.permissions_alert_option),true)) {
             if (functionality.equals(CommonUtils.PERMISSIONS_DIALOG, true)) {
                 requestPermissions()
             }
-        }else if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.continue_str),true)) {
+        }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.continue_str),true)) {
             if (functionality.equals(CommonUtils.TIMER_DIALOG, true)) {
                 if (Counter != null) {
                     Counter!!.cancel()
@@ -786,13 +784,13 @@ class VideoRecordActivityNew : AppCompatActivity(), TextureView.SurfaceTextureLi
                 }
                 backgroundTimer()
             }
-        }else if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.alert_ok),true)) {
+        }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.alert_ok),true)) {
             if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
                 val intent = Intent(this, DashBoardActivity::class.java)
                 intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             }
-        }else if(buttonName.equals(this@VideoRecordActivityNew.resources.getString(R.string.alert_cancel),true)) {
+        }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.alert_cancel),true)) {
                 //No action required. Just exit dialog.
         }
     }

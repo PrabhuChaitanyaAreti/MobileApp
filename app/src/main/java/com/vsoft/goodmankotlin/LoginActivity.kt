@@ -1,24 +1,21 @@
 package com.vsoft.goodmankotlin
 
 import android.Manifest
-import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -29,7 +26,6 @@ import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.UserAuthRequest
 import com.vsoft.goodmankotlin.model.UserAuthResponse
 import com.vsoft.goodmankotlin.utils.*
-import kotlinx.android.synthetic.main.activity_add_die.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -109,7 +105,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                         validationAlert(this.resources.getString(R.string.login_pin_validation_message), listOf<String>(this.resources.getString(R.string.alert_ok)))
                     }
                 } else {
-                    validationAlert(this.resources.getString(R.string.login_pin_validation_message), listOf<String>(this.resources.getString(R.string.alert_ok)))
+                    validationAlert(this.resources.getString(R.string.login_password_validation_message_empty), listOf<String>(this.resources.getString(R.string.alert_ok)))
                 }
             } else {
                 if (empIdStr.length < minEmpIdDigits) {
@@ -123,7 +119,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
             }
         } else {
             validationAlert(
-                this.resources.getString(R.string.login_username_validation_message_range),
+                this.resources.getString(R.string.login_username_validation_message_empty),
                 listOf<String>(this.resources.getString(R.string.alert_ok))
             )
         }
