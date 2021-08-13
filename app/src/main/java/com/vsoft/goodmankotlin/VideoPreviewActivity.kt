@@ -289,6 +289,9 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                                 response: Response<PunchResponse?>
                             ) {
                                 try {
+                                    if (progressDialog!!.isShowing) {
+                                        progressDialog!!.dismiss()
+                                    }
                                     Log.d(
                                         "TAG",
                                         "submit onClick onResponse message ::: " + response.message()
@@ -297,35 +300,54 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                                         "TAG",
                                         "submit onClick onResponse code ::: " + response.code()
                                     )
-                                    // Storing data into SharedPreferences
-                                    val sharedPreferences =
-                                        getSharedPreferences(
-                                            CommonUtils.SHARED_PREF_FILE,
-                                            MODE_PRIVATE
+                                    if (response.body()?.getGt()!=null) {
+                                        // Storing data into SharedPreferences
+                                        val sharedPreferences =
+                                            getSharedPreferences(
+                                                CommonUtils.SHARED_PREF_FILE,
+                                                MODE_PRIVATE
+                                            )
+                                        // Creating an Editor object to edit(write to the file)
+                                        val myEdit = sharedPreferences.edit()
+                                        // Storing the key and its value as the data fetched from edittext
+                                        // Once the changes have been made,
+                                        // we need to commit to apply those changes made,
+                                        // otherwise, it will throw an error
+                                        val gson = Gson()
+                                        val json: String = gson.toJson(response.body())
+                                        myEdit.putString(CommonUtils.RESPONSE, json)
+                                        myEdit.apply()
+                                        val intent = Intent(
+                                            this@VideoPreviewActivity,
+                                            MaskingActivity::class.java
                                         )
-                                    // Creating an Editor object to edit(write to the file)
-                                    val myEdit = sharedPreferences.edit()
-                                    // Storing the key and its value as the data fetched from edittext
-                                    // Once the changes have been made,
-                                    // we need to commit to apply those changes made,
-                                    // otherwise, it will throw an error
-                                    val gson = Gson()
-                                    val json: String = gson.toJson(response.body())
-                                    myEdit.putString(CommonUtils.RESPONSE, json)
-                                    myEdit.apply()
-                                    val intent = Intent(
-                                        this@VideoPreviewActivity,
-                                        MaskingActivity::class.java
-                                    )
-                                    startActivity(intent)
-                                    finish()
-
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                    if (progressDialog!!.isShowing) {
-                                        progressDialog!!.dismiss()
+                                        startActivity(intent)
+                                        finish()
+                                    }else {
+                                        if (progressDialog!!.isShowing) {
+                                            progressDialog!!.dismiss()
+                                        }
+                                        DialogUtils.showCustomAlert(
+                                            this@VideoPreviewActivity,
+                                            CustomDialogModel(
+                                                this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                                                "Invalid response",
+                                                null,
+                                                listOf(
+                                                    this@VideoPreviewActivity.resources.getString(
+                                                        R.string.alert_ok
+                                                    )
+                                                )
+                                            ), this@VideoPreviewActivity, "invalidResponse"
+                                        )
                                     }
-                                }
+
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        if (progressDialog!!.isShowing) {
+                                            progressDialog!!.dismiss()
+                                        }
+                                    }
                             }
 
                             override fun onFailure(call: Call<PunchResponse?>, t: Throwable) {
