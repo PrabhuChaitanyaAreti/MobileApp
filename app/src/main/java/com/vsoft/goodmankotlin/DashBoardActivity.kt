@@ -41,6 +41,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
     private var sharedPreferences: SharedPreferences? = null
+    private var isSyncing=false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -145,13 +146,25 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         subscribeOnBackground {
             videosList = vm.getVideos()
             if (videosList!!.isEmpty()) {
-                runOnUiThread(Runnable {
-                    showCustomAlert(
-                        this@DashBoardActivity.resources.getString(R.string.no_videos_available), CommonUtils.VIDEO_SYNC_DIALOG,
-                        listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
-                    )
-                })
+                if(!isSyncing) {
+                    runOnUiThread(Runnable {
+                        showCustomAlert(
+                            this@DashBoardActivity.resources.getString(R.string.no_videos_available),
+                            CommonUtils.VIDEO_SYNC_DIALOG,
+                            listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                        )
+                    })
+                }else{
+                    isSyncing=false
+                    runOnUiThread(Runnable {
+                        showCustomAlert(
+                            this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success), CommonUtils.VIDEO_SYNC_DIALOG,
+                            listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                        )
+                    })
+                }
             } else {
+                isSyncing=true
                 Log.i("Videos observed size", "${videosList?.size}")
                 val iterator = videosList!!.listIterator()
                 if (iterator.hasNext()) {
