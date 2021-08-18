@@ -54,7 +54,6 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
     private lateinit var uniqueDiesDisplayed: ArrayList<Unique_results>
     private lateinit var dialogShowInfo: Dialog
     private lateinit var optionsMenu: Menu
-    private var alertDialog: android.app.AlertDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.hamburg_menu_icon);// set drawable icon
@@ -157,7 +156,6 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
             incorrectShapes.size,
             undetectedShapes.size
         )
-        loadRightSideMenu(incorrectShapes, missedShapes)
         drawMask()
     }
 
@@ -366,10 +364,14 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
             //now adding the adapter to recyclerview
             rightSideMenu.adapter = adapter
         } else {
-            val item: MenuItem = optionsMenu.findItem(R.id.rightMenu)
-            item.isVisible = false
-            rightSideMenu.adapter = null
-            rightSideMenu.visibility = View.GONE
+            try {
+                val item: MenuItem = optionsMenu.findItem(R.id.rightMenu)
+                item.isVisible = false
+                rightSideMenu.adapter = null
+                rightSideMenu.visibility = View.GONE
+            }catch (e:Exception){
+                println(e.printStackTrace())
+            }
         }
     }
 
@@ -377,6 +379,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         // Inflate the menu; this adds items to the action bar if it is present.
         optionsMenu = menu!!
         menuInflater.inflate(R.menu.right_menu, menu)
+        loadRightSideMenu(incorrectShapes, missedShapes)
         return true
     }
 
@@ -542,7 +545,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         }
     }
 
-    fun navigateToDashBoard() {
+    private fun navigateToDashBoard() {
         val mainIntent = Intent(this, DashBoardActivity::class.java)
         mainIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(mainIntent)
