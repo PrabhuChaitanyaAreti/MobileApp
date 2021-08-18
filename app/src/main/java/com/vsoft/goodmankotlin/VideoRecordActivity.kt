@@ -398,16 +398,16 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
                     isRecording = true
 
-                    Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                    Handler(Looper.getMainLooper()).post(Runnable {
                         // enable stop button
                         runOnUiThread {
-                            if(progressDialog.isShowing){
-                                progressDialog.dismiss()
-                            }
                             videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
                             settingsImgIcon!!.visibility = View.GONE
                             videoRecordPlayPause!!.visibility = View.VISIBLE
                             videoOnlineImageButton!!.setImageResource(R.drawable.video_record_stop_new)
+                            if(progressDialog.isShowing){
+                                progressDialog.dismiss()
+                            }
                             recordmCountDown = object : CountDownTimer(recordDynamicTimer, 1000) {
                                 override fun onFinish() {
                                     stopRecording()
@@ -418,11 +418,11 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
                                             TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
                                         )
-                                    timeleftTxt!!.setText("$recordSecondsLeft/20")
+                                    timeleftTxt!!.text = "$recordSecondsLeft/20"
                                 }
                             }.start()
                         }
-                    }, 1000)
+                    })
                 } catch (e: Exception) {
                     e.printStackTrace()
                     // prepare didn't work, release the camera
