@@ -51,11 +51,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
      * Background and Countdown timer variables
      */
     private var Counter: CountDownTimer? = null
-    private val minutesToGo: Long = 1
-    private val initialMillisToGo = minutesToGo * 1000 * 60
+    private val idleTime: Long = 5
+    private val idleTimeInMillis = idleTime * 1000 * 60
 
-    private var recordDynamicTimer: Long = 20000
-    private var recordmCountDown: CountDownTimer? = null
+    private var videoMaxTimeInMillis: Long = 2*60*1000
+    private var totalTimer: Long = videoMaxTimeInMillis/1000
+    private var recordMCountDown: CountDownTimer? = null
     private var recordSecondsLeft: Long = 0
 
     private var isFlashMode = false
@@ -160,12 +161,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     Counter!!.cancel()
                     Counter = null
                 }
-                if (recordmCountDown != null) {
-                    recordmCountDown!!.cancel()
-                    recordmCountDown = null
+                if (recordMCountDown != null) {
+                    recordMCountDown!!.cancel()
+                    recordMCountDown = null
                 }
                 backgroundTimer()
-                recordmCountDown = object : CountDownTimer(recordDynamicTimer, 1000) {
+                recordMCountDown = object : CountDownTimer(videoMaxTimeInMillis, 1000) {
                     override fun onFinish() {
                         println("resume onFinish  ")
                         stopRecording()
@@ -173,13 +174,10 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
                     override fun onTick(millisUntilFinished: Long) {
                         println("resume onTick millisUntilFinished $millisUntilFinished")
-                        recordSecondsLeft = millisUntilFinished;
+                        //recordSecondsLeft = millisUntilFinished;
                         recordSecondsLeft =
-                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
-                                TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                            )
-                        //String time = "" + String.format(FORMAT, hr, min, sec);
-                        timeleftTxt!!.setText("$recordSecondsLeft/20")
+                            millisUntilFinished / 1000
+                        timeleftTxt!!.text = "$recordSecondsLeft/"+totalTimer
                     }
                 }.start()
             } else {
@@ -188,7 +186,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 mMediaRecorder!!.pause()
 
                 println("pause recordSecondsLeft  $recordSecondsLeft")
-                recordDynamicTimer = (recordSecondsLeft.toInt() * 1000).toLong()
+                videoMaxTimeInMillis = (recordSecondsLeft.toInt() * 1000).toLong()
                 isPauseResume = true
                 if (mMediaRecorder != null) {
                     if (isRecording) {
@@ -199,9 +197,9 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     Counter!!.cancel()
                     Counter = null
                 }
-                if (recordmCountDown != null) {
-                    recordmCountDown!!.cancel()
-                    recordmCountDown = null
+                if (recordMCountDown != null) {
+                    recordMCountDown!!.cancel()
+                    recordMCountDown = null
                 }
             }
         }
@@ -307,9 +305,9 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             Counter!!.cancel()
             Counter = null
         }
-        if (recordmCountDown != null) {
-            recordmCountDown!!.cancel()
-            recordmCountDown = null
+        if (recordMCountDown != null) {
+            recordMCountDown!!.cancel()
+            recordMCountDown = null
         }
     }
 
@@ -408,17 +406,15 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                             if(progressDialog.isShowing){
                                 progressDialog.dismiss()
                             }
-                            recordmCountDown = object : CountDownTimer(recordDynamicTimer, 1000) {
+                            recordMCountDown = object : CountDownTimer(videoMaxTimeInMillis, 1000) {
                                 override fun onFinish() {
                                     stopRecording()
                                 }
 
                                 override fun onTick(millisUntilFinished: Long) {
-                                    recordSecondsLeft =
-                                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
-                                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                                        )
-                                    timeleftTxt!!.text = "$recordSecondsLeft/20"
+                                    println(millisUntilFinished)
+                                    recordSecondsLeft = millisUntilFinished / 1000
+                                    timeleftTxt!!.text = "$recordSecondsLeft/"+totalTimer
                                 }
                             }.start()
                         }
@@ -525,7 +521,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
      * Background timer initialize
      */
     private fun backgroundTimer() {
-        Counter = object : CountDownTimer(initialMillisToGo, 1000) {
+        Counter = object : CountDownTimer(idleTimeInMillis, 1000) {
             override fun onTick(millisUntilFinished1: Long) {
                 val secs = (millisUntilFinished1 / 1000).toInt() % 60
                 val minutes = (millisUntilFinished1 / (1000 * 60) % 60).toInt()
@@ -786,6 +782,10 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             }
         }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.alert_ok),true)) {
             if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
+                if (Counter != null) {
+                    Counter!!.cancel()
+                    Counter = null
+                }
                 val intent = Intent(this, DashBoardActivity::class.java)
                 intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
