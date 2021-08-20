@@ -26,6 +26,7 @@ class CommonUtils {
         const val VIDEO_SYNC_DIALOG="videoSyncDialog"
         const val LOGOUT_DIALOG="logoutDialog"
         const val NO_OPERATOR_FUNCTIONALITY_IMPLEMENTED_DIALOG="noOperatorFunctionalityImplementedDialog"
+        const val NO_DIE_DATA_DIALOG="noDieDialog"
 
         const val VALIDATION_OPERATOR_SELECT_DIALOG = "validation_alert_select_dialog"
 
@@ -37,6 +38,13 @@ class CommonUtils {
         const val APP_CENTER_ANALYTICS_SECRET_KEY="41d26db7-77ac-4c92-bc27-5910ea601d14"
         const val LOGIN_STATUS="loginStatus"
         const val SPLASH_DURATION=1*1000
+
+
+        const val IS_DIE_DATA_AVAILABLE="is_die_data_available"
+        const val DIE_DATA="die_data"
+        const val DIE_DATA_SYNC_TIME="die_data_sync_time"
+        const val DIE_DATA_SYNC_DAYS=2
+
 
         const val SYNC_VIDEO_API_DIE_ID="Die Id"
         const val SYNC_VIDEO_API_PART_ID="Part Id"

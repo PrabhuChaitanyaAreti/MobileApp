@@ -11,7 +11,8 @@
 
     <string name="verify_die">Verify Die</string>
     <string name="die">Die</string>
-    <string name="sync">Sync</string>
+    <string name="sync">Sync Videos</string>
+    <string name="sync_die">Sync die</string>
     <string name="operator">Operator</string>
     <string name="logout">Logout</string>
 
@@ -72,12 +73,14 @@
     <string name="login_alert_message">Invalid Credentials.</string>
 
     <!--Dashboard Screen-->
-    <string name="progress_dialog_message_sync">Please wait .. Saving video will take time..</string>
+    <string name="progress_dialog_message_sync_videos">Please wait .. Saving video will take time..</string>
     <string name="add_operator_alert_message">Functionality will be updated soon..</string>
     <string name="logout_alert_message">Would you like to logout?</string>
     <string name="exit_app_alert_message">Do you want to exit app?</string>
     <string name="sync_videos_alert_message_success">All available dies are synced successfully.</string>
     <string name="no_videos_available">No video data available to sync !!</string>
+
+    <string name="no_die_id_data">No Die data available. please click on SyncDie to get the die details.</string>
 
 
     <!--ADD DIE Screen-->

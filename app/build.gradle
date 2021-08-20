@@ -6,14 +6,14 @@ plugins {
 }
 
 android {
-    signingConfigs {
+    /*signingConfigs {
         debug {
             storeFile file('/Users/PrabhuChaitanyaAreti/Desktop/GoodmanKeyStore/GoodmanKeystore')
             storePassword 'goodman123'
             keyAlias 'goodmankey'
             keyPassword 'goodman123'
         }
-    }
+    }*/
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 

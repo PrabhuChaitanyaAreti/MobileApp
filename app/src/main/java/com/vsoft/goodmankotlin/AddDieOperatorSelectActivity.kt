@@ -29,6 +29,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
+import com.google.gson.Gson
+
+
+
 
 class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
     private lateinit var btnContinue: Button
@@ -48,6 +52,10 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
 
     private var dieTypeArray: Array<String> = arrayOf(CommonUtils.DIE_TYPE_SELECT,CommonUtils.DIE_TYPE_TOP,CommonUtils.DIE_TYPE_BOTTOM)
     private lateinit var sharedPreferences: SharedPreferences
+
+    private var isDieDataAvailable = false
+    private var dieData = ""
+    private var dieDataSyncTime = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +77,22 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
         progressDialog?.setCancelable(false)
         progressDialog?.setMessage(this@AddDieOperatorSelectActivity.resources.getString(R.string.progress_dialog_message_dies_parts))
 
-        getDieAndPartData(false)
+      //  getDieAndPartData(false)
+
+        isDieDataAvailable = sharedPreferences!!.getBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
+        dieData = sharedPreferences!!.getString(CommonUtils.DIE_DATA, "").toString()
+        dieDataSyncTime = sharedPreferences!!.getString(CommonUtils.DIE_DATA_SYNC_TIME, "").toString()
+
+        Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  isDieDataAvailable $isDieDataAvailable")
+        Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  dieData $dieData")
+        Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  dieDataSyncTime $dieDataSyncTime")
+
+        if(isDieDataAvailable){
+            val gson = Gson()
+            val dieIdDetailsModel: DieIdDetailsModel = gson.fromJson(dieData, DieIdDetailsModel::class.java)
+            responses = dieIdDetailsModel.response
+        }
+
 
         if(isNewDie){
             dieTypeSpinner.visibility=View.VISIBLE
