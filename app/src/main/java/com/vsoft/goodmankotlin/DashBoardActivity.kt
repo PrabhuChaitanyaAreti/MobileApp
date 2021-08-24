@@ -144,12 +144,20 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
 
         if (v?.id == addDie.id) {
-            if(isDieDataAvailable){
-                navigateToAddDie()
-            }else{
+            if (CommonUtils.checkMemory()) {
+                if (isDieDataAvailable) {
+                    navigateToAddDie()
+                } else {
+                    showCustomAlert(
+                        this@DashBoardActivity.resources.getString(R.string.no_die_id_data),
+                        CommonUtils.NO_DIE_DATA_DIALOG,
+                        listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                    )
+                }
+            } else {
                 showCustomAlert(
-                    this@DashBoardActivity.resources.getString(R.string.no_die_id_data),
-                    CommonUtils.NO_DIE_DATA_DIALOG,
+                    this@DashBoardActivity.resources.getString(R.string.memory_message),
+                    CommonUtils.MEMORY_DIALOG,
                     listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                 )
             }
@@ -161,12 +169,20 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             sync()
         }
         if (v?.id == skip.id) {
-            if(isDieDataAvailable){
-                navigateToOperatorSelection()
+            if (CommonUtils.checkMemory()) {
+                if (isDieDataAvailable) {
+                    navigateToOperatorSelection()
+                } else {
+                    showCustomAlert(
+                        this@DashBoardActivity.resources.getString(R.string.no_die_id_data),
+                        CommonUtils.NO_DIE_DATA_DIALOG,
+                        listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                    )
+                }
             }else{
                 showCustomAlert(
-                    this@DashBoardActivity.resources.getString(R.string.no_die_id_data),
-                    CommonUtils.NO_DIE_DATA_DIALOG,
+                    this@DashBoardActivity.resources.getString(R.string.memory_message),
+                    CommonUtils.MEMORY_DIALOG,
                     listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                 )
             }
@@ -324,6 +340,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                                 item.status = true
                                 val status: Int = vm.update(item)
                                 Log.i("response update status ", "$status")
+                                CommonUtils.deletePath(item.video_path)
+                                vm.delete(item)
                                 sync()
                             })
                         } else if (statusCode == 401) {
