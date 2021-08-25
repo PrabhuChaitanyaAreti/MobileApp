@@ -229,8 +229,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                             this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_2),
                             CommonUtils.DIE_TOP_DIALOG,
                             listOf(
-                                this@VideoPreviewActivity.resources.getString(R.string.alert_ok),
-                                this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)
+                                this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                                this@VideoPreviewActivity.resources.getString(R.string.alert_no)
                             )
                         )
 
@@ -253,8 +253,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                             this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_3),
                             CommonUtils.DIE_BOTTOM_DIALOG,
                             listOf(
-                                this@VideoPreviewActivity.resources.getString(R.string.alert_ok),
-                                this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)
+                                this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                                this@VideoPreviewActivity.resources.getString(R.string.alert_no)
                             )
                         )
                     }
@@ -518,7 +518,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                     e.printStackTrace()
                 }
             }
-        } else if (buttonName.equals(
+        }
+        if (buttonName.equals(
                 this@VideoPreviewActivity.resources.getString(R.string.alert_ok),
                 true
             )
@@ -529,11 +530,19 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 startActivity(intent)
             } else if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
                 //No action required. Just exit dialog.
-            } else if (functionality.equals(CommonUtils.DIE_BOTH_DIALOG, true)) {
+            }
+        }
+        if (buttonName.equals(
+                this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                true
+            )
+        ) {
+             if (functionality.equals(CommonUtils.DIE_BOTH_DIALOG, true)) {
                 val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-            } else if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
+            }
+            if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
@@ -542,7 +551,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)
                 finish()
-            } else if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
+            }
+            if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
@@ -552,8 +562,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 startActivity(intent)
                 finish()
             }
-        } else if (buttonName.equals(
-                this@VideoPreviewActivity.resources.getString(R.string.alert_cancel),
+
+        }
+        if (buttonName.equals(
+                this@VideoPreviewActivity.resources.getString(R.string.alert_no),
                 true
             )
         ) {

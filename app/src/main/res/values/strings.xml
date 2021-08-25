@@ -42,6 +42,8 @@
     <string name="alert_title">Alert!!</string>
     <string name="alert_cancel">Cancel</string>
     <string name="alert_ok">OK</string>
+    <string name="alert_yes">YES</string>
+    <string name="alert_no">NO</string>
     <string name="alert_exit">Exit</string>
     <string name="continue_str">Continue</string>
     <string name="settings_str">Settings</string>

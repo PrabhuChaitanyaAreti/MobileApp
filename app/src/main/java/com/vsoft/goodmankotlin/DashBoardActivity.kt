@@ -366,11 +366,14 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 }
 
                 override fun onFailure(call: Call<videoUploadSaveRespose?>, t: Throwable) {
-                    showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_failure_alert_title),CommonUtils.WEB_SERVICE_CALL_FAILED,
-                        listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
-                    if (progressDialog.isShowing) {
-                        progressDialog.dismiss()
-                    }
+                    runOnUiThread(Runnable {
+                        showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
+                            listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
+                        }
+                    })
+
                 }
             })
         } else {
