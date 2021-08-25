@@ -27,6 +27,8 @@ class CommonUtils {
         const val LOGOUT_DIALOG="logoutDialog"
         const val NO_OPERATOR_FUNCTIONALITY_IMPLEMENTED_DIALOG="noOperatorFunctionalityImplementedDialog"
         const val NO_DIE_DATA_DIALOG="noDieDialog"
+        const val NO_DIE_ID_IN_LIST_FUNCTIONALITY="noDieIdInList"
+        const val NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY="noPartIdRelatedToDieIdInList"
 
         const val VALIDATION_OPERATOR_SELECT_DIALOG = "validation_alert_select_dialog"
 

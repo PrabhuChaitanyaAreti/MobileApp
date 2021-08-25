@@ -90,6 +90,11 @@
     <string name="add_die_alert_die_type_select">Please Select Die Type</string>
     <string name="add_die_alert_enter_part_id">Please enter Part Id</string>
     <string name="add_die_alert_enter_die_id">Please enter Die Id</string>
+    <string name="dieIdNotAvailableWarningMessage">Die id not available in the list, Do yo want to add it ?</string>
+    <string name="partIdNotAvailableWarningMessage">Part id not related to DieId, Do yo want to add it ?</string>
+    <string name="WarningDialogAddDie">Add Die</string>
+    <string name="WarningDialogAddPart">Add Part</string>
+    <string name="WarningDialogReCheck">Re-Check</string>
 
 
     <!--Operator Select Screen-->

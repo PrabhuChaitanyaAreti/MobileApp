@@ -47,6 +47,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
     private var responses: List<DieIdResponse> = java.util.ArrayList()
     private var isDataSynced = false
     private var isNewDie=false
+    private lateinit var selectedItem:Editable
 
     private lateinit var dieTypeStr:String
 
@@ -261,15 +262,43 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             searchET = dialogLayout.findViewById(R.id.search_et)
             buttonSelect=dialogLayout.findViewById(R.id.buttonSelect)
             buttonSelect.setOnClickListener {
-                var selectedItem=searchET.text
+                 selectedItem=searchET.text
                 if (selectedItem.isNotEmpty()) {
                     if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_OPERATOR)) {
                         operatorBT.text = selectedItem
                     } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_DIE_ID)) {
-                        dieBT.text = selectedItem
-                        partBT.text=""
+                        if(!dataModels.contains(ChoiceListOperator(selectedItem.toString()))) {
+                            DialogUtils.showCustomAlert(
+                                this, CustomDialogModel(
+                                    resources.getString(R.string.app_name),
+                                    resources.getString(R.string.dieIdNotAvailableWarningMessage),
+                                    null,
+                                    listOf(
+                                        resources.getString(R.string.WarningDialogAddDie),
+                                        resources.getString(R.string.WarningDialogReCheck)
+                                    )
+                                ), this, CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY
+                            )
+                        }else {
+                            dieBT.text = selectedItem
+                            partBT.text = ""
+                        }
                     } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_PART_ID)) {
-                        partBT.text = selectedItem
+                        if(!dataModels.contains(ChoiceListOperator(selectedItem.toString()))) {
+                            DialogUtils.showCustomAlert(
+                                this, CustomDialogModel(
+                                    resources.getString(R.string.app_name),
+                                    resources.getString(R.string.partIdNotAvailableWarningMessage),
+                                    null,
+                                    listOf(
+                                        resources.getString(R.string.WarningDialogAddPart),
+                                        resources.getString(R.string.WarningDialogReCheck)
+                                    )
+                                ), this, CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY
+                            )
+                        }else {
+                            partBT.text = selectedItem
+                        }
                     }
                     customAlertDialogSpinner.dismiss()
                 }
@@ -422,6 +451,31 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 //No action required. Just exit dialog.
             }else if (functionality.equals(CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG, true)) {
                 //No action required. Just exit dialog.
+            }
+        }
+        if(buttonName.equals(resources.getString(R.string.WarningDialogAddDie),true)){
+            if(functionality.equals(CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+                dieBT.text = selectedItem
+                partBT.text = ""
+            }
+            if(functionality.equals(CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+                //No functionality required
+            }
+        }
+        if(buttonName.equals(resources.getString(R.string.WarningDialogReCheck),true)){
+            if(functionality.equals(CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+                //No functionality required
+            }
+            if(functionality.equals(CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+                //No functionality required
+            }
+        }
+        if(buttonName.equals(resources.getString(R.string.WarningDialogAddPart),true)){
+            if(functionality.equals(CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+                //No functionality required
+            }
+            if(functionality.equals(CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+                partBT.text = selectedItem
             }
         }
     }
