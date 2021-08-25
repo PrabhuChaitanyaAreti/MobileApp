@@ -2,8 +2,15 @@ package com.vsoft.goodmankotlin.utils
 
 import android.content.Context
 import android.hardware.Camera
+import android.os.Environment
 import androidx.appcompat.app.AlertDialog
 import com.microsoft.appcenter.AppCenter
+import android.os.StatFs
+import android.text.TextUtils
+import java.io.File
+import java.lang.Exception
+import java.lang.StringBuilder
+
 
 class CommonUtils {
     companion object {
@@ -32,7 +39,7 @@ class CommonUtils {
 
         const val VALIDATION_OPERATOR_SELECT_DIALOG = "validation_alert_select_dialog"
 
-
+        const val MEMORY_DIALOG="memoryDialog"
 
 
 
@@ -183,5 +190,128 @@ class CommonUtils {
                 }
                 .setNegativeButton("CANCEL") { dialog, which -> }.show()
         }
+
+
+
+     fun externalMemoryAvailable(): Boolean {
+        return Environment.getExternalStorageState().equals(
+            Environment.MEDIA_MOUNTED
+        )
+    }
+
+     fun getAvailableInternalMemorySize(): String? {
+        val path: File = Environment.getDataDirectory()
+        val stat = StatFs(path.getPath())
+        val blockSize = stat.blockSizeLong
+        val availableBlocks = stat.availableBlocksLong
+        return formatSize(availableBlocks * blockSize)
+    }
+
+    fun getTotalInternalMemorySize(): String? {
+        val path: File = Environment.getDataDirectory()
+        val stat = StatFs(path.getPath())
+        val blockSize = stat.blockSizeLong
+        val totalBlocks = stat.blockCountLong
+        return formatSize(totalBlocks * blockSize)
+    }
+
+     fun getAvailableExternalMemorySize(): String? {
+        return if (externalMemoryAvailable()) {
+            val path: File = Environment.getExternalStorageDirectory()
+            val stat = StatFs(path.getPath())
+            val blockSize = stat.blockSizeLong
+            val availableBlocks = stat.availableBlocksLong
+            formatSize(availableBlocks * blockSize)
+        } else {
+            "10"
+        }
+    }
+
+    fun getTotalExternalMemorySize(): String? {
+        return if (externalMemoryAvailable()) {
+            val path: File = Environment.getExternalStorageDirectory()
+            val stat = StatFs(path.getPath())
+            val blockSize = stat.blockSizeLong
+            val totalBlocks = stat.blockCountLong
+            formatSize(totalBlocks * blockSize)
+        } else {
+            "10"
+        }
+    }
+
+     fun formatSize(size: Long): String? {
+        var size = size
+        var suffix: String? = null
+        if (size >= 1024) {
+            suffix = "KB"
+            size /= 1024
+            if (size >= 1024) {
+                suffix = "MB"
+                size /= 1024
+            }
+        }
+        val resultBuffer = StringBuilder(java.lang.Long.toString(size))
+        var commaOffset = resultBuffer.length - 3
+        while (commaOffset > 0) {
+            resultBuffer.insert(commaOffset, ',')
+            commaOffset -= 3
+        }
+        if (suffix != null) resultBuffer.append(suffix)
+        return resultBuffer.toString()
+    }
+
+    fun checkMemory(): Boolean {
+        var isMemory = false
+        val internalMemory: String? = getAvailableInternalMemorySize()
+        val externalMemory: String? = getAvailableExternalMemorySize()
+        println(" checkMemory internalMemory *** $internalMemory")
+        println("  checkMemory externalMemory *** $externalMemory")
+        if (!internalMemory!!.contains("KB") || !externalMemory!!.contains("KB")) {
+            var internalMemory1 = internalMemory.replace("MB".toRegex(), "")
+            var externalMemory1 = externalMemory!!.replace("MB".toRegex(), "")
+            if (internalMemory1.contains(",")) {
+                internalMemory1 = internalMemory1.replace(",".toRegex(), "")
+            }
+            if (externalMemory1.contains(",")) {
+                externalMemory1 = externalMemory1.replace(",".toRegex(), "")
+            }
+            println(" checkMemory internalMemory1 ***  $internalMemory1")
+            println("  checkMemory externalMemory1 ***  $externalMemory1")
+
+            if(Integer.parseInt(internalMemory1) <200  || Integer.parseInt(externalMemory1) <200 ) {
+                isMemory = false;
+            }else{
+                isMemory = true;
+            }
+        } else {
+            isMemory = false
+        }
+        println("  checkMemory isMemory $isMemory")
+        return isMemory
+    }
+
+
+    /**
+     * delete the video path from file path.
+     *
+     * @param filePath is a parameter
+     * @return returns value
+     */
+    fun deletePath(filePath: String): Boolean {
+        return try {
+            if (!TextUtils.isEmpty(filePath) && filePath.length > 0) {
+                //clearImage(filePath);
+                val imgFile = File(filePath)
+                if (imgFile.exists()) {
+                    return imgFile.delete()
+                }
+            }
+            false
+        } catch (e: Exception) {
+            //ADD THE ERROR MESSAGE
+            e.printStackTrace()
+            false
+        }
+    }
     }
 }

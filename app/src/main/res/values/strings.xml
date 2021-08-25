@@ -81,6 +81,10 @@
     <string name="no_videos_available">No video data available to sync !!</string>
 
     <string name="no_die_id_data">No Die data available. please click on SyncDie to get the die details.</string>
+    <string name="memory_message">Device have insufficient memory to Record the Video.</string>
+
+
+
 
 
     <!--ADD DIE Screen-->
