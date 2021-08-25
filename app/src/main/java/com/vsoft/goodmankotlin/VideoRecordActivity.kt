@@ -353,7 +353,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         mMediaRecorder!!.setProfile(profile)
 
         // Step 4: Set output file
-        mOutputFile = CameraHelper.getOutputMediaFile(CameraHelper.MEDIA_TYPE_VIDEO)
+        mOutputFile = CameraHelper.getOutputMediaFile(CameraHelper.MEDIA_TYPE_VIDEO,this@VideoRecordActivity)
         if (mOutputFile == null) {
             return false
         }

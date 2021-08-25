@@ -34,6 +34,8 @@ class CommonUtils {
         const val LOGOUT_DIALOG="logoutDialog"
         const val NO_OPERATOR_FUNCTIONALITY_IMPLEMENTED_DIALOG="noOperatorFunctionalityImplementedDialog"
         const val NO_DIE_DATA_DIALOG="noDieDialog"
+        const val NO_DIE_ID_IN_LIST_FUNCTIONALITY="noDieIdInList"
+        const val NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY="noPartIdRelatedToDieIdInList"
 
         const val VALIDATION_OPERATOR_SELECT_DIALOG = "validation_alert_select_dialog"
 
@@ -295,21 +297,27 @@ class CommonUtils {
      * @param filePath is a parameter
      * @return returns value
      */
-    fun deletePath(filePath: String): Boolean {
-        return try {
+    fun deletePath(filePath: String) {
+        try{
             if (!TextUtils.isEmpty(filePath) && filePath.length > 0) {
                 //clearImage(filePath);
                 val imgFile = File(filePath)
                 if (imgFile.exists()) {
-                    return imgFile.delete()
+                     imgFile.delete()
                 }
             }
-            false
         } catch (e: Exception) {
             //ADD THE ERROR MESSAGE
             e.printStackTrace()
-            false
         }
+//        val fdelete = File(filePath)
+//        if (fdelete.exists()) {
+//            if (fdelete.delete()) {
+//                System.out.println("file Deleted :$filePath")
+//            } else {
+//                System.out.println("file not Deleted :$filePath")
+//            }
+//        }
     }
     }
 }

@@ -59,6 +59,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         initProgress()
         init()
 
+
     }
 
     private fun init() {
@@ -77,6 +78,19 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         syncDie.setOnClickListener(this)
 
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
+
+        var videosList: List<VideoModel>? = null
+        subscribeOnBackground {
+            videosList = vm.getAllVideosList()
+                Log.d("TAG", "DashBoardActivity  videosList!!.size ${videosList!!.size}")
+//           if(videosList!!.size>0) {
+//                val iterator = videosList!!.listIterator()
+//                if (iterator.hasNext()) {
+//                    val item = iterator.next()
+//                    CommonUtils.deletePath(item.video_path)
+//                }
+//            }
+        }
 
         sharedPreferences = this.getSharedPreferences(
             CommonUtils.SHARED_PREF_FILE,
@@ -366,11 +380,14 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 }
 
                 override fun onFailure(call: Call<videoUploadSaveRespose?>, t: Throwable) {
-                    showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_failure_alert_title),CommonUtils.WEB_SERVICE_CALL_FAILED,
-                        listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
-                    if (progressDialog.isShowing) {
-                        progressDialog.dismiss()
-                    }
+                    runOnUiThread(Runnable {
+                        showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
+                            listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
+                        }
+                    })
+
                 }
             })
         } else {

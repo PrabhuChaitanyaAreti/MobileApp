@@ -32,6 +32,9 @@ class VideoViewModel(app: Application) : AndroidViewModel(app) {
     fun getVideos():List<VideoModel>?{
         return repository.getVideos()
     }
+    fun getAllVideosList():List<VideoModel>?{
+        return repository.getAllVideosList()
+    }
     fun updateSyncStatus(id:Int?):Int{
         return repository.updateSyncStatus(id)
     }

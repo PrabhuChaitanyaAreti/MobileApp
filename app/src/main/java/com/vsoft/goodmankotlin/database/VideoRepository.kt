@@ -47,6 +47,9 @@ class VideoRepository(application: Application) {
     fun getVideos(): List<VideoModel>? {
            return videoDao.getVideos()
     }
+    fun getAllVideosList(): List<VideoModel>? {
+        return videoDao.getAllVideosList()
+    }
     fun updateSyncStatus(id:Int?):Int{
         var status:Int=-1
         subscribeOnBackground {

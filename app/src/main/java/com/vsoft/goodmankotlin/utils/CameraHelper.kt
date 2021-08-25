@@ -1,6 +1,7 @@
 package com.vsoft.goodmankotlin
 
 import android.annotation.TargetApi
+import android.content.Context
 import android.hardware.Camera
 import android.os.Build
 import android.os.Environment
@@ -134,7 +135,7 @@ class CameraHelper {
          * @param type Media type. Can be video or image.
          * @return A file object pointing to the newly created file.
          */
-        fun getOutputMediaFile(type: Int): File? {
+        fun getOutputMediaFile(type: Int,context: Context): File? {
             // To be safe, you should check that the SDCard is mounted
             // using Environment.getExternalStorageState() before doing this.
             /*  if (!Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
@@ -145,15 +146,17 @@ class CameraHelper {
                 Environment.DIRECTORY_PICTURES), "CameraSample");*/
             val mediaStorageDir: File
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                mediaStorageDir = File(
-                    Environment
-                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).path + "/Goodman/Videos"
-                )
+//                mediaStorageDir = File(
+//                    Environment
+//                        .getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).path + "/Goodman/Videos"
+//                )
+                mediaStorageDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)!!.path+ "/Goodman/Videos")
             } else {
-                mediaStorageDir = File(
-                    Environment
-                        .getExternalStorageDirectory().path + "/Goodman/Videos"
-                )
+//                mediaStorageDir = File(
+//                    Environment
+//                        .getExternalStorageDirectory().path + "/Goodman/Videos"
+//                )
+                mediaStorageDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)!!.path+ "/Goodman/Videos")
             }
             // This location works best if you want the created images to be shared
             // between applications and persist after your app has been uninstalled.
