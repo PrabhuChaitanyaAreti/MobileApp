@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId "com.vsoft.goodmankotlin"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 5
         versionName "1.0"
@@ -42,9 +42,10 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 }
+allprojects { repositories {  flatDir { dirs 'libs' } } }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -96,9 +97,10 @@ dependencies {
 
    // implementation 'io.reactivex.rxjava2:rxjava:3.0.0'
    // implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-
     //app center
-        def appCenterSdkVersion = '4.1.0'
-        implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
-        implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+    def appCenterSdkVersion = '4.1.0'
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+
+    implementation 'com.arthenica:ffmpeg-kit-full:4.4.LTS'
 }

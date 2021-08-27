@@ -150,13 +150,15 @@ class CameraHelper {
 //                    Environment
 //                        .getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).path + "/Goodman/Videos"
 //                )
-                mediaStorageDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)!!.path+ "/Goodman/Videos")
+              //  mediaStorageDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)!!.path+ "/Goodman/Videos")
+                mediaStorageDir = context.getExternalFilesDir(null)!!
             } else {
 //                mediaStorageDir = File(
 //                    Environment
 //                        .getExternalStorageDirectory().path + "/Goodman/Videos"
 //                )
-                mediaStorageDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)!!.path+ "/Goodman/Videos")
+                //mediaStorageDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)!!.path+ "/Goodman/Videos")
+                mediaStorageDir = context.getExternalFilesDir(null)!!
             }
             // This location works best if you want the created images to be shared
             // between applications and persist after your app has been uninstalled.
