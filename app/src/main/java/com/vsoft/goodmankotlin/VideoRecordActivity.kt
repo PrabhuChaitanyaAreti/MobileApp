@@ -30,15 +30,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import android.media.AudioManager
 
-import com.arthenica.ffmpegkit.ReturnCode
-
-import com.arthenica.ffmpegkit.FFmpegKit
-
-
-
-
-
-
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
     View.OnClickListener, CustomDialogCallback {
     private var mCamera: Camera? = null
@@ -127,7 +118,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         //setMicMuted(false)
     }
 
-
+/*
     private fun setMicMuted(state: Boolean) {
         val myAudioManager =
             applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -142,15 +133,15 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
         // set back the original working mode
         myAudioManager.mode = workingAudioMode
-       /* val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+       *//* val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
 
         audioManager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
         audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true)
         audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
         audioManager.setStreamVolume(AudioManager.STREAM_DTMF, 0, 0)
         audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 0, 0)
-        audioManager.setStreamVolume(AudioManager.STREAM_RING, 0, 0)*/
-    }
+        audioManager.setStreamVolume(AudioManager.STREAM_RING, 0, 0)*//*
+    }*/
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
         progressDialog!!.setCancelable(false)
@@ -258,8 +249,14 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             isRecording = false
             releaseCamera()
             Log.d(TAG, "onVideoSaved ${mOutputFile.toString()}")
-
             val inputpath = mOutputFile.toString()
+            Log.d(TAG, "onVideoSaved inputpath $inputpath")
+
+            val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
+            i.putExtra(CommonUtils.VIDEO_SAVING_FILE_PATH, inputpath)
+            startActivity(i)
+
+           /* val inputpath = mOutputFile.toString()
             val outputpath=CameraHelper.getOutputMediaFile(CameraHelper.MEDIA_TYPE_VIDEO,this@VideoRecordActivity).toString()
 
             //val command= "ffmpeg -i $inputpath -c copy -an $outputpath"
@@ -289,7 +286,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                         session.failStackTrace
                     )
                 )
-            }
+            }*/
          /*   val rc = FFmpeg.execute(command)
             Log.i(Config.TAG, "rc $rc")
 
@@ -390,10 +387,15 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
     override fun onPause() {
         super.onPause()
+        setMicMuted(false)
         releaseMediaRecorder()
         releaseCamera()
     }
 
+    override fun onResume() {
+        super.onResume()
+        setMicMuted(true)
+    }
     private fun releaseMediaRecorder() {
         if (mMediaRecorder != null) {
             mMediaRecorder!!.reset()
@@ -500,6 +502,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 // Camera is available and unlocked, MediaRecorder is prepared,
                 // now you can start recording
                 try {
+                    setMicMuted(true)
                     mMediaRecorder!!.start()
 
                     isRecording = true
@@ -902,5 +905,24 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 //No action required. Just exit dialog.
         }
     }
+    private fun setMicMuted(state: Boolean) {
+//        AudioManager myAudioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        val myAudioManager =
+            applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        // get the working mode and keep it
+        val workingAudioMode = myAudioManager.mode
+        myAudioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
+        // change mic state only if needed
+        if (myAudioManager.isMicrophoneMute != state) {
+            myAudioManager.isMicrophoneMute = state
+        }
+
+        // set back the original working mode
+        myAudioManager.mode = workingAudioMode
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        setMicMuted(false)
+    }
 }

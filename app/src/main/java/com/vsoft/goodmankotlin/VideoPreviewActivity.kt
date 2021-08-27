@@ -117,7 +117,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
         if (batterLevel >= 15) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            path = intent.extras!!.getString("videoSavingFilePath").toString()
+            path = intent.extras!!.getString(CommonUtils.VIDEO_SAVING_FILE_PATH).toString()
             Log.d(TAG, "VideoPreviewActivity onCreate $path")
             videofilename = CommonUtils.getFileName(path)
             println("VideoPreviewActivity videofilename is $videofilename")
