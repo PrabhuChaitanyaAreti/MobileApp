@@ -2,6 +2,7 @@ package com.vsoft.goodmankotlin
 
 import android.Manifest
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.SurfaceTexture
@@ -27,6 +28,10 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import android.media.AudioManager
+
+
+
 
 
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
@@ -283,10 +288,15 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
     override fun onPause() {
         super.onPause()
+        setMicMuted(false)
         releaseMediaRecorder()
         releaseCamera()
     }
 
+    override fun onResume() {
+        super.onResume()
+        setMicMuted(true)
+    }
     private fun releaseMediaRecorder() {
         if (mMediaRecorder != null) {
             mMediaRecorder!!.reset()
@@ -392,6 +402,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 // Camera is available and unlocked, MediaRecorder is prepared,
                 // now you can start recording
                 try {
+                    setMicMuted(true)
                     mMediaRecorder!!.start()
 
                     isRecording = true
@@ -794,5 +805,24 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 //No action required. Just exit dialog.
         }
     }
+    private fun setMicMuted(state: Boolean) {
+//        AudioManager myAudioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        val myAudioManager =
+            applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        // get the working mode and keep it
+        val workingAudioMode = myAudioManager.mode
+        myAudioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
+        // change mic state only if needed
+        if (myAudioManager.isMicrophoneMute != state) {
+            myAudioManager.isMicrophoneMute = state
+        }
+
+        // set back the original working mode
+        myAudioManager.mode = workingAudioMode
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        setMicMuted(false)
+    }
 }
