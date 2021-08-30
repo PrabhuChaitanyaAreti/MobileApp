@@ -207,10 +207,12 @@
         </LinearLayout>
     </GridLayout>
     <TextView
+        android:id="@+id/versionDetails"
+        android:textColor="@color/black"
         android:text="** ALPHA RELEASE: UI Design in Progress"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
-        android:visibility="gone"
+        android:visibility="visible"
         android:padding="5dp"
         android:layout_marginEnd="20dp"
         android:gravity="right"

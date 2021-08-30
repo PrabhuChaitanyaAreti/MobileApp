@@ -5,10 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.*
+import android.text.Html
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProviders
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -51,15 +54,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private var isDieDataAvailable = false
     private var dieData = ""
     private var dieDataSyncTime = ""
-
+    private lateinit var versionDetails:TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
 
         initProgress()
         init()
-
-
     }
 
     private fun init() {
@@ -76,7 +77,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         skip.setOnClickListener(this)
         logout.setOnClickListener(this)
         syncDie.setOnClickListener(this)
-
+        versionDetails=findViewById(R.id.versionDetails)
+        versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
 
         var videosList: List<VideoModel>? = null
