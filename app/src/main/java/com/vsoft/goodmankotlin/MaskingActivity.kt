@@ -3,11 +3,13 @@ package com.vsoft.goodmankotlin
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.*
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.util.Base64
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -54,6 +56,14 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
     private lateinit var uniqueDiesDisplayed: ArrayList<Unique_results>
     private lateinit var dialogShowInfo: Dialog
     private lateinit var optionsMenu: Menu
+
+
+    private var sharedPreferences: SharedPreferences? = null
+
+    private var dieIdStr = ""
+    private var partIdStr = ""
+    private var dieTypeStr = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.hamburg_menu_icon);// set drawable icon
@@ -69,10 +79,22 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         context = this
         loadLeftSidemenu()
         try {
-            val sharedPreferences = getSharedPreferences(CommonUtils.SHARED_PREF_FILE, MODE_PRIVATE)
-            if (sharedPreferences.contains(CommonUtils.RESPONSE)) {
+            sharedPreferences = this.getSharedPreferences(
+                CommonUtils.SHARED_PREF_FILE,
+                Context.MODE_PRIVATE
+            )
+
+            dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
+            partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
+            dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
+
+            Log.d("TAG", "MaskingActivity  sharedPreferences  dieIdStr $dieIdStr")
+            Log.d("TAG", "MaskingActivity sharedPreferences  partIdStr $partIdStr")
+            Log.d("TAG", "MaskingActivity sharedPreferences  dieTypeStr $dieTypeStr")
+
+            if (sharedPreferences!!.contains(CommonUtils.RESPONSE)) {
                 val gson = Gson()
-                val json = sharedPreferences.getString(CommonUtils.RESPONSE, "")
+                val json = sharedPreferences!!.getString(CommonUtils.RESPONSE, "")
                 response = gson.fromJson(json, PunchResponse::class.java)
                 processData(response)
             } else {

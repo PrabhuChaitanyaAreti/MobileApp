@@ -8,7 +8,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
@@ -64,6 +66,9 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
     private var current: TextView? = null
     private var seekBar: SeekBar? = null
     private var total: TextView? = null
+    private var partIdTxt: TextView? = null
+    private var dieIdTxt: TextView? = null
+    private var dieTypeTxt: TextView? = null
 
     private lateinit var vm: VideoViewModel
 
@@ -109,6 +114,9 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
         current = findViewById(R.id.current)
         total = findViewById(R.id.total)
         seekBar = findViewById(R.id.seekbar)
+        partIdTxt = findViewById(R.id.partIdTxt)
+        dieIdTxt = findViewById(R.id.dieIdTxt)
+        dieTypeTxt = findViewById(R.id.dieTypeTxt)
 
 
         val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoPreviewActivity)
@@ -121,6 +129,26 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             Log.d(TAG, "VideoPreviewActivity onCreate $path")
             videofilename = CommonUtils.getFileName(path)
             println("VideoPreviewActivity videofilename is $videofilename")
+
+            if (dieIdStr.isNotEmpty() && !TextUtils.isEmpty(dieIdStr) && dieIdStr != "null") {
+                dieIdTxt!!.text="Die ID: "+dieIdStr
+                dieIdTxt!!.visibility= View.VISIBLE
+            }else{
+                dieIdTxt!!.visibility= View.GONE
+            }
+            if (partIdStr.isNotEmpty() && !TextUtils.isEmpty(partIdStr) && partIdStr != "null") {
+                partIdTxt!!.text="Part ID: "+partIdStr
+                partIdTxt!!.visibility= View.VISIBLE
+            }else{
+                partIdTxt!!.visibility= View.GONE
+            }
+
+            if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+                dieTypeTxt!!.text="Die Type: "+dieTypeStr.uppercase(Locale.getDefault())
+                dieTypeTxt!!.visibility= View.VISIBLE
+            }else{
+                dieTypeTxt!!.visibility= View.GONE
+            }
 
             val appNameStringRes = R.string.app_name
             val trackSelectorDef: TrackSelector = DefaultTrackSelector()

@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
@@ -29,6 +30,7 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
 import android.media.AudioManager
+import android.text.TextUtils
 
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
     View.OnClickListener, CustomDialogCallback {
@@ -71,6 +73,15 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private var videoRecordPlayPause: ImageButton? = null
     private var flashImgIcon: ImageView? = null
     private var timeleftTxt: TextView? = null
+    private var partIdTxt: TextView? = null
+    private var dieIdTxt: TextView? = null
+    private var dieTypeTxt: TextView? = null
+
+    private var sharedPreferences: SharedPreferences? = null
+
+    private var dieIdStr = ""
+    private var partIdStr = ""
+    private var dieTypeStr = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,12 +93,29 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             return;
         }*/
 
+        sharedPreferences = this.getSharedPreferences(
+            CommonUtils.SHARED_PREF_FILE,
+            Context.MODE_PRIVATE
+        )
+
+        dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
+        partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
+        dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
+
+        Log.d("TAG", "VideoRecordActivity  sharedPreferences  dieIdStr $dieIdStr")
+        Log.d("TAG", "VideoRecordActivity sharedPreferences  partIdStr $partIdStr")
+        Log.d("TAG", "VideoRecordActivity sharedPreferences  dieTypeStr $dieTypeStr")
+
         surface_view = findViewById(R.id.surface_view)
         settingsImgIcon = findViewById(R.id.settingsImgIcon)
         videoOnlineImageButton = findViewById(R.id.videoOnlineImageButton)
         videoRecordPlayPause = findViewById(R.id.videoRecordPlayPause)
         flashImgIcon = findViewById(R.id.flashImgIcon)
         timeleftTxt = findViewById(R.id.timeleftTxt)
+        partIdTxt = findViewById(R.id.partIdTxt)
+        dieIdTxt = findViewById(R.id.dieIdTxt)
+        dieTypeTxt = findViewById(R.id.dieTypeTxt)
+
 
         initProgress()
 
@@ -104,6 +132,27 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             }
             videoRecordPlayPause!!.visibility = View.GONE
             settingsImgIcon!!.visibility = View.GONE
+
+
+            if (dieIdStr.isNotEmpty() && !TextUtils.isEmpty(dieIdStr) && dieIdStr != "null") {
+                dieIdTxt!!.text="Die ID: "+dieIdStr
+                dieIdTxt!!.visibility=View.VISIBLE
+            }else{
+                dieIdTxt!!.visibility=View.GONE
+            }
+            if (partIdStr.isNotEmpty() && !TextUtils.isEmpty(partIdStr) && partIdStr != "null") {
+                partIdTxt!!.text="Part ID: "+partIdStr
+                partIdTxt!!.visibility=View.VISIBLE
+            }else{
+                partIdTxt!!.visibility=View.GONE
+            }
+
+            if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+                dieTypeTxt!!.text="Die Type: "+ dieTypeStr.uppercase(Locale.getDefault())
+                dieTypeTxt!!.visibility=View.VISIBLE
+            }else{
+                dieTypeTxt!!.visibility=View.GONE
+            }
 
             videoOnlineImageButton!!.setOnClickListener(this)
             flashImgIcon!!.setOnClickListener(this)
