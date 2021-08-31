@@ -117,7 +117,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
         if (batterLevel >= 15) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            path = intent.extras!!.getString("videoSavingFilePath").toString()
+            path = intent.extras!!.getString(CommonUtils.VIDEO_SAVING_FILE_PATH).toString()
             Log.d(TAG, "VideoPreviewActivity onCreate $path")
             videofilename = CommonUtils.getFileName(path)
             println("VideoPreviewActivity videofilename is $videofilename")
@@ -410,6 +410,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        CommonUtils.freeMemory()
+    }
     // display video progress
     fun setVideoProgress() {
         //get the video duration
@@ -469,6 +473,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
     override fun onDestroy() {
         super.onDestroy()
+        CommonUtils.freeMemory()
         if (absPlayerInternal!!.isPlaying()) {
             absPlayerInternal!!.stop()
         }

@@ -41,6 +41,7 @@ class CommonUtils {
 
         const val MEMORY_DIALOG="memoryDialog"
 
+        const val VIDEO_SAVING_FILE_PATH="videoSavingFilePath"
 
 
         const val SHARED_PREF_FILE = "goodman_shared_preference"
@@ -319,5 +320,10 @@ class CommonUtils {
 //            }
 //        }
     }
+        fun freeMemory() {
+            System.runFinalization()
+            Runtime.getRuntime().gc()
+            System.gc()
+        }
     }
 }

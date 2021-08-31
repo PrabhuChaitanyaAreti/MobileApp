@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.*
-import android.text.Html
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -55,6 +55,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private var dieData = ""
     private var dieDataSyncTime = ""
     private lateinit var versionDetails:TextView
+    private var totalVideoCount:Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
@@ -64,6 +65,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     private fun init() {
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         addOperator = findViewById(R.id.addOperator)
         addDie = findViewById(R.id.addDie)
         sync = findViewById(R.id.sync)
@@ -81,10 +84,18 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
 
-        var videosList: List<VideoModel>? = null
+        var videosList: List<VideoModel>?
         subscribeOnBackground {
-            videosList = vm.getAllVideosList()
+            videosList = vm.getVideos()
                 Log.d("TAG", "DashBoardActivity  videosList!!.size ${videosList!!.size}")
+            runOnUiThread(Runnable {
+                totalVideoCount=videosList!!.size
+//                Toast.makeText(
+//                    applicationContext,
+//                    "llVideosList size " + videosList!!.size,
+//                    Toast.LENGTH_LONG
+//                ).show()
+            })
 //           if(videosList!!.size>0) {
 //                val iterator = videosList!!.listIterator()
 //                if (iterator.hasNext()) {
@@ -147,7 +158,6 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private fun initProgress() {
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
-        progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_sync_videos))
     }
 
     override fun onClick(v: View?) {
@@ -277,6 +287,15 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             } else {
                 isSyncing=true
                 Log.i("Videos observed size", "${videosList?.size}")
+                runOnUiThread(Runnable {
+                    progressDialog.setMessage("Syncing ...${videosList!!.size}/$totalVideoCount")
+
+//                    Toast.makeText(
+//                        applicationContext,
+//                        "syncvideos list size " + videosList!!.size,
+//                        Toast.LENGTH_LONG
+//                    ).show()
+                })
                 val iterator = videosList!!.listIterator()
                 if (iterator.hasNext()) {
                     val item = iterator.next()
@@ -353,22 +372,27 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                         val statusCode = response.body()!!.statusCode
                         if (statusCode == 200) {
                             runOnUiThread(Runnable {
+                               // Toast.makeText(applicationContext, "video upload success 200", Toast.LENGTH_LONG).show()
                                 item.status = true
                                 val status: Int = vm.update(item)
                                 Log.i("response update status ", "$status")
-                                CommonUtils.deletePath(item.video_path)
-                                vm.delete(item)
+//                                CommonUtils.deletePath(item.video_path)
+//                                vm.delete(item)
                                 sync()
                             })
                         } else if (statusCode == 401) {
                             runOnUiThread(Runnable {
+                                //Toast.makeText(applicationContext, "video upload exists 200", Toast.LENGTH_LONG).show()
                                 item.status = true
                                 val status: Int = vm.update(item)
                                 Log.i("response update status ", "$status")
                                 sync()
                             })
                         } else {
+                            runOnUiThread(Runnable {
+                            //Toast.makeText(applicationContext, "video upload fail", Toast.LENGTH_LONG).show()
                             showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_server_alert_message), CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
+                            })
                         }
                         if (progressDialog.isShowing) {
                             progressDialog.dismiss()
@@ -383,6 +407,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
                 override fun onFailure(call: Call<videoUploadSaveRespose?>, t: Throwable) {
                     runOnUiThread(Runnable {
+//                        Toast.makeText(applicationContext, "video upload failure", Toast.LENGTH_LONG).show()
                         showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
                             listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
                         if (progressDialog.isShowing) {

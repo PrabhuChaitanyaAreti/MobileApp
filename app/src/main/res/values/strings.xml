@@ -75,7 +75,7 @@
     <string name="login_alert_message">Invalid Credentials.</string>
 
     <!--Dashboard Screen-->
-    <string name="progress_dialog_message_sync_videos">Please wait .. Saving video will take time..</string>
+    <string name="progress_dialog_message_sync_videos">Please wait .. Syncing video will take time..</string>
     <string name="add_operator_alert_message">Functionality will be updated soon..</string>
     <string name="logout_alert_message">Would you like to logout?</string>
     <string name="exit_app_alert_message">Do you want to exit app?</string>

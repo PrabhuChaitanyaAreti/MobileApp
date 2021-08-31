@@ -30,10 +30,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import android.media.AudioManager
 
-
-
-
-
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
     View.OnClickListener, CustomDialogCallback {
     private var mCamera: Camera? = null
@@ -48,7 +44,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private val TAG = VideoRecordActivity::class.java.simpleName
 
     private var CAMERA_PERMISSION = Manifest.permission.CAMERA
-    private var RECORD_AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
+   // private var RECORD_AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
 
     private var RC_PERMISSION = 101
     private lateinit var progressDialog: ProgressDialog
@@ -79,13 +75,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_record)
-
      /*   val finish= intent.getBooleanExtra("finish", false)
         if(finish) {
             finish();
             return;
         }*/
-
+        CommonUtils.freeMemory()
         surface_view = findViewById(R.id.surface_view)
         settingsImgIcon = findViewById(R.id.settingsImgIcon)
         videoOnlineImageButton = findViewById(R.id.videoOnlineImageButton)
@@ -118,7 +113,33 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 this@VideoRecordActivity.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
                 listOf(this@VideoRecordActivity.resources.getString(R.string.alert_exit)))
         }
+
+        //setMicMuted(false)
     }
+/*
+    private fun setMicMuted(state: Boolean) {
+        val myAudioManager =
+            applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        // get the working mode and keep it
+        val workingAudioMode = myAudioManager.mode
+        myAudioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+
+        // change mic state only if needed
+        if (myAudioManager.isMicrophoneMute != state) {
+            myAudioManager.isMicrophoneMute = state
+        }
+
+        // set back the original working mode
+        myAudioManager.mode = workingAudioMode
+       *//* val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+
+        audioManager.setStreamMute(AudioManager.STREAM_SYSTEM, true)
+        audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true)
+        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, 0, 0)
+        audioManager.setStreamVolume(AudioManager.STREAM_DTMF, 0, 0)
+        audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, 0, 0)
+        audioManager.setStreamVolume(AudioManager.STREAM_RING, 0, 0)*//*
+    }*/
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
         progressDialog!!.setCancelable(false)
@@ -178,7 +199,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     }
 
                     override fun onTick(millisUntilFinished: Long) {
-                        println("resume onTick millisUntilFinished $millisUntilFinished")
+                        //println("resume onTick millisUntilFinished $millisUntilFinished")
                         //recordSecondsLeft = millisUntilFinished;
                         recordSecondsLeft =
                             millisUntilFinished / 1000
@@ -226,9 +247,85 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             isRecording = false
             releaseCamera()
             Log.d(TAG, "onVideoSaved ${mOutputFile.toString()}")
+            val inputpath = mOutputFile.toString()
+            Log.d(TAG, "onVideoSaved inputpath $inputpath")
+
             val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
-            i.putExtra("videoSavingFilePath", mOutputFile.toString())
+            i.putExtra(CommonUtils.VIDEO_SAVING_FILE_PATH, inputpath)
             startActivity(i)
+
+           /* val inputpath = mOutputFile.toString()
+            val outputpath=CameraHelper.getOutputMediaFile(CameraHelper.MEDIA_TYPE_VIDEO,this@VideoRecordActivity).toString()
+
+            //val command= "ffmpeg -i $inputpath -c copy -an $outputpath"
+            val command= "ffmpeg -i $$inputpath -vcodec copy -an $$outputpath"
+            Log.i(
+                TAG,
+                "command  $command"
+            )
+            val session = FFmpegKit.execute(command)
+            if (ReturnCode.isSuccess(session.returnCode)) {
+            // SUCCESS
+                Log.i(TAG, "Command execution completed successfully.")
+                val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
+                i.putExtra("videoSavingFilePath", outputpath)
+                startActivity(i)
+            } else if (ReturnCode.isCancel(session.returnCode)) {
+            // CANCEL
+                Log.i(TAG, "Command execution cancelled by user.")
+            } else {
+                // FAILURE
+                Log.d(
+                    TAG,
+                    String.format(
+                        "Command failed with state %s and rc %s.%s",
+                        session.state,
+                        session.returnCode,
+                        session.failStackTrace
+                    )
+                )
+            }*/
+         /*   val rc = FFmpeg.execute(command)
+            Log.i(Config.TAG, "rc $rc")
+
+            if (rc == RETURN_CODE_SUCCESS) {
+                Log.i(Config.TAG, "Command execution completed successfully.")
+                val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
+                i.putExtra("videoSavingFilePath", outputpath)
+                startActivity(i)
+            } else if (rc == RETURN_CODE_CANCEL) {
+                Log.i(Config.TAG, "Command execution cancelled by user.")
+            } else {
+                Log.i(
+                    Config.TAG,
+                    String.format("Command execution failed with rc=%d and the output below.", rc)
+                )
+                Config.printLastCommandOutput(Log.INFO)
+            }*/
+           /* val executionId = FFmpeg.executeAsync(command
+            ) { executionId, returnCode ->
+                if (returnCode == Config.RETURN_CODE_SUCCESS) {
+                    Log.i(
+                        Config.TAG,
+                        "Async command execution completed successfully."
+                    )
+                    val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
+                    i.putExtra("videoSavingFilePath", outputpath)
+                    startActivity(i)
+                } else if (returnCode == Config.RETURN_CODE_CANCEL) {
+                    Log.i(Config.TAG, "Async command execution cancelled by user.")
+                } else {
+                    Log.i(
+                        Config.TAG,
+                        String.format(
+                            "Async command execution failed with returnCode=%d.",
+                            returnCode
+                        )
+                    )
+                }
+            }*/
+
+
         } catch (e: RuntimeException) {
             Log.d(
                 TAG,
@@ -241,7 +338,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(CAMERA_PERMISSION, RECORD_AUDIO_PERMISSION),
+            arrayOf(CAMERA_PERMISSION),
             RC_PERMISSION
         )
     }
@@ -295,6 +392,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
     override fun onResume() {
         super.onResume()
+        CommonUtils.freeMemory()
         setMicMuted(true)
     }
     private fun releaseMediaRecorder() {
@@ -330,7 +428,8 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         mMediaRecorder!!.setCamera(mCamera)
 
         // Step 2: Set sources
-        mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
+         mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
+       // mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
         mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
 
         /*  mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
@@ -423,7 +522,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                                 }
 
                                 override fun onTick(millisUntilFinished: Long) {
-                                    println(millisUntilFinished)
+                                    //println(millisUntilFinished)
                                     recordSecondsLeft = millisUntilFinished / 1000
                                     timeleftTxt!!.text = "$recordSecondsLeft/"+totalTimer
                                 }
@@ -536,7 +635,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             override fun onTick(millisUntilFinished1: Long) {
                 val secs = (millisUntilFinished1 / 1000).toInt() % 60
                 val minutes = (millisUntilFinished1 / (1000 * 60) % 60).toInt()
-                Log.e("secs", secs.toString() + "")
+               // Log.e("secs", secs.toString() + "")
             }
 
             override fun onFinish() {
