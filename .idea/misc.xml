@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/drawable/circular_background.xml" value="0.16328125" />
         <entry key="app/src/main/res/drawable/green_corner.xml" value="0.32578125" />
         <entry key="app/src/main/res/drawable/green_rounded_corner_shape.xml" value="0.32578125" />
+        <entry key="app/src/main/res/drawable/hamburg_menu_icon.xml" value="0.198828125" />
         <entry key="app/src/main/res/drawable/ic_clear_black_24dp.xml" value="0.16796875" />
         <entry key="app/src/main/res/drawable/red_rounded_corner_shape.xml" value="0.16796875" />
         <entry key="app/src/main/res/drawable/spinner_box_bg.xml" value="0.16796875" />
@@ -27,13 +28,25 @@
         <entry key="app/src/main/res/layout/activity_dash_board.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.1371191135734072" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_masking.xml" value="0.18671875" />
         <entry key="app/src/main/res/layout/activity_operator_select.xml" value="0.1" />
+<<<<<<< HEAD
         <entry key="app/src/main/res/layout/activity_video_preview.xml" value="0.28359375" />
+=======
+        <entry key="app/src/main/res/layout/activity_video_preview.xml" value="0.12869458128078817" />
+>>>>>>> 01bdbee55cb574171cd555342a50ae4a43f65797
         <entry key="app/src/main/res/layout/activity_video_record.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_video_record_new.xml" value="0.151171875" />
         <entry key="app/src/main/res/layout/camera_settings_dialog.xml" value="0.14375" />
         <entry key="app/src/main/res/layout/camera_settings_dialog_new.xml" value="0.14375" />
         <entry key="app/src/main/res/layout/custom_dialog_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/left_menu_list_layout.xml" value="0.12869458128078817" />
+        <entry key="app/src/main/res/layout/right_menu_list_item_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/simple_spinner_dropdown.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/spinner_row_item.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/spinner_text.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/uom_spinner_list_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/right_menu.xml" value="0.18671875" />
       </map>
     </option>
   </component>

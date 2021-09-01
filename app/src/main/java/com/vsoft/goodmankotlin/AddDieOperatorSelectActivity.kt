@@ -201,6 +201,9 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 editor.putString(CommonUtils.SAVE_DIE_ID,dieIdStr)
                 editor.putString(CommonUtils.SAVE_PART_ID,partIdStr)
                 editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE,false)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, "")
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, false)
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, false)
                 editor.apply()
                 val mainIntent =
                     Intent(this@AddDieOperatorSelectActivity, VideoRecordActivity::class.java)

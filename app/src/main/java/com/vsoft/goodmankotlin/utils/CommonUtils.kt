@@ -320,10 +320,10 @@ class CommonUtils {
 //            }
 //        }
     }
-        fun freeMemory() {
-            System.runFinalization()
-            Runtime.getRuntime().gc()
-            System.gc()
-        }
+//        fun freeMemory() {
+//            System.gc()
+//            System.runFinalization()
+//            Runtime.getRuntime().gc()
+//        }
     }
 }
