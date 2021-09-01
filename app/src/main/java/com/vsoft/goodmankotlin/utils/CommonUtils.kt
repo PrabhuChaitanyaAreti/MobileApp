@@ -1,15 +1,19 @@
 package com.vsoft.goodmankotlin.utils
 
+import android.app.Activity
 import android.content.Context
 import android.hardware.Camera
+import android.os.Build
 import android.os.Environment
 import androidx.appcompat.app.AlertDialog
 import com.microsoft.appcenter.AppCenter
 import android.os.StatFs
 import android.text.TextUtils
+import androidx.core.app.ActivityCompat.finishAffinity
 import java.io.File
 import java.lang.Exception
 import java.lang.StringBuilder
+import kotlin.system.exitProcess
 
 
 class CommonUtils {
@@ -279,7 +283,7 @@ class CommonUtils {
             println(" checkMemory internalMemory1 ***  $internalMemory1")
             println("  checkMemory externalMemory1 ***  $externalMemory1")
 
-            if(Integer.parseInt(internalMemory1) <200  || Integer.parseInt(externalMemory1) <200 ) {
+            if(Integer.parseInt(internalMemory1) <500  || Integer.parseInt(externalMemory1) <500 ) {
                 isMemory = false;
             }else{
                 isMemory = true;
@@ -320,10 +324,23 @@ class CommonUtils {
 //            }
 //        }
     }
+
+
 //        fun freeMemory() {
 //            System.gc()
 //            System.runFinalization()
 //            Runtime.getRuntime().gc()
 //        }
+    fun appExit(activity: Activity){
+   /* if(Build.VERSION.SDK_INT>=16 && Build.VERSION.SDK_INT<21){
+        activity!!.finishAffinity()
+    } else if(Build.VERSION.SDK_INT>=21){
+        activity!!.finishAndRemoveTask();
+    }*/
+    activity!!.finishAffinity();
+    exitProcess(0);
+}
     }
+
+
 }

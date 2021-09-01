@@ -31,6 +31,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import android.media.AudioManager
 import android.text.TextUtils
+import kotlin.system.exitProcess
 
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
     View.OnClickListener, CustomDialogCallback {
@@ -909,9 +910,10 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.alert_exit),true)) {
             if (functionality.equals(CommonUtils.BATTERY_DIALOG, true)) {
                 try {
-                    val previewIntent = Intent()
-                    setResult(RESULT_CANCELED, previewIntent)
-                    finishAffinity()
+//                    val previewIntent = Intent()
+//                    setResult(RESULT_CANCELED, previewIntent)
+//                    finishAffinity()
+                    CommonUtils.appExit(this@VideoRecordActivity)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -921,9 +923,13 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     //intent.putExtra("finish", true)
                   //  finish()
-                    val previewIntent = Intent()
+                   /* val previewIntent = Intent()
                     setResult(RESULT_CANCELED, previewIntent)
-                    finishAffinity()
+                    finishAffinity()*/
+//                    finishAffinity();
+//                    exitProcess(0);
+
+                    CommonUtils.appExit(this@VideoRecordActivity)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
