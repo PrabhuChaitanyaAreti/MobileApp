@@ -30,11 +30,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_masking.xml" value="0.18671875" />
         <entry key="app/src/main/res/layout/activity_operator_select.xml" value="0.1" />
-<<<<<<< HEAD
-        <entry key="app/src/main/res/layout/activity_video_preview.xml" value="0.28359375" />
-=======
         <entry key="app/src/main/res/layout/activity_video_preview.xml" value="0.12869458128078817" />
->>>>>>> 01bdbee55cb574171cd555342a50ae4a43f65797
         <entry key="app/src/main/res/layout/activity_video_record.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_video_record_new.xml" value="0.151171875" />
         <entry key="app/src/main/res/layout/camera_settings_dialog.xml" value="0.14375" />
