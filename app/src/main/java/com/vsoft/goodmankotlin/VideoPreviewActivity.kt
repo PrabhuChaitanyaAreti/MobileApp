@@ -546,9 +546,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
         ) {
             if (functionality.equals(CommonUtils.BATTERY_DIALOG, true)) {
                 try {
-                    val previewIntent = Intent()
-                    setResult(RESULT_CANCELED, previewIntent)
-                    finishAffinity()
+//                    val previewIntent = Intent()
+//                    setResult(RESULT_CANCELED, previewIntent)
+//                    finishAffinity()
+                    CommonUtils.appExit(this@VideoPreviewActivity)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
