@@ -201,13 +201,16 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
             retakeVideo = findViewById<TextView>(R.id.retakeVideo)
             retakeVideo!!.setOnClickListener {
-                absPlayerInternal!!.release()
-                if (absPlayerInternal!!.isPlaying()) {
-                    absPlayerInternal!!.stop()
-                }
-                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
-                startActivity(intent)
-                finish()
+                showCustomAlert(
+                    this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                    this@VideoPreviewActivity.resources.getString(R.string.video_preview_ratake),
+                    CommonUtils.RETAKE_DIALOG,
+                    listOf(
+                        this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                        this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                    )
+                )
+
             }
             videoSubmit = findViewById<TextView>(R.id.videoSubmit)
             if (isNewDie) {
@@ -599,6 +602,17 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 startActivity(intent)
                 finish()
             }
+            if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
+                absPlayerInternal!!.release()
+                if (absPlayerInternal!!.isPlaying()) {
+                    absPlayerInternal!!.stop()
+                }
+                Log.d(TAG, "VideoPreviewActivity onCreate $path")
+                CommonUtils.deletePath(path)
+                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
 
         }
         if (buttonName.equals(
@@ -614,6 +628,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
+            }else if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
+
             }
         }
     }

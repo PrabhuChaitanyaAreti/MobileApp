@@ -45,6 +45,8 @@ class CommonUtils {
 
         const val MEMORY_DIALOG="memoryDialog"
 
+        const val RETAKE_DIALOG="retakeDialog"
+
         const val VIDEO_SAVING_FILE_PATH="videoSavingFilePath"
 
 

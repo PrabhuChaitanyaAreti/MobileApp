@@ -122,7 +122,7 @@
     <string name="video_preview_save_click_3">Die bottom is recorded.Do you want to record die top?</string>
     <string name="progress_dialog_message_video_preview">Please wait .. Processing video may take some time.</string>
     <string name="video_preview_alert_message">You can use retake to retake a video after cancelling this dialog or press OK to navigate to Dashboard?</string>
-
+    <string name="video_preview_ratake">Do you want to Retake the video?</string>
 
     <!--Masking Screen-->
     <string name="instructions"><b>Instructions :</b> Please insert a punch into the displayed die.</string>
