@@ -25,10 +25,8 @@ import java.util.*
           */
          fun refreshGallery(context: Context?, filePath: String) {
              // ScanFile so it will be appeared on Gallery
-             MediaScannerConnection.scanFile(context, arrayOf(filePath), null,
-                 object : MediaScannerConnection.OnScanCompletedListener {
-                     override fun onScanCompleted(path: String, uri: Uri) {}
-                 })
+             MediaScannerConnection.scanFile(context, arrayOf(filePath), null
+             ) { path, uri -> }
          }
 
          fun checkPermissions(context: Context?): Boolean {
@@ -74,7 +72,7 @@ import java.util.*
              // this device has a camera
              // no camera on this device
              return context.packageManager.hasSystemFeature(
-                 PackageManager.FEATURE_CAMERA
+                 PackageManager.FEATURE_CAMERA_ANY
              )
          }
 
@@ -92,7 +90,7 @@ import java.util.*
          fun getOutputMediaFileUri(context: Context, file: File?): Uri {
              return FileProvider.getUriForFile(
                  Objects.requireNonNull(context),
-                 BuildConfig.APPLICATION_ID.toString() + ".provider", file!!
+                 BuildConfig.APPLICATION_ID + ".provider", file!!
              )
          }
      }

@@ -29,7 +29,7 @@ class LeftMenuAdapter(var context:Context,val leftMenuItemList: ArrayList<LeftMe
         return leftMenuItemList.size
     }
 
-    //the class is hodling the list view
+    //the class is holding the list view
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bindItems(leftMenuDataItem: LeftMenuDataModel) {

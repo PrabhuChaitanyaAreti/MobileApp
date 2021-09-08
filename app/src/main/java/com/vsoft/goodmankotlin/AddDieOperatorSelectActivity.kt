@@ -75,14 +75,14 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
         partBT = findViewById(R.id.part_au_tv)
         btnContinue = findViewById(R.id.btnContinue)
         progressDialog = ProgressDialog(this)
-        progressDialog?.setCancelable(false)
-        progressDialog?.setMessage(this@AddDieOperatorSelectActivity.resources.getString(R.string.progress_dialog_message_dies_parts))
+        progressDialog.setCancelable(false)
+        progressDialog.setMessage(this@AddDieOperatorSelectActivity.resources.getString(R.string.progress_dialog_message_dies_parts))
 
       //  getDieAndPartData(false)
 
-        isDieDataAvailable = sharedPreferences!!.getBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
-        dieData = sharedPreferences!!.getString(CommonUtils.DIE_DATA, "").toString()
-        dieDataSyncTime = sharedPreferences!!.getString(CommonUtils.DIE_DATA_SYNC_TIME, "").toString()
+        isDieDataAvailable = sharedPreferences.getBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
+        dieData = sharedPreferences.getString(CommonUtils.DIE_DATA, "").toString()
+        dieDataSyncTime = sharedPreferences.getString(CommonUtils.DIE_DATA_SYNC_TIME, "").toString()
 
         Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  isDieDataAvailable $isDieDataAvailable")
         Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  dieData $dieData")
@@ -110,17 +110,16 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
         }
 
 
-        mainLyt?.setOnClickListener(View.OnClickListener { hideSoftKeyboard(this@AddDieOperatorSelectActivity) })
+        mainLyt.setOnClickListener(View.OnClickListener { hideSoftKeyboard(this@AddDieOperatorSelectActivity) })
 
-        operatorBT?.setOnClickListener { showUnitOfMeasureSpinnerList(CommonUtils.OPERATOR_SELECTION_OPERATOR) }
+        operatorBT.setOnClickListener { showUnitOfMeasureSpinnerList(CommonUtils.OPERATOR_SELECTION_OPERATOR) }
 
-        dieBT?.setOnClickListener { showUnitOfMeasureSpinnerList(CommonUtils.OPERATOR_SELECTION_DIE_ID) }
+        dieBT.setOnClickListener { showUnitOfMeasureSpinnerList(CommonUtils.OPERATOR_SELECTION_DIE_ID) }
 
-        partBT?.setOnClickListener {
+        partBT.setOnClickListener {
             if(dieBT.text.isNotEmpty()) {
                 showUnitOfMeasureSpinnerList(CommonUtils.OPERATOR_SELECTION_PART_ID)
-            }
-            else{
+            } else{
                 if (!isFinishing) {
                     showCustomAlert(this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
                         this@AddDieOperatorSelectActivity.resources.getString(R.string.op_se_alert_message_die_id_part_id),CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
@@ -129,7 +128,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             }
         }
 
-        btnContinue?.setOnClickListener(View.OnClickListener {
+        btnContinue.setOnClickListener(View.OnClickListener {
             val dieIdStr=dieBT!!.text.toString()
             val partIdStr=partBT!!.text.toString()
             if (operatorBT?.text.toString().isEmpty()) {
@@ -215,13 +214,13 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
     private fun showUnitOfMeasureSpinnerList(dataFrom: String) {
         try {
             val spinnerList: ListView
-            val close_spinner_popup: ImageView
+            val closeSpinnerPopup: ImageView
             val inflater = LayoutInflater.from(this@AddDieOperatorSelectActivity)
             val dialogLayout = inflater.inflate(R.layout.uom_spinner_list_layout, null)
             val builder = AlertDialog.Builder(this@AddDieOperatorSelectActivity)
             builder.setView(dialogLayout)
             spinnerList = dialogLayout.findViewById(R.id.spinnerList)
-            close_spinner_popup = dialogLayout.findViewById(R.id.close_uom_spinner_popup)
+            closeSpinnerPopup = dialogLayout.findViewById(R.id.close_uom_spinner_popup)
             val dataModels: ArrayList<ChoiceListOperator> = ArrayList()
             if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_OPERATOR)) {
                 dataModels.add(ChoiceListOperator(CommonUtils.OPERATOR_SELECTION_1))
@@ -235,14 +234,14 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 dataModels.add(ChoiceListOperator(CommonUtils.OPERATOR_SELECTION_9))
                 dataModels.add(ChoiceListOperator(CommonUtils.OPERATOR_SELECTION_10))
             } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_DIE_ID)) {
-                val iterator = responses!!.listIterator()
+                val iterator = responses.listIterator()
                 while (iterator.hasNext()){
                     val item=iterator.next()
                     dataModels.add(ChoiceListOperator(item.dieId))
                 }
             } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_PART_ID)) {
                 if(dieBT.text.isNotEmpty()){
-                    val iterator = responses!!.listIterator()
+                    val iterator = responses.listIterator()
                     while (iterator.hasNext()){
                         val dieIdItem=iterator.next()
                         if(dieIdItem.dieId.equals(dieBT.text.toString())){
@@ -307,11 +306,11 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 }
             }
             customAlertDialogSpinner = builder.create()
-            customAlertDialogSpinner?.setCancelable(false)
-            customAlertDialogSpinner?.setCanceledOnTouchOutside(false)
-            customAlertDialogSpinner?.show()
-            close_spinner_popup.setOnClickListener { customAlertDialogSpinner?.dismiss() }
-            searchET?.addTextChangedListener(object : TextWatcher {
+            customAlertDialogSpinner.setCancelable(false)
+            customAlertDialogSpinner.setCanceledOnTouchOutside(false)
+            customAlertDialogSpinner.show()
+            closeSpinnerPopup.setOnClickListener { customAlertDialogSpinner.dismiss() }
+            searchET.addTextChangedListener(object : TextWatcher {
                 override fun onTextChanged(cs: CharSequence, arg1: Int, arg2: Int, arg3: Int) {
                     if (searchET?.text.toString() != "") { //if edittext include text
                         buttonSelect.visibility=View.VISIBLE
@@ -341,7 +340,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             return spinnerDataFiltered.size
         }
 
-        override fun getItem(p0: Int): ChoiceListOperator? {
+        override fun getItem(p0: Int): ChoiceListOperator {
             return spinnerDataFiltered[p0]
         }
 
@@ -352,7 +351,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val view: TextView = convertView as TextView? ?: LayoutInflater.from(context).inflate(R.layout.spinner_row_item, parent, false) as TextView
-            view.text = "${spinnerDataFiltered[position].name}"
+            view.text = spinnerDataFiltered[position].name
             view.setOnClickListener {
                 searchET.text=Editable.Factory.getInstance().newEditable(spinnerDataFiltered[position].name)
             }
@@ -361,17 +360,16 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
 
         override fun getFilter(): Filter {
             return object : Filter() {
-                override fun publishResults(charSequence: CharSequence?, filterResults: Filter.FilterResults) {
-                    if((filterResults.values as List<ChoiceListOperator>).isEmpty()){
-                        spinnerDataFiltered= listOf(ChoiceListOperator(charSequence.toString()))
+                override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
+                    spinnerDataFiltered = if((filterResults.values as List<ChoiceListOperator>).isEmpty()){
+                        listOf(ChoiceListOperator(charSequence.toString()))
                     }else {
-                        spinnerDataFiltered =
-                            filterResults.values as List<ChoiceListOperator>
+                        filterResults.values as List<ChoiceListOperator>
                     }
                     notifyDataSetChanged()
                 }
 
-                override fun performFiltering(charSequence: CharSequence?): Filter.FilterResults {
+                override fun performFiltering(charSequence: CharSequence?): FilterResults {
                     val queryString = charSequence?.toString()?.lowercase(Locale.getDefault())
                     val filterResults = FilterResults()
                     filterResults.values = if (queryString==null || queryString.isEmpty())
@@ -457,27 +455,27 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             }
         }
         if(buttonName.equals(resources.getString(R.string.WarningDialogAddDie),true)){
-            if(functionality.equals(CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+            if(functionality == CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY){
                 dieBT.text = selectedItem
                 partBT.text = ""
             }
-            if(functionality.equals(CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+            if(functionality == CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY){
                 //No functionality required
             }
         }
         if(buttonName.equals(resources.getString(R.string.WarningDialogReCheck),true)){
-            if(functionality.equals(CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+            if(functionality == CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY){
                 //No functionality required
             }
-            if(functionality.equals(CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+            if(functionality == CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY){
                 //No functionality required
             }
         }
         if(buttonName.equals(resources.getString(R.string.WarningDialogAddPart),true)){
-            if(functionality.equals(CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+            if(functionality == CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY){
                 //No functionality required
             }
-            if(functionality.equals(CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY)){
+            if(functionality == CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY){
                 partBT.text = selectedItem
             }
         }

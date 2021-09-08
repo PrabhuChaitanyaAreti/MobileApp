@@ -73,7 +73,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         empIdEditText.setOnTouchListener(this)
         pinEditText.setOnTouchListener(this)
 
-        loginButton?.setOnClickListener(this)
+        loginButton.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
@@ -102,25 +102,25 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                     if (pinStr!!.length == pinMaxDigits) {
                         screenNavigationWithPermissions()
                     } else {
-                        validationAlert(this.resources.getString(R.string.login_pin_validation_message), listOf<String>(this.resources.getString(R.string.alert_ok)))
+                        validationAlert(this.resources.getString(R.string.login_pin_validation_message), listOf(this.resources.getString(R.string.alert_ok)))
                     }
                 } else {
-                    validationAlert(this.resources.getString(R.string.login_password_validation_message_empty), listOf<String>(this.resources.getString(R.string.alert_ok)))
+                    validationAlert(this.resources.getString(R.string.login_password_validation_message_empty), listOf(this.resources.getString(R.string.alert_ok)))
                 }
             } else {
                 if (empIdStr.length < minEmpIdDigits) {
-                    validationAlert(this.resources.getString(R.string.login_username_validation_message_min), listOf<String>(this.resources.getString(R.string.alert_ok)))
+                    validationAlert(this.resources.getString(R.string.login_username_validation_message_min), listOf(this.resources.getString(R.string.alert_ok)))
                 } else {
                     validationAlert(
                         this.resources.getString(R.string.login_username_validation_message_range),
-                        listOf<String>(this.resources.getString(R.string.alert_ok))
+                        listOf(this.resources.getString(R.string.alert_ok))
                     )
                 }
             }
         } else {
             validationAlert(
                 this.resources.getString(R.string.login_username_validation_message_empty),
-                listOf<String>(this.resources.getString(R.string.alert_ok))
+                listOf(this.resources.getString(R.string.alert_ok))
             )
         }
     }
@@ -136,7 +136,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
     private fun validateUser(userId: String, password: String) {
         if (NetworkUtils.isNetworkAvailable(this@LoginActivity)) {
             Handler(Looper.getMainLooper()).post {
-                progressDialog!!.show()
+                progressDialog.show()
             }
             val call: Call<UserAuthResponse?>? =
                 RetrofitClient.getInstance()!!.getMyApi()!!
@@ -162,13 +162,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                         } else {
                             showCustomAlert(this@LoginActivity.resources.getString(R.string.api_server_alert_message), CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, listOf(this@LoginActivity.resources.getString(R.string.alert_ok)))
                         }
-                        if (progressDialog!!.isShowing) {
-                            progressDialog!!.dismiss()
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        if (progressDialog!!.isShowing) {
-                            progressDialog!!.dismiss()
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
                         }
                     }
                 }
@@ -179,8 +179,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                         CommonUtils.WEB_SERVICE_CALL_FAILED,
                         listOf(this@LoginActivity.resources.getString(R.string.alert_ok))
                     )
-                    if (progressDialog!!.isShowing) {
-                        progressDialog!!.dismiss()
+                    if (progressDialog.isShowing) {
+                        progressDialog.dismiss()
                     }
                 }
             })
@@ -208,7 +208,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         functionality: String,
         buttonList: List<String>
     ) {
-        var customDialogModel = CustomDialogModel(
+        val customDialogModel = CustomDialogModel(
             getString(R.string.app_name), alertMessage, null,
             buttonList
         )

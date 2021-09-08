@@ -5,13 +5,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class RetrofitClient() {
+class RetrofitClient {
     companion object {
     private var instance: RetrofitClient? = null
     private var myApi: RetrofitApiInterface? = null
     private var myApi1: RetrofitApiInterface? = null
-    var BASE_URL:String = "http://111.93.3.148:12808"
-    var BASE_URL1:String = "http://111.93.3.148:13808"
+    private var BASE_URL:String = "http://111.93.3.148:12808"
+    private var BASE_URL1:String = "http://111.93.3.148:13808"
         private var timeOut:Long=3
 
     init {
@@ -33,7 +33,7 @@ class RetrofitClient() {
     }
 
         @Synchronized
-        public fun getInstance(): RetrofitClient? {
+        fun getInstance(): RetrofitClient? {
             if (instance == null) {
                 instance = RetrofitClient()
             }

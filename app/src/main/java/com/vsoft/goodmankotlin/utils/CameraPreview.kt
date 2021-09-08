@@ -8,6 +8,7 @@ import android.view.SurfaceView
 import com.vsoft.goodmankotlin.CameraActivity.Companion.screenHeight
 import com.vsoft.goodmankotlin.CameraActivity.Companion.screenWidth
 import java.io.IOException
+import kotlin.math.abs
 
 
 class CameraPreview(context: Context?, camera: Camera?) :
@@ -96,7 +97,7 @@ class CameraPreview(context: Context?, camera: Camera?) :
         refreshCamera(mCamera)
     }
 
-    fun setCamera(camera: Camera?) {
+    private fun setCamera(camera: Camera?) {
         //method to set a camera instance
         Log.d("TAG", "setCamera: ")
         mCamera = camera
@@ -126,25 +127,25 @@ class CameraPreview(context: Context?, camera: Camera?) :
 
     companion object {
         fun getOptimalPreviewSize(sizes: List<Camera.Size>, w: Int, h: Int): Camera.Size? {
-            val ASPECT_TOLERANCE = 0.1
+            val aspectTolerance = 0.1
             val targetRatio = h.toDouble() / w
             //if (sizes == null) return null
             var optimalSize: Camera.Size? = null
             var minDiff = Double.MAX_VALUE
             for (size in sizes) {
                 val ratio = size.width.toDouble() / size.height
-                if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue
-                if (Math.abs(size.height - h) < minDiff) {
+                if (abs(ratio - targetRatio) > aspectTolerance) continue
+                if (abs(size.height - h) < minDiff) {
                     optimalSize = size
-                    minDiff = Math.abs(size.height - h).toDouble()
+                    minDiff = abs(size.height - h).toDouble()
                 }
             }
             if (optimalSize == null) {
                 minDiff = Double.MAX_VALUE
                 for (size in sizes) {
-                    if (Math.abs(size.height - h) < minDiff) {
+                    if (abs(size.height - h) < minDiff) {
                         optimalSize = size
-                        minDiff = Math.abs(size.height - h).toDouble()
+                        minDiff = abs(size.height - h).toDouble()
                     }
                 }
             }

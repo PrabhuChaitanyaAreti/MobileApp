@@ -20,7 +20,7 @@ class RightMenuAdapter(private val rightMenuItemList: ArrayList<RightMenuDataMod
     }
 
     override fun getItemCount(): Int {
-        return rightMenuItemList.size;
+        return rightMenuItemList.size
     }
     //the class is holding the list view
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -29,9 +29,9 @@ class RightMenuAdapter(private val rightMenuItemList: ArrayList<RightMenuDataMod
             val punchType  = itemView.findViewById(R.id.punchType) as TextView
             punchId.text = rightMenuDataItem.id
             punchType.text = rightMenuDataItem.title
-            itemView.setOnClickListener(View.OnClickListener {
+            itemView.setOnClickListener {
                 rightMenuItemClickCallBack.onRightMenuItemClickCallBack(adapterPosition)
-            })
+            }
         }
     }
 }

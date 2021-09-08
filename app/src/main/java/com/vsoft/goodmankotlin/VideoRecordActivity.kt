@@ -28,10 +28,9 @@ import com.vsoft.goodmankotlin.utils.DialogUtils
 import java.io.File
 import java.io.IOException
 import java.util.*
-import java.util.concurrent.TimeUnit
 import android.media.AudioManager
 import android.text.TextUtils
-import kotlin.system.exitProcess
+import com.vsoft.goodmankotlin.utils.CameraHelper
 
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
     View.OnClickListener, CustomDialogCallback {
@@ -41,10 +40,10 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private var isRecording = false
     private var isPauseResume = false
 
-    private var parameters: Camera.Parameters? = null;
+    private var parameters: Camera.Parameters? = null
     private var profile: CamcorderProfile? = null
 
-    private val TAG = VideoRecordActivity::class.java.simpleName
+    private val tag = VideoRecordActivity::class.java.simpleName
 
     private var CAMERA_PERMISSION = Manifest.permission.CAMERA
    // private var RECORD_AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO
@@ -73,7 +72,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private var videoOnlineImageButton: ImageButton? = null
     private var videoRecordPlayPause: ImageButton? = null
     private var flashImgIcon: ImageView? = null
-    private var timeleftTxt: TextView? = null
+    private var timeLeftTxt: TextView? = null
     private var partIdTxt: TextView? = null
     private var dieIdTxt: TextView? = null
     private var dieTypeTxt: TextView? = null
@@ -112,7 +111,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         videoOnlineImageButton = findViewById(R.id.videoOnlineImageButton)
         videoRecordPlayPause = findViewById(R.id.videoRecordPlayPause)
         flashImgIcon = findViewById(R.id.flashImgIcon)
-        timeleftTxt = findViewById(R.id.timeleftTxt)
+        timeLeftTxt = findViewById(R.id.timeleftTxt)
         partIdTxt = findViewById(R.id.partIdTxt)
         dieIdTxt = findViewById(R.id.dieIdTxt)
         dieTypeTxt = findViewById(R.id.dieTypeTxt)
@@ -136,13 +135,13 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
 
             if (dieIdStr.isNotEmpty() && !TextUtils.isEmpty(dieIdStr) && dieIdStr != "null") {
-                dieIdTxt!!.text="Die ID: "+dieIdStr
+                dieIdTxt!!.text= "Die ID: $dieIdStr"
                 dieIdTxt!!.visibility=View.VISIBLE
             }else{
                 dieIdTxt!!.visibility=View.GONE
             }
             if (partIdStr.isNotEmpty() && !TextUtils.isEmpty(partIdStr) && partIdStr != "null") {
-                partIdTxt!!.text="Part ID: "+partIdStr
+                partIdTxt!!.text= "Part ID: $partIdStr"
                 partIdTxt!!.visibility=View.VISIBLE
             }else{
                 partIdTxt!!.visibility=View.GONE
@@ -193,7 +192,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     }*/
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
-        progressDialog!!.setCancelable(false)
+        progressDialog.setCancelable(false)
         progressDialog!!.setMessage(this@VideoRecordActivity.resources.getString(R.string.progress_dialog_message_video_recording))
     }
     @RequiresApi(Build.VERSION_CODES.N)
@@ -215,14 +214,14 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             if (isFlashMode) {
                 isFlashMode = false
                 flashImgIcon!!.setImageResource(R.drawable.flash_off)
-                parameters!!.setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
-                mCamera!!.setParameters(parameters!!)
+                parameters!!.flashMode = Camera.Parameters.FLASH_MODE_OFF
+                mCamera!!.parameters = parameters!!
             } else {
                 flashImgIcon!!.setImageResource(R.drawable.flash_on)
                 isFlashMode = true
-                parameters!!.setFlashMode(Camera.Parameters.FLASH_MODE_ON)
-                parameters!!.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH)
-                mCamera!!.setParameters(parameters!!)
+                parameters!!.flashMode = Camera.Parameters.FLASH_MODE_ON
+                parameters!!.flashMode = Camera.Parameters.FLASH_MODE_TORCH
+                mCamera!!.parameters = parameters!!
             }
         } else if (v == videoRecordPlayPause) {
             if (isPauseResume) {
@@ -254,7 +253,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                         //recordSecondsLeft = millisUntilFinished;
                         recordSecondsLeft =
                             millisUntilFinished / 1000
-                        timeleftTxt!!.text = "$recordSecondsLeft/"+totalTimer
+                        timeLeftTxt!!.text = "$recordSecondsLeft/$totalTimer"
                     }
                 }.start()
             } else {
@@ -284,8 +283,8 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
     private fun stopRecording() {
         try {
-            parameters!!.setFlashMode(Camera.Parameters.FLASH_MODE_OFF)
-            mCamera!!.setParameters(parameters)
+            parameters!!.flashMode = Camera.Parameters.FLASH_MODE_OFF
+            mCamera!!.parameters = parameters
             if (mMediaRecorder != null) {
                 mMediaRecorder!!.stop() // stop the recording
             }
@@ -297,12 +296,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             mCamera!!.lock() // take camera access back from MediaRecorder
             isRecording = false
             releaseCamera()
-            Log.d(TAG, "onVideoSaved ${mOutputFile.toString()}")
-            val inputpath = mOutputFile.toString()
-            Log.d(TAG, "onVideoSaved inputpath $inputpath")
+            Log.d(tag, "onVideoSaved ${mOutputFile.toString()}")
+            val inputPath = mOutputFile.toString()
+            Log.d(tag, "onVideoSaved inputPath $inputPath")
 
             val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
-            i.putExtra(CommonUtils.VIDEO_SAVING_FILE_PATH, inputpath)
+            i.putExtra(CommonUtils.VIDEO_SAVING_FILE_PATH, inputPath)
             startActivity(i)
 
            /* val inputpath = mOutputFile.toString()
@@ -379,7 +378,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
         } catch (e: RuntimeException) {
             Log.d(
-                TAG,
+                tag,
                 "RuntimeException: stop() is called immediately after start()"
             )
             mOutputFile!!.delete()
@@ -525,14 +524,14 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             mMediaRecorder!!.prepare()
         } catch (e: IllegalStateException) {
             Log.d(
-                TAG,
+                tag,
                 "IllegalStateException preparing MediaRecorder: " + e.message
             )
             releaseMediaRecorder()
             return false
         } catch (e: IOException) {
             Log.d(
-                TAG,
+                tag,
                 "IOException preparing MediaRecorder: " + e.message
             )
             releaseMediaRecorder()
@@ -541,12 +540,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         return true
     }
 
-    inner class MediaPrepareTask() : AsyncTask<Void, Void, Boolean>() {
+    inner class MediaPrepareTask : AsyncTask<Void, Void, Boolean>() {
         override fun onPreExecute() {
             super.onPreExecute()
                 progressDialog.show()
         }
-        override fun doInBackground(vararg params: Void?): Boolean? {
+        override fun doInBackground(vararg params: Void?): Boolean {
             // initialize video camera
             if (prepareVideoRecorder()) {
                 // Camera is available and unlocked, MediaRecorder is prepared,
@@ -557,7 +556,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
                     isRecording = true
 
-                    Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                    Handler(Looper.getMainLooper()).postDelayed({
                         // enable stop button
                         runOnUiThread {
                             videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
@@ -575,7 +574,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                                 override fun onTick(millisUntilFinished: Long) {
                                     //println(millisUntilFinished)
                                     recordSecondsLeft = millisUntilFinished / 1000
-                                    timeleftTxt!!.text = "$recordSecondsLeft/"+totalTimer
+                                    timeLeftTxt!!.text = "$recordSecondsLeft/$totalTimer"
                                 }
                             }.start()
                         }
@@ -622,9 +621,9 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 mSupportedVideoSizes,
                 mSupportedPreviewSizes, surface_view!!.width, surface_view!!.height
             )
-            Log.e(TAG, "onSurfaceTextureAvailable surface_view!!.width::: " + surface_view!!.width)
+            Log.e(tag, "onSurfaceTextureAvailable surface_view!!.width::: " + surface_view!!.width)
             Log.e(
-                TAG,
+                tag,
                 "onSurfaceTextureAvailable surface_view!!.height::: " + surface_view!!.height
             )
 
@@ -634,11 +633,11 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
             parameters!!.setPreviewSize(profile!!.videoFrameWidth, profile!!.videoFrameHeight)
 
-            val focusModes: List<String> = parameters!!.getSupportedFocusModes()
+            val focusModes: List<String> = parameters!!.supportedFocusModes
             if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                parameters!!.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
+                parameters!!.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
             } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-                parameters!!.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO)
+                parameters!!.focusMode = Camera.Parameters.FOCUS_MODE_AUTO
             }
 
             mCamera!!.parameters = parameters
@@ -650,18 +649,18 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             val optimalSize1: Camera.Size? = mCamera!!.parameters.previewSize
 
             Log.d(
-                TAG,
+                tag,
                 "onSurfaceTextureAvailable optimalSize1!!.width ${optimalSize1!!.width}"
             )
             Log.d(
-                TAG,
+                tag,
                 "onSurfaceTextureAvailable optimalSize1!!.height ${optimalSize1.height}"
             )
 
             getCameraCharacteristics()
         } catch (e: IOException) {
             Log.e(
-                TAG,
+                tag,
                 "Surface texture is unavailable or unsuitable" + e.message
             )
         }
@@ -704,7 +703,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     }
 
     private fun getCameraCharacteristics() {
-        Log.d(TAG, "getCameraCharacteristics")
+        Log.d(tag, "getCameraCharacteristics")
         try {
 
             // val sizes: List<Camera.Size> = parameters!!.getSupportedPreviewSizes()
@@ -713,12 +712,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             cameraSizesArray = arrayOfNulls<String?>(mSupportedSizes.size)
             for (i in mSupportedSizes.indices) {
                 val str = mSupportedSizes[i].width.toString() + "x" + mSupportedSizes[i].height
-                Log.i(TAG, "imageDimension $str")
+                Log.i(tag, "imageDimension $str")
                 cameraSizesArray[i] = str
             }
 
             val sb1 = StringBuffer()
-            val supportedPreviewFps: List<IntArray> = parameters!!.getSupportedPreviewFpsRange()
+            val supportedPreviewFps: List<IntArray> = parameters!!.supportedPreviewFpsRange
             val supportedPreviewFpsIterator = supportedPreviewFps.iterator()
             while (supportedPreviewFpsIterator.hasNext()) {
                 val tmpRate = supportedPreviewFpsIterator.next()
@@ -742,11 +741,11 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             str = str.replace("000".toRegex(), "")
             cameraFPSArray = str.split("n").toTypedArray()
             Log.e(
-                TAG,
+                tag,
                 "printSupportFormats: cameraFPSArray " + Arrays.toString(cameraFPSArray)
             )
         } catch (e: java.lang.Exception) {
-            Log.d(TAG, "CameraAccessException: " + e.message)
+            Log.d(tag, "CameraAccessException: " + e.message)
         }
     }
 
@@ -782,18 +781,18 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             this@VideoRecordActivity.resources.getString(R.string.alert_ok)
         ) { dialog, which ->
             val size = spResolution1.selectedItem.toString()
-            Log.d(TAG, "spinner ok click size $size")
+            Log.d(tag, "spinner ok click size $size")
             val separated = size.split("x").toTypedArray()
             Log.d(
-                TAG,
+                tag,
                 "spinner ok click separated.length " + separated.size
             )
             Log.d(
-                TAG,
+                tag,
                 "spinner ok click Integer.parseInt(separated[0]) " + separated[0].toInt()
             )
             Log.d(
-                TAG,
+                tag,
                 "spinner ok click Integer.parseInt(separated[1]) " + separated[1].toInt()
             )
             // Camera camera = Camera.open();
@@ -801,11 +800,11 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             val selectedWidth = separated[0].toInt()
             val selectedHeight = separated[1].toInt()
             Log.d(
-                TAG,
+                tag,
                 "spinner ok click selectedWidth $selectedWidth"
             )
             Log.d(
-                TAG,
+                tag,
                 "spinner ok click selectedHeight $selectedHeight"
             )
 
@@ -834,11 +833,11 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     val optimalSize: Camera.Size? =
                         choosePreviewSize(parameters!!, selectedWidth, selectedHeight)
                     Log.d(
-                        TAG,
+                        tag,
                         "spinner ok click optimalSize!!.width ${optimalSize!!.width}"
                     )
                     Log.d(
-                        TAG,
+                        tag,
                         "spinner ok click optimalSize!!.height ${optimalSize.height}"
                     )
 
@@ -859,10 +858,10 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
 
 
-    fun choosePreviewSize(parms: Camera.Parameters, width: Int, height: Int): Camera.Size? {
+    private fun choosePreviewSize(params: Camera.Parameters, width: Int, height: Int): Camera.Size? {
         // We should make sure that the requested MPEG size is less than the preferred
         // size, and has the same aspect ratio.
-        val ppsfv = parms.preferredPreviewSizeForVideo
+        val ppsfv = params.preferredPreviewSizeForVideo
         if (ppsfv != null) {
             Log.d(
                 "",
@@ -873,7 +872,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         //for (Camera.Size size : parms.getSupportedPreviewSizes()) {
         //    Log.d(TAG, "supported: " + size.width + "x" + size.height);
         //}
-        for (size: Camera.Size in parms.supportedPreviewSizes) {
+        for (size: Camera.Size in params.supportedPreviewSizes) {
             if (size.width == width && size.height == height) {
                 // parms.setPreviewSize(width, height)
                 return size

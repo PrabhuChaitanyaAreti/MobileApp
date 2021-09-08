@@ -21,7 +21,7 @@ import com.vsoft.goodmankotlin.database.subscribeOnBackground
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.DieIdDetailsModel
-import com.vsoft.goodmankotlin.model.videoUploadSaveRespose
+import com.vsoft.goodmankotlin.model.VideoUploadSaveResponse
 import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils
 import com.vsoft.goodmankotlin.utils.NetworkUtils
@@ -88,7 +88,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         subscribeOnBackground {
             videosList = vm.getVideos()
                 Log.d("TAG", "DashBoardActivity  videosList!!.size ${videosList!!.size}")
-            runOnUiThread(Runnable {
+            runOnUiThread({
                 totalVideoCount=videosList!!.size
 //                Toast.makeText(
 //                    applicationContext,
@@ -138,10 +138,10 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 val hours = minutes / 60
                 val days = hours / 24
 
-                Log.e("DateandTime ", "days:::: $days")
-                Log.e("DateandTime ", "hours::::  $hours")
-                Log.e("DateandTime ", "minutes:::: $minutes")
-                Log.e("DateandTime ", "seconds:::: $seconds")
+                Log.e("DateAndTime ", "days:::: $days")
+                Log.e("DateAndTime ", "hours::::  $hours")
+                Log.e("DateAndTime ", "minutes:::: $minutes")
+                Log.e("DateAndTime ", "seconds:::: $seconds")
 
                 if(days>=CommonUtils.DIE_DATA_SYNC_DAYS){
                     getDieAndPartData()
@@ -227,7 +227,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         functionality: String,
         buttonList: List<String>
     ) {
-        var customDialogModel = CustomDialogModel(
+        val customDialogModel = CustomDialogModel(
             getString(R.string.app_name), alertMessage, null,
             buttonList
         )
@@ -268,7 +268,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             videosList = vm.getVideos()
             if (videosList!!.isEmpty()) {
                 if(!isSyncing) {
-                    runOnUiThread(Runnable {
+                    runOnUiThread({
                         showCustomAlert(
                             this@DashBoardActivity.resources.getString(R.string.no_videos_available),
                             CommonUtils.VIDEO_SYNC_DIALOG,
@@ -277,7 +277,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     })
                 }else{
                     isSyncing=false
-                    runOnUiThread(Runnable {
+                    runOnUiThread({
                         showCustomAlert(
                             this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success), CommonUtils.VIDEO_SYNC_DIALOG,
                             listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
@@ -287,7 +287,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             } else {
                 isSyncing=true
                 Log.i("Videos observed size", "${videosList?.size}")
-                runOnUiThread(Runnable {
+                runOnUiThread({
                     progressDialog.setMessage("Syncing ...${videosList!!.size}/$totalVideoCount")
 
 //                    Toast.makeText(
@@ -303,7 +303,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                         save(this, item)
                     }
                 } else {
-                    runOnUiThread(Runnable {
+                    runOnUiThread({
                         showCustomAlert(
                             this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success), CommonUtils.VIDEO_SYNC_DIALOG,
                             listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
@@ -324,7 +324,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID, item.die_id)
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID, item.part_id)
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM, item.die_top_bottom)
-        val path = item.video_path;
+        val path = item.video_path
         val filename: String = path.substring(path.lastIndexOf("/") + 1)
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_FILE_NAME, filename)
 
@@ -360,18 +360,18 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             Handler(Looper.getMainLooper()).post {
                 progressDialog.show()
             }
-            val call: Call<videoUploadSaveRespose?>? =
+            val call: Call<VideoUploadSaveResponse?>? =
                 RetrofitClient.getInstance()!!.getMyApi1()!!.saveVideo(metaData, videoFile)
-            call!!.enqueue(object : Callback<videoUploadSaveRespose?> {
+            call!!.enqueue(object : Callback<VideoUploadSaveResponse?> {
                 override fun onResponse(
-                    call: Call<videoUploadSaveRespose?>,
-                    response: Response<videoUploadSaveRespose?>
+                    call: Call<VideoUploadSaveResponse?>,
+                    response: Response<VideoUploadSaveResponse?>
                 ) {
                     try {
                         Log.i("response  ", "$response")
                         val statusCode = response.body()!!.statusCode
                         if (statusCode == 200) {
-                            runOnUiThread(Runnable {
+                            runOnUiThread({
                                // Toast.makeText(applicationContext, "video upload success 200", Toast.LENGTH_LONG).show()
                                 item.status = true
                                 val status: Int = vm.update(item)
@@ -381,7 +381,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                                 sync()
                             })
                         } else if (statusCode == 401) {
-                            runOnUiThread(Runnable {
+                            runOnUiThread({
                                 //Toast.makeText(applicationContext, "video upload exists 200", Toast.LENGTH_LONG).show()
                                 item.status = true
                                 val status: Int = vm.update(item)
@@ -389,7 +389,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                                 sync()
                             })
                         } else {
-                            runOnUiThread(Runnable {
+                            runOnUiThread({
                             //Toast.makeText(applicationContext, "video upload fail", Toast.LENGTH_LONG).show()
                             showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_server_alert_message), CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
                             })
@@ -405,8 +405,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     }
                 }
 
-                override fun onFailure(call: Call<videoUploadSaveRespose?>, t: Throwable) {
-                    runOnUiThread(Runnable {
+                override fun onFailure(call: Call<VideoUploadSaveResponse?>, t: Throwable) {
+                    runOnUiThread({
 //                        Toast.makeText(applicationContext, "video upload failure", Toast.LENGTH_LONG).show()
                         showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
                             listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
@@ -418,7 +418,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 }
             })
         } else {
-            runOnUiThread(Runnable {
+            runOnUiThread({
                 showCustomAlert(
                     this@DashBoardActivity.resources.getString(R.string.network_alert_message),
                     CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,

@@ -1,10 +1,9 @@
-package com.vsoft.goodmankotlin
+package com.vsoft.goodmankotlin.utils
 
 import android.annotation.TargetApi
 import android.content.Context
 import android.hardware.Camera
 import android.os.Build
-import android.os.Environment
 import android.util.Log
 import java.io.File
 import java.text.SimpleDateFormat

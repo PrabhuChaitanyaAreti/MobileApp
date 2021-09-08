@@ -44,10 +44,10 @@ class VideoRepository(application: Application) {
     fun getAllVideos(): LiveData<List<VideoModel>> {
         return allVideos
     }
-    fun getVideos(): List<VideoModel>? {
+    fun getVideos(): List<VideoModel> {
            return videoDao.getVideos()
     }
-    fun getAllVideosList(): List<VideoModel>? {
+    fun getAllVideosList(): List<VideoModel> {
         return videoDao.getAllVideosList()
     }
     fun updateSyncStatus(id:Int?):Int{

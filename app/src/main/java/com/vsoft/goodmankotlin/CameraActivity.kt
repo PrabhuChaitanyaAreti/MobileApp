@@ -53,11 +53,11 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
     private var mPicture: PictureCallback? = null
 
     private var capture: Button? = null
-    private var btnSendEdge:android.widget.Button? = null
+    private var btnSendEdge: Button? = null
     private var cameraPreview: LinearLayout? = null
     private var imgSettings: ImageView? = null
-    private var imgCapture:android.widget.ImageView? = null
-    private var imgPreview:android.widget.ImageView? = null
+    private var imgCapture: ImageView? = null
+    private var imgPreview: ImageView? = null
 
     private var myContext: Context? = null
 
@@ -69,7 +69,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
     /**
      * Background and Countdown timer variables
      */
-    private var Counter: CountDownTimer? = null
+    private var counter: CountDownTimer? = null
     private val minutesToGo: Long = 1
     private val initialMillisToGo = minutesToGo * 1000 * 60
     private var alertDialog: AlertDialog? = null
@@ -119,7 +119,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         val builder = AlertDialog.Builder(this@CameraActivity)
         builder.setCancelable(false)
         builder.setTitle("Low Battery")
-        builder.setMessage("15% of battery remaining.Please piugin charger")
+        builder.setMessage("15% of battery remaining.Please plugin charger")
         builder.setNeutralButton("Exit") { dialog, which ->
             dialog.dismiss()
             if (alertDialog!!.isShowing) {
@@ -135,7 +135,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
             }
         }
         alertDialog = builder.create()
-        if (!this@CameraActivity.isFinishing()) {
+        if (!this@CameraActivity.isFinishing) {
             try {
                 alertDialog!!.show()
             } catch (e: BadTokenException) {
@@ -152,16 +152,16 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         imgSettings = findViewById(R.id.settings_icon)
         imgCapture = findViewById(R.id.capture_icon)
         imgPreview = findViewById(R.id.imgPreview)
-        val displaymetrics = DisplayMetrics()
-        this@CameraActivity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics)
-       CameraActivity.screenHeight = displaymetrics.heightPixels
-       CameraActivity.screenWidth = displaymetrics.widthPixels
+        val displayMetrics = DisplayMetrics()
+        this@CameraActivity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+       screenHeight = displayMetrics.heightPixels
+       screenWidth = displayMetrics.widthPixels
         Log.d(
             "TAG",
-            "device width and height " +CameraActivity.screenWidth + "x" +CameraActivity.screenHeight
+            "device width and height " + screenWidth + "x" + screenHeight
         )
         mCamera = Camera.open()
-        val parameters = mCamera!!.getParameters()
+        val parameters = mCamera!!.parameters
         val mSupportedPreviewSizes = parameters
             .supportedPreviewSizes
         val previewSize: Camera.Size? = getOptimalPreviewSize(
@@ -189,15 +189,15 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         capture!!.setOnClickListener(this)
         imgSettings!!.setOnClickListener(this)
         imgCapture!!.setOnClickListener(this)
-        btnSendEdge!!.setVisibility(View.GONE)
-        imgCapture!!.setVisibility(View.GONE)
-        imgSettings!!.setVisibility(View.GONE)
-        imgPreview!!.setVisibility(View.GONE)
+        btnSendEdge!!.visibility = View.GONE
+        imgCapture!!.visibility = View.GONE
+        imgSettings!!.visibility = View.GONE
+        imgPreview!!.visibility = View.GONE
         mPicture = getPictureCallback()
         mPreview!!.refreshCamera(mCamera)
         mCamera!!.startPreview()
-        val size = mCamera!!.getParameters().previewSize
-        Log.d("TAG", "oncreate getPreviewSize   " + size.width + "x" + size.height)
+        val size = mCamera!!.parameters.previewSize
+        Log.d("TAG", "onCreate getPreviewSize   " + size.width + "x" + size.height)
     }
 
     /**
@@ -215,7 +215,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
                         initScreen()
-                    } else if (report.isAnyPermissionPermanentlyDenied()) {
+                    } else if (report.isAnyPermissionPermanentlyDenied) {
                         showPermissionsAlert()
                     }
                 }
@@ -247,29 +247,29 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
 
     override fun onClick(view: View) {
         if (view === capture) {
-            if (Counter != null) {
-                Counter!!.cancel()
-                Counter = null
+            if (counter != null) {
+                counter!!.cancel()
+                counter = null
             }
             Log.d("TAG", "capture onClick ")
             if (mCamera != null) {
-                val size = mCamera!!.getParameters().previewSize
-                Log.d("TAG", "oncreate getPreviewSize   " + size.width + "x" + size.height)
+                val size = mCamera!!.parameters.previewSize
+                Log.d("TAG", "onCreate getPreviewSize   " + size.width + "x" + size.height)
                 mPicture = getPictureCallback()
                 mCamera!!.takePicture(null, null, mPicture)
             }
         } else if (view === imgSettings) {
-            if (Counter != null) {
-                Counter!!.cancel()
-                Counter = null
+            if (counter != null) {
+                counter!!.cancel()
+                counter = null
             }
             //showDialog()
         } else if (view === imgCapture) {
             reCapture()
         } else if (view === btnSendEdge) {
-            if (Counter != null) {
-                Counter!!.cancel()
-                Counter = null
+            if (counter != null) {
+                counter!!.cancel()
+                counter = null
             }
             Log.d("TAG", "btnSendEdge onClick imagePath::: $imagePath")
             progressDialog = ProgressDialog(this)
@@ -291,7 +291,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                         response: Response<PunchResponse?>
                     ) {
                         try {
-                            if (response.isSuccessful()) {
+                            if (response.isSuccessful) {
                                 // Storing data into SharedPreferences
                                 val sharedPreferences =
                                     getSharedPreferences("MySharedPref", MODE_PRIVATE)
@@ -305,7 +305,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                                 val json: String = gson.toJson(response.body())
                                 myEdit.putString("response", json)
                                 myEdit.apply()
-                                if (progressDialog != null && progressDialog!!.isShowing()) progressDialog!!.dismiss()
+                                if (progressDialog != null && progressDialog!!.isShowing) progressDialog!!.dismiss()
                                 val intent = Intent(
                                     this@CameraActivity,
                                     MaskingActivity::class.java
@@ -313,7 +313,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                                 startActivity(intent)
                                 finish()
                             } else {
-                                if (progressDialog!!.isShowing()) {
+                                if (progressDialog!!.isShowing) {
                                     progressDialog!!.dismiss()
                                 }
                                 DialogUtils.showNormalAlert(
@@ -324,7 +324,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
-                            if (progressDialog!!.isShowing()) {
+                            if (progressDialog!!.isShowing) {
                                 progressDialog!!.dismiss()
                             }
                         }
@@ -332,7 +332,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
 
                     override fun onFailure(call: Call<PunchResponse?>?, t: Throwable) {
                         DialogUtils.showNormalAlert(this@CameraActivity, "Alert!!", "" + t)
-                        if (progressDialog!!.isShowing()) {
+                        if (progressDialog!!.isShowing) {
                             progressDialog!!.dismiss()
                         }
                     }
@@ -349,12 +349,12 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
 
     private fun reCapture() {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        builder.setTitle(this@CameraActivity.getResources().getString(R.string.app_name))
+        builder.setTitle(this@CameraActivity.resources.getString(R.string.app_name))
             .setMessage("Are you sure to want to go ReCapture?")
             .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
-                if (Counter != null) {
-                    Counter!!.cancel()
-                    Counter = null
+                if (counter != null) {
+                    counter!!.cancel()
+                    counter = null
                 }
                 backgroundTimer()
                 btnSendEdge!!.visibility = View.GONE
@@ -428,9 +428,9 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         Log.d("TAG", "onPause: ")
         //when on Pause, release camera in order to be used from other applications
         releaseCamera()
-        if (Counter != null) {
-            Counter!!.cancel()
-            Counter = null
+        if (counter != null) {
+            counter!!.cancel()
+            counter = null
         }
     }
 
@@ -464,15 +464,15 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         }
     }
 
-    fun saveImage(myBitmap: Bitmap): String {
+    private fun saveImage(myBitmap: Bitmap): String {
         val bytes = ByteArrayOutputStream()
         myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes)
-        val IMAGE_DIRECTORY = "/Goodman/images"
+        val imageDirectory = "/Goodman/images"
         val wallpaperDirectory =
-            File(Environment.getExternalStorageDirectory().toString() + IMAGE_DIRECTORY)
+            File(Environment.getExternalStorageDirectory().toString() + imageDirectory)
         // have the object build the directory structure, if needed.
         if (!wallpaperDirectory.exists()) {
-            Log.d("dirrrrrr", "" + wallpaperDirectory.mkdirs())
+            Log.d("dir", "" + wallpaperDirectory.mkdirs())
             wallpaperDirectory.mkdirs()
         }
         try {
@@ -497,7 +497,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
      * Background timer initialize
      */
     private fun backgroundTimer() {
-        Counter = object : CountDownTimer(initialMillisToGo, 1000) {
+        counter = object : CountDownTimer(initialMillisToGo, 1000) {
             override fun onTick(millisUntilFinished1: Long) {
                 val secs = (millisUntilFinished1 / 1000).toInt() % 60
                 val minutes = (millisUntilFinished1 / (1000 * 60) % 60).toInt()
@@ -506,13 +506,13 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
             }
 
             override fun onFinish() {
-                if (Counter != null) {
-                    Counter!!.cancel()
-                    Counter = null
+                if (counter != null) {
+                    counter!!.cancel()
+                    counter = null
                 }
                 val builder = AlertDialog.Builder(this@CameraActivity)
                 builder.setTitle(
-                    this@CameraActivity.getResources().getString(R.string.app_name)
+                    this@CameraActivity.resources.getString(R.string.app_name)
                 )
                 builder.setCancelable(false)
                 builder.setMessage("No activity detected. Capture screen will close.Select Continue to continue capturing image.")
@@ -523,9 +523,9 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                     if (alertDialog!!.isShowing) {
                         alertDialog!!.dismiss()
                     }
-                    if (Counter != null) {
-                        Counter!!.cancel()
-                        Counter = null
+                    if (counter != null) {
+                        counter!!.cancel()
+                        counter = null
                     }
                     backgroundTimer()
                 }
@@ -542,7 +542,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                     }
                 }
                 alertDialog = builder.create()
-                if (!this@CameraActivity.isFinishing()) {
+                if (!this@CameraActivity.isFinishing) {
                     try {
                         alertDialog!!.show()
                     } catch (e: BadTokenException) {
@@ -551,6 +551,6 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                 }
             }
         }
-        Counter!!.start()
+        counter!!.start()
     }
 }

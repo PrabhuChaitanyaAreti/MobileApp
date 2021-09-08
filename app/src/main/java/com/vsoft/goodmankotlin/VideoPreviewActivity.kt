@@ -23,7 +23,6 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.trackselection.TrackSelector
-import com.google.android.exoplayer2.ui.PlayerControlView
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
@@ -46,19 +45,19 @@ import java.util.*
 
 class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
-    private val TAG = VideoPreviewActivity::class.java.simpleName
+    private val tag = VideoPreviewActivity::class.java.simpleName
     private var path = ""
-    private var videofilename: String? = null
-    private var isplay = false
-    private var current_pos: Long = 0
-    private var total_duration: Long = 0
+    private var videoFileName: String? = null
+    private var isPlay = false
+    private var currentPos: Long = 0
+    private var totalDuration: Long = 0
     private var mHandler: Handler? = null
     private var handler: Handler? = null
     private var absPlayerInternal: SimpleExoPlayer? = null
 
     private var progressDialog: ProgressDialog? = null
 
-    private var pv_main: PlayerView? = null
+    private var pvMain: PlayerView? = null
     private var pause: ImageView? = null
 
     private var retakeVideo: TextView? = null
@@ -110,7 +109,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
 
-        pv_main = findViewById(R.id.pv_main)
+        pvMain = findViewById(R.id.pv_main)
         current = findViewById(R.id.current)
         total = findViewById(R.id.total)
         seekBar = findViewById(R.id.seekbar)
@@ -126,18 +125,18 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
         if (batterLevel >= 15) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             path = intent.extras!!.getString(CommonUtils.VIDEO_SAVING_FILE_PATH).toString()
-            Log.d(TAG, "VideoPreviewActivity onCreate $path")
-            videofilename = CommonUtils.getFileName(path)
-            println("VideoPreviewActivity videofilename is $videofilename")
+            Log.d(tag, "VideoPreviewActivity onCreate $path")
+            videoFileName = CommonUtils.getFileName(path)
+            println("VideoPreviewActivity videoFileName is $videoFileName")
 
             if (dieIdStr.isNotEmpty() && !TextUtils.isEmpty(dieIdStr) && dieIdStr != "null") {
-                dieIdTxt!!.text="Die ID: "+dieIdStr
+                dieIdTxt!!.text= "Die ID: $dieIdStr"
                 dieIdTxt!!.visibility= View.VISIBLE
             }else{
                 dieIdTxt!!.visibility= View.GONE
             }
             if (partIdStr.isNotEmpty() && !TextUtils.isEmpty(partIdStr) && partIdStr != "null") {
-                partIdTxt!!.text="Part ID: "+partIdStr
+                partIdTxt!!.text= "Part ID: $partIdStr"
                 partIdTxt!!.visibility= View.VISIBLE
             }else{
                 partIdTxt!!.visibility= View.GONE
@@ -159,9 +158,9 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 .build()
 
             val userAgent = Util.getUserAgent(this, this.getString(appNameStringRes))
-            val defdataSourceFactory = DefaultDataSourceFactory(this, userAgent)
+            val defaultDataSourceFactory = DefaultDataSourceFactory(this, userAgent)
             val uriOfContentUrl = Uri.parse(path)
-            val mediaSource: MediaSource = ProgressiveMediaSource.Factory(defdataSourceFactory)
+            val mediaSource: MediaSource = ProgressiveMediaSource.Factory(defaultDataSourceFactory)
                 .createMediaSource(uriOfContentUrl) // creating a media source
 
 
@@ -169,37 +168,34 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             //absPlayerInternal.setPlayWhenReady(true); // start loading video and play it at the moment a chunk of it is available offline
 
             //absPlayerInternal.setPlayWhenReady(true); // start loading video and play it at the moment a chunk of it is available offline
-            pv_main!!.setPlayer(absPlayerInternal) // attach surface to the view
+            pvMain!!.player = absPlayerInternal // attach surface to the view
 
             absPlayerInternal!!.repeatMode = Player.REPEAT_MODE_ALL
-            pv_main!!.setKeepScreenOn(true)
+            pvMain!!.keepScreenOn = true
 
-            pv_main!!.hideController()
-            pv_main!!.setControllerVisibilityListener(object :
-                PlayerControlView.VisibilityListener {
-                override fun onVisibilityChange(i: Int) {
-                    if (i == 0) {
-                        pv_main!!.hideController()
-                    }
+            pvMain!!.hideController()
+            pvMain!!.setControllerVisibilityListener { i ->
+                if (i == 0) {
+                    pvMain!!.hideController()
                 }
-            })
-            pause = findViewById<ImageView>(R.id.pause)
+            }
+            pause = findViewById(R.id.pause)
             pause!!.setImageResource(R.drawable.video_record_play)
             pause!!.setOnClickListener {
-                if (isplay) {
-                    isplay = false
+                if (isPlay) {
+                    isPlay = false
                     //  pvMain.onPause();
-                    absPlayerInternal!!.setPlayWhenReady(false)
+                    absPlayerInternal!!.playWhenReady = false
                     pause!!.setImageResource(R.drawable.video_record_play)
                 } else {
-                    isplay = true
+                    isPlay = true
                     //  pvMain.onResume();
-                    absPlayerInternal!!.setPlayWhenReady(true)
+                    absPlayerInternal!!.playWhenReady = true
                     pause!!.setImageResource(R.drawable.video_record_pause)
                 }
             }
 
-            retakeVideo = findViewById<TextView>(R.id.retakeVideo)
+            retakeVideo = findViewById(R.id.retakeVideo)
             retakeVideo!!.setOnClickListener {
                 showCustomAlert(
                     this@VideoPreviewActivity.resources.getString(R.string.app_name),
@@ -212,7 +208,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 )
 
             }
-            videoSubmit = findViewById<TextView>(R.id.videoSubmit)
+            videoSubmit = findViewById(R.id.videoSubmit)
             if (isNewDie) {
                 videoSubmit!!.text = this@VideoPreviewActivity.resources.getString(R.string.save)
             } else {
@@ -292,7 +288,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                     }
                 } else {
 
-                    if (absPlayerInternal!!.isPlaying()) {
+                    if (absPlayerInternal!!.isPlaying) {
                         absPlayerInternal!!.stop()
                     }
                     pause!!.isEnabled = false
@@ -412,7 +408,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                     val dur = absPlayerInternal!!.duration
                     Log.e("dur", "::::$dur:::")
                     if (dur > 0) {
-                        total_duration = absPlayerInternal!!.duration.toDouble().toLong()
+                        totalDuration = absPlayerInternal!!.duration.toDouble().toLong()
                         setVideoProgress()
                     }
                 }
@@ -442,26 +438,22 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        //CommonUtils.freeMemory()
-    }
     // display video progress
     fun setVideoProgress() {
         //get the video duration
-        current_pos = absPlayerInternal!!.getCurrentPosition()
+        currentPos = absPlayerInternal!!.currentPosition
 
         //display video duration
-        total!!.text = timeConversion(total_duration as Long)
-        current!!.text = timeConversion(current_pos.toLong())
-        seekBar!!.max = total_duration.toInt()
+        total!!.text = timeConversion(totalDuration as Long)
+        current!!.text = timeConversion(currentPos)
+        seekBar!!.max = totalDuration.toInt()
         val handler = Handler(Looper.getMainLooper())
         val runnable: Runnable = object : Runnable {
             override fun run() {
                 try {
-                    current_pos = absPlayerInternal!!.getCurrentPosition()
-                    current!!.text = timeConversion(current_pos.toLong())
-                    seekBar!!.progress = current_pos.toInt()
+                    currentPos = absPlayerInternal!!.currentPosition
+                    current!!.text = timeConversion(currentPos)
+                    seekBar!!.progress = currentPos.toInt()
                     handler.postDelayed(this, 1000)
                 } catch (ed: IllegalStateException) {
                     ed.printStackTrace()
@@ -470,19 +462,19 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
         }
         handler.postDelayed(runnable, 1000)
 
-        //seekbar change listner
+        //seekbar change listener
         seekBar!!.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {}
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                current_pos = seekBar.progress.toLong()
-                absPlayerInternal!!.seekTo(current_pos.toLong())
+                currentPos = seekBar.progress.toLong()
+                absPlayerInternal!!.seekTo(currentPos)
             }
         })
     }
 
     //time conversion
-    fun timeConversion(value: Long): String? {
+    fun timeConversion(value: Long): String {
         val songTime: String
         val dur = value.toInt()
         val hrs = dur / 3600000
@@ -498,7 +490,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
     override fun onPause() {
         super.onPause()
-        if (absPlayerInternal!!.isPlaying()) {
+        if (absPlayerInternal!!.isPlaying) {
             absPlayerInternal!!.stop()
         }
     }
@@ -507,7 +499,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
         super.onDestroy()
         //CommonUtils.freeMemory()
         absPlayerInternal!!.release()
-        if (absPlayerInternal!!.isPlaying()) {
+        if (absPlayerInternal!!.isPlaying) {
             absPlayerInternal!!.stop()
         }
     }
@@ -604,10 +596,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             }
             if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
                 absPlayerInternal!!.release()
-                if (absPlayerInternal!!.isPlaying()) {
+                if (absPlayerInternal!!.isPlaying) {
                     absPlayerInternal!!.stop()
                 }
-                Log.d(TAG, "VideoPreviewActivity onCreate $path")
+                Log.d(tag, "VideoPreviewActivity onCreate $path")
                 CommonUtils.deletePath(path)
                 val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)

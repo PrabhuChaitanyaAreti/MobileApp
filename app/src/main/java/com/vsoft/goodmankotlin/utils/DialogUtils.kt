@@ -42,14 +42,14 @@ class DialogUtils {
                 customDialog.setCancelable(false)
                 val buttonListIterator = buttonsList.iterator()
                 while (buttonListIterator.hasNext()) run {
-                    var button = Button(context);
+                    val button = Button(context)
                     button.text = buttonListIterator.next()
                     button.setPadding(20,0,20,0)
                     button.setTextAppearance(context, R.style.TextAppearance_AppCompat_Medium)
                     button.background=context?.resources?.getDrawable(R.drawable.button_bg)
                     button.setTextColor(Color.parseColor("#FFFFFF"))
                     button.isAllCaps=false
-                    button.setOnClickListener(View.OnClickListener {
+                    button.setOnClickListener({
                         customDialogCallback.onCustomDialogButtonClicked(button.text as String,functionality)
                         customDialog.dismiss()
                     })

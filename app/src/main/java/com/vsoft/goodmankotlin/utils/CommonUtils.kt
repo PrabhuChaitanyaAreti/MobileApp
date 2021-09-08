@@ -3,16 +3,14 @@ package com.vsoft.goodmankotlin.utils
 import android.app.Activity
 import android.content.Context
 import android.hardware.Camera
-import android.os.Build
 import android.os.Environment
 import androidx.appcompat.app.AlertDialog
-import com.microsoft.appcenter.AppCenter
 import android.os.StatFs
 import android.text.TextUtils
-import androidx.core.app.ActivityCompat.finishAffinity
 import java.io.File
 import java.lang.Exception
 import java.lang.StringBuilder
+import kotlin.math.abs
 import kotlin.system.exitProcess
 
 
@@ -122,9 +120,9 @@ class CommonUtils {
             if (pathContents != null) {
                 val pathContentsLength = pathContents.size
                 //  System.out.println("Path Contents Length: " + pathContentsLength);
-                for (i in pathContents.indices) {
-                    //System.out.println("Path " + i + ": " + pathContents[i]);
-                }
+//                for (i in pathContents.indices) {
+//                    //System.out.println("Path " + i + ": " + pathContents[i]);
+//                }
                 //lastPart: s659629384_752969_4472.jpg
                 val lastPart = pathContents[pathContentsLength - 1]
                 val lastPartContents = lastPart.split("\\.").toTypedArray()
@@ -155,25 +153,25 @@ class CommonUtils {
         }
 
         fun getOptimalPreviewSize(sizes: List<Camera.Size>?, w: Int, h: Int): Camera.Size? {
-            val ASPECT_TOLERANCE = 0.1
+            val aspectTolerance = 0.1
             val targetRatio = h.toDouble() / w
             if (sizes == null) return null
             var optimalSize: Camera.Size? = null
             var minDiff = Double.MAX_VALUE
             for (size in sizes) {
                 val ratio = size.width.toDouble() / size.height
-                if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue
-                if (Math.abs(size.height - h) < minDiff) {
+                if (abs(ratio - targetRatio) > aspectTolerance) continue
+                if (abs(size.height - h) < minDiff) {
                     optimalSize = size
-                    minDiff = Math.abs(size.height - h).toDouble()
+                    minDiff = abs(size.height - h).toDouble()
                 }
             }
             if (optimalSize == null) {
                 minDiff = Double.MAX_VALUE
                 for (size in sizes) {
-                    if (Math.abs(size.height - h) < minDiff) {
+                    if (abs(size.height - h) < minDiff) {
                         optimalSize = size
-                        minDiff = Math.abs(size.height - h).toDouble()
+                        minDiff = abs(size.height - h).toDouble()
                     }
                 }
             }
@@ -200,15 +198,15 @@ class CommonUtils {
 
 
 
-     fun externalMemoryAvailable(): Boolean {
+     private fun externalMemoryAvailable(): Boolean {
         return Environment.getExternalStorageState().equals(
             Environment.MEDIA_MOUNTED
         )
     }
 
-     fun getAvailableInternalMemorySize(): String? {
+     private fun getAvailableInternalMemorySize(): String? {
         val path: File = Environment.getDataDirectory()
-        val stat = StatFs(path.getPath())
+        val stat = StatFs(path.path)
         val blockSize = stat.blockSizeLong
         val availableBlocks = stat.availableBlocksLong
         return formatSize(availableBlocks * blockSize)
@@ -216,16 +214,16 @@ class CommonUtils {
 
     fun getTotalInternalMemorySize(): String? {
         val path: File = Environment.getDataDirectory()
-        val stat = StatFs(path.getPath())
+        val stat = StatFs(path.path)
         val blockSize = stat.blockSizeLong
         val totalBlocks = stat.blockCountLong
         return formatSize(totalBlocks * blockSize)
     }
 
-     fun getAvailableExternalMemorySize(): String? {
+     private fun getAvailableExternalMemorySize(): String? {
         return if (externalMemoryAvailable()) {
             val path: File = Environment.getExternalStorageDirectory()
-            val stat = StatFs(path.getPath())
+            val stat = StatFs(path.path)
             val blockSize = stat.blockSizeLong
             val availableBlocks = stat.availableBlocksLong
             formatSize(availableBlocks * blockSize)
@@ -237,7 +235,7 @@ class CommonUtils {
     fun getTotalExternalMemorySize(): String? {
         return if (externalMemoryAvailable()) {
             val path: File = Environment.getExternalStorageDirectory()
-            val stat = StatFs(path.getPath())
+            val stat = StatFs(path.path)
             val blockSize = stat.blockSizeLong
             val totalBlocks = stat.blockCountLong
             formatSize(totalBlocks * blockSize)
@@ -246,7 +244,7 @@ class CommonUtils {
         }
     }
 
-     fun formatSize(size: Long): String? {
+     private fun formatSize(size: Long): String {
         var size = size
         var suffix: String? = null
         if (size >= 1024) {
@@ -257,7 +255,7 @@ class CommonUtils {
                 size /= 1024
             }
         }
-        val resultBuffer = StringBuilder(java.lang.Long.toString(size))
+        val resultBuffer = StringBuilder(size.toString())
         var commaOffset = resultBuffer.length - 3
         while (commaOffset > 0) {
             resultBuffer.insert(commaOffset, ',')
@@ -285,11 +283,8 @@ class CommonUtils {
             println(" checkMemory internalMemory1 ***  $internalMemory1")
             println("  checkMemory externalMemory1 ***  $externalMemory1")
 
-            if(Integer.parseInt(internalMemory1) <500  || Integer.parseInt(externalMemory1) <500 ) {
-                isMemory = false;
-            }else{
-                isMemory = true;
-            }
+            isMemory =
+                !(Integer.parseInt(internalMemory1) <500  || Integer.parseInt(externalMemory1) <500)
         } else {
             isMemory = false
         }
@@ -306,7 +301,7 @@ class CommonUtils {
      */
     fun deletePath(filePath: String) {
         try{
-            if (!TextUtils.isEmpty(filePath) && filePath.length > 0) {
+            if (!TextUtils.isEmpty(filePath) && filePath.isNotEmpty()) {
                 //clearImage(filePath);
                 val imgFile = File(filePath)
                 if (imgFile.exists()) {
@@ -339,8 +334,8 @@ class CommonUtils {
     } else if(Build.VERSION.SDK_INT>=21){
         activity!!.finishAndRemoveTask();
     }*/
-    activity!!.finishAffinity();
-    exitProcess(0);
+    activity.finishAffinity();
+    exitProcess(0)
 }
     }
 

@@ -8,6 +8,4 @@ data class CustomDialogModel(
     @SerializedName("message") val message: String,
     @SerializedName("image") val image: String?,
     @SerializedName("Buttons") val buttons: List<String>
-){
-
-}
+)
