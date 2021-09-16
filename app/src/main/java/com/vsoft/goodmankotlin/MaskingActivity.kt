@@ -401,7 +401,11 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         // Inflate the menu; this adds items to the action bar if it is present.
         optionsMenu = menu!!
         menuInflater.inflate(R.menu.right_menu, menu)
-        loadRightSideMenu(incorrectShapes, missedShapes)
+        try {
+            loadRightSideMenu(incorrectShapes, missedShapes)
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
         return true
     }
 
