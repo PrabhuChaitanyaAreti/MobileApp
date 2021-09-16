@@ -80,7 +80,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         syncDie.setOnClickListener(this)
         versionDetails=findViewById(R.id.versionDetails)
         versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
-        vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
+
+       val str="select * from video_table where status="+"'"+false+"'"
+        Log.d("TAG", "strstrstrstr: $str")
+
+            vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
 
         var videosList: List<VideoModel>?
         subscribeOnBackground {
@@ -341,7 +345,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         val metaDataFilePart = MultipartBody.Part.createFormData(
             CommonUtils.SYNC_VIDEO_API_META_DATA,
             jsonFile.name,
-            RequestBody.create(MediaType.parse("text/plain"), jsonFile)
+            RequestBody.create(MediaType.parse("*/*"), jsonFile)
         )
 
         val file = File(path) // initialize file here
@@ -362,7 +366,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 progressDialog.show()
             }
             val call: Call<VideoUploadSaveResponse?>? =
-                RetrofitClient.getInstance()!!.getMyApi1()!!.saveVideo(metaData, videoFile)
+                RetrofitClient.getInstance()!!.getMyApi()!!.saveVideo(metaData, videoFile)
             call!!.enqueue(object : Callback<VideoUploadSaveResponse?> {
                 override fun onResponse(
                     call: Call<VideoUploadSaveResponse?>,

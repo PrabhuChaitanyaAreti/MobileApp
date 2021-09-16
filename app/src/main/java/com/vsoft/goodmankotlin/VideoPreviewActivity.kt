@@ -170,7 +170,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             //absPlayerInternal.setPlayWhenReady(true); // start loading video and play it at the moment a chunk of it is available offline
             pvMain!!.player = absPlayerInternal // attach surface to the view
 
-            absPlayerInternal!!.repeatMode = Player.REPEAT_MODE_ALL
+            absPlayerInternal!!.repeatMode = Player.REPEAT_MODE_OFF
             pvMain!!.keepScreenOn = true
 
             pvMain!!.hideController()
@@ -328,6 +328,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                                         "TAG",
                                         "submit onClick onResponse code ::: " + response.code()
                                     )
+                                    if(response.code()==200){
                                     if (response.body()?.getGt()!=null) {
                                         // Storing data into SharedPreferences
                                         val sharedPreferences =
@@ -359,7 +360,26 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                                             this@VideoPreviewActivity,
                                             CustomDialogModel(
                                                 this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                                                "Invalid response",
+                                                "Empty data, Contact Admin.",
+                                                null,
+                                                listOf(
+                                                    this@VideoPreviewActivity.resources.getString(
+                                                        R.string.alert_ok
+                                                    )
+                                                )
+                                            ), this@VideoPreviewActivity, "invalidResponse"
+                                        )
+
+                                    }
+                                    }else if(response.code()==404) {
+                                        if (progressDialog!!.isShowing) {
+                                            progressDialog!!.dismiss()
+                                        }
+                                        DialogUtils.showCustomAlert(
+                                            this@VideoPreviewActivity,
+                                            CustomDialogModel(
+                                                this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                                                "Something went wrong, Contact Admin.",
                                                 null,
                                                 listOf(
                                                     this@VideoPreviewActivity.resources.getString(
