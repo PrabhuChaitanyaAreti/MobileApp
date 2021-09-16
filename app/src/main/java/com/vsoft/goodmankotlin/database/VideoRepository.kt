@@ -12,7 +12,7 @@ class VideoRepository(application: Application) {
 
     init {
         videoDao = database.videoDao()
-        allVideos = videoDao.getAllVideos()
+        allVideos = videoDao.getAllVideos(false)
     }
 
     fun insert(video: VideoModel) {
@@ -45,7 +45,7 @@ class VideoRepository(application: Application) {
         return allVideos
     }
     fun getVideos(): List<VideoModel> {
-           return videoDao.getVideos()
+           return videoDao.getVideos(false)
     }
     fun getAllVideosList(): List<VideoModel> {
         return videoDao.getAllVideosList()

@@ -170,7 +170,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             //absPlayerInternal.setPlayWhenReady(true); // start loading video and play it at the moment a chunk of it is available offline
             pvMain!!.player = absPlayerInternal // attach surface to the view
 
-            absPlayerInternal!!.repeatMode = Player.REPEAT_MODE_ALL
+            absPlayerInternal!!.repeatMode = Player.REPEAT_MODE_OFF
             pvMain!!.keepScreenOn = true
 
             pvMain!!.hideController()

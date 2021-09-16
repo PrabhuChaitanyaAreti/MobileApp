@@ -9,9 +9,11 @@ class RetrofitClient {
     companion object {
     private var instance: RetrofitClient? = null
     private var myApi: RetrofitApiInterface? = null
-    private var myApi1: RetrofitApiInterface? = null
-    private var BASE_URL:String = "http://111.93.3.148:12808"
-    private var BASE_URL1:String = "http://111.93.3.148:13808"
+   // private var myApi1: RetrofitApiInterface? = null
+   // private var BASE_URL:String = "http://111.93.3.148:12808"
+    //private var BASE_URL1:String = "http://111.93.3.148:13808"
+       //  http://3.218.249.156:12808
+        private var BASE_URL:String="http://3.218.249.156:12808"
         private var timeOut:Long=20
 
     init {
@@ -25,11 +27,11 @@ class RetrofitClient {
             .client(okHttpClient)
             .build()
         myApi = retrofit.create(RetrofitApiInterface::class.java)
-        val retrofit1: Retrofit = Retrofit.Builder().baseUrl(BASE_URL1)
+       /* val retrofit1: Retrofit = Retrofit.Builder().baseUrl(BASE_URL1)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
-        myApi1 = retrofit1.create(RetrofitApiInterface::class.java)
+        myApi1 = retrofit1.create(RetrofitApiInterface::class.java)*/
     }
 
         @Synchronized
@@ -44,7 +46,7 @@ class RetrofitClient {
     fun getMyApi(): RetrofitApiInterface? {
         return myApi
     }
-    fun getMyApi1(): RetrofitApiInterface? {
+    /*fun getMyApi1(): RetrofitApiInterface? {
         return myApi1
-    }
+    }*/
 }

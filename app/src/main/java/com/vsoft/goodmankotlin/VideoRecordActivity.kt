@@ -450,7 +450,9 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             mMediaRecorder!!.reset()
             mMediaRecorder!!.release()
             mMediaRecorder = null
-            mCamera!!.lock()
+            if (mCamera != null) {
+                mCamera!!.lock()
+            }
         }
     }
 
@@ -473,16 +475,17 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         mMediaRecorder = MediaRecorder()
 
         // Step 1: Unlock and set camera to MediaRecorder
-        mCamera!!.stopPreview()
-        mCamera!!.unlock()
-        mMediaRecorder!!.setCamera(mCamera)
+        if (mCamera != null) {
+            mCamera!!.stopPreview()
+            mCamera!!.unlock()
+            mMediaRecorder!!.setCamera(mCamera)
 
-        // Step 2: Set sources
-         mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
-       // mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
+            // Step 2: Set sources
+            mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
+            // mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
+            mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
 
-        /*  mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
+            /*  mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
           mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.CAMCORDER)
           mMediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
           mMediaRecorder!!.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
@@ -494,50 +497,58 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 //        mMediaRecorder!!.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 //        mMediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
-       // mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC);
-       // mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-     //   mMediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-       // mMediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-       // mMediaRecorder!!.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+            // mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC);
+            // mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+            //   mMediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            // mMediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            // mMediaRecorder!!.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
 
 
-        ///Log.e("---1----", width+"------------"+height);
+            ///Log.e("---1----", width+"------------"+height);
 //                    mediaRecorder.setVideoSize(camera.getParameters().getPreviewSize().width, camera.getParameters().getPreviewSize().height);
-       /// mMediaRecorder!!.setVideoFrameRate(30);
-        //mMediaRecorder!!.setVideoEncodingBitRate(3*1024*1024);
+            /// mMediaRecorder!!.setVideoFrameRate(30);
+            //mMediaRecorder!!.setVideoEncodingBitRate(3*1024*1024);
 //                    mediaRecorder.setOrientationHint(90);
-        //mMediaRecorder!!.setMaxDuration(60*60*1000);
+            //mMediaRecorder!!.setMaxDuration(60*60*1000);
 
-        // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-        mMediaRecorder!!.setProfile(profile)
+            // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
+            mMediaRecorder!!.setProfile(profile)
 
-        // Step 4: Set output file
-        mOutputFile = CameraHelper.getOutputMediaFile(CameraHelper.MEDIA_TYPE_VIDEO,this@VideoRecordActivity)
-        if (mOutputFile == null) {
+            // Step 4: Set output file
+            mOutputFile = CameraHelper.getOutputMediaFile(
+                CameraHelper.MEDIA_TYPE_VIDEO,
+                this@VideoRecordActivity
+            )
+            if (mOutputFile == null) {
+                return false
+            }
+            mMediaRecorder!!.setOutputFile(mOutputFile!!.path)
+            // END_INCLUDE (configure_media_recorder)
+
+            // Step 5: Prepare configured MediaRecorder
+            try {
+                mMediaRecorder!!.prepare()
+            } catch (e: IllegalStateException) {
+                Log.d(
+                    tag,
+                    "IllegalStateException preparing MediaRecorder: " + e.message
+                )
+                releaseMediaRecorder()
+                return false
+            } catch (e: IOException) {
+                Log.d(
+                    tag,
+                    "IOException preparing MediaRecorder: " + e.message
+                )
+                releaseMediaRecorder()
+                return false
+            }
+            return true
+        }else
+        {
             return false
         }
-        mMediaRecorder!!.setOutputFile(mOutputFile!!.path)
-        // END_INCLUDE (configure_media_recorder)
 
-        // Step 5: Prepare configured MediaRecorder
-        try {
-            mMediaRecorder!!.prepare()
-        } catch (e: IllegalStateException) {
-            Log.d(
-                tag,
-                "IllegalStateException preparing MediaRecorder: " + e.message
-            )
-            releaseMediaRecorder()
-            return false
-        } catch (e: IOException) {
-            Log.d(
-                tag,
-                "IOException preparing MediaRecorder: " + e.message
-            )
-            releaseMediaRecorder()
-            return false
-        }
-        return true
     }
 
     inner class MediaPrepareTask : AsyncTask<Void, Void, Boolean>() {
@@ -607,6 +618,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     }
 
     override fun onSurfaceTextureAvailable(p0: SurfaceTexture, p1: Int, p2: Int) {
+        Log.d("pri","")
         try {
             /*
                    * Background timer initialize
@@ -979,5 +991,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         super.onDestroy()
         //CommonUtils.freeMemory()
         setMicMuted(false)
+        releaseMediaRecorder()
+        releaseCamera()
     }
 }
