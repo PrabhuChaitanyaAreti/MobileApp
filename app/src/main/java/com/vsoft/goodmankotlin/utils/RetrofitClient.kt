@@ -12,7 +12,7 @@ class RetrofitClient {
     private var myApi1: RetrofitApiInterface? = null
     private var BASE_URL:String = "http://111.93.3.148:12808"
     private var BASE_URL1:String = "http://111.93.3.148:13808"
-        private var timeOut:Long=3
+        private var timeOut:Long=20
 
     init {
         val okHttpClient = OkHttpClient.Builder()

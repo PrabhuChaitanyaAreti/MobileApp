@@ -49,8 +49,6 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private lateinit var vm: VideoViewModel
     private var sharedPreferences: SharedPreferences? = null
     private var isSyncing=false
-
-
     private var isDieDataAvailable = false
     private var dieData = ""
     private var dieDataSyncTime = ""
@@ -340,14 +338,14 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         val metaDataFilePart = MultipartBody.Part.createFormData(
             CommonUtils.SYNC_VIDEO_API_META_DATA,
             jsonFile.name,
-            RequestBody.create(MediaType.parse("*/*"), jsonFile)
+            RequestBody.create(MediaType.parse("text/plain"), jsonFile)
         )
 
         val file = File(path) // initialize file here
         val videoFilePart = MultipartBody.Part.createFormData(
             CommonUtils.SYNC_VIDEO_API_FILE,
             file.name,
-            RequestBody.create(MediaType.parse("image/*"), file)
+            RequestBody.create(MediaType.parse("video/*"), file)
         )
         saveVideoToServer(item, metaDataFilePart, videoFilePart)
     }

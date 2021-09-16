@@ -67,6 +67,7 @@
         <activity
             android:name=".DashBoardActivity"
             android:exported="true"
+            android:turnScreenOn="true"
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
