@@ -332,6 +332,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
         Log.i("save jsonString ", jsonString)
         Log.i("save path ", path)
+        val fileSize: File = File(path)
+        val file_size = (fileSize.length() / 1024)/1024
+        Log.i("video file_size  ", ""+file_size)
         val rootFolder: File? = context.getExternalFilesDir(null)
         val jsonFile = File(rootFolder, "post.json")
         val writer = FileWriter(jsonFile)
@@ -406,6 +409,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 }
 
                 override fun onFailure(call: Call<VideoUploadSaveResponse?>, t: Throwable) {
+                    Log.i("onFailure  ", "${t.printStackTrace()}")
+
                     runOnUiThread({
 //                        Toast.makeText(applicationContext, "video upload failure", Toast.LENGTH_LONG).show()
                         showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
@@ -416,6 +421,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     })
 
                 }
+
+
+
             })
         } else {
             runOnUiThread({
