@@ -54,6 +54,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private var dieDataSyncTime = ""
     private lateinit var versionDetails:TextView
     private var totalVideoCount:Int = 0
+    private var currentIndex:Int=0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
@@ -279,6 +280,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     })
                 }else{
                     isSyncing=false
+                    currentIndex=0
                     runOnUiThread({
                         showCustomAlert(
                             this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success), CommonUtils.VIDEO_SYNC_DIALOG,
@@ -290,8 +292,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 isSyncing=true
                 Log.i("Videos observed size", "${videosList?.size}")
                 runOnUiThread({
-                    progressDialog.setMessage("Syncing ...${videosList!!.size}/$totalVideoCount")
-
+                    progressDialog.setMessage("Syncing ...${++currentIndex}/$totalVideoCount")
 //                    Toast.makeText(
 //                        applicationContext,
 //                        "syncvideos list size " + videosList!!.size,
@@ -394,6 +395,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                                 sync()
                             })
                         } else {
+                            --currentIndex
                             runOnUiThread({
                             //Toast.makeText(applicationContext, "video upload fail", Toast.LENGTH_LONG).show()
                             showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_server_alert_message), CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
@@ -403,6 +405,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                             progressDialog.dismiss()
                         }
                     } catch (e: Exception) {
+                        --currentIndex
                         e.printStackTrace()
                         if (progressDialog.isShowing) {
                             progressDialog.dismiss()
@@ -412,11 +415,15 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
                 override fun onFailure(call: Call<VideoUploadSaveResponse?>, t: Throwable) {
                     Log.i("onFailure  ", "${t.printStackTrace()}")
-
+                    --currentIndex
                     runOnUiThread({
 //                        Toast.makeText(applicationContext, "video upload failure", Toast.LENGTH_LONG).show()
-                        showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
-                            listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
+                        if(t.localizedMessage.equals("timeout",true)){
+                            sync()
+                        }else{
+                            showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
+                                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
+                        }
                         if (progressDialog.isShowing) {
                             progressDialog.dismiss()
                         }

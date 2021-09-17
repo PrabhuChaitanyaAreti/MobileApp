@@ -37,7 +37,7 @@
 
     <!--Common Messages-->
     <string name="api_failure_alert_title">Unable to communicate with server.</string>
-    <string name="api_server_alert_message">Server Error.</string>
+    <string name="api_server_alert_message">Unable to process request.Contact admin.</string>
     <string name="network_alert_message">Please check your internet connection and try again.</string>
     <string name="alert_title">Alert!!</string>
     <string name="alert_cancel">Cancel</string>

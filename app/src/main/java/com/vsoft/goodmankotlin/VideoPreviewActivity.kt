@@ -305,9 +305,9 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                         }
                         val file = File(path) // initialize file here
                         val filePart = MultipartBody.Part.createFormData(
-                            "file",
+                            "video",
                             file.name,
-                            RequestBody.create(MediaType.parse("image/*"), file)
+                            RequestBody.create(MediaType.parse("video/*"), file)
                         )
                         val call: Call<PunchResponse?>? =
                             RetrofitClient.getInstance()!!.getMyApi()!!.uploadDyeVideo(filePart)

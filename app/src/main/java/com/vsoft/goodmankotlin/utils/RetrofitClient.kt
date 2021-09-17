@@ -18,9 +18,9 @@ class RetrofitClient {
 
     init {
         val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(timeOut, TimeUnit.MINUTES)
-            .readTimeout(timeOut, TimeUnit.MINUTES)
-            .writeTimeout(timeOut, TimeUnit.MINUTES)
+//            .connectTimeout(timeOut, TimeUnit.MINUTES)
+//            .readTimeout(timeOut, TimeUnit.MINUTES)
+//            .writeTimeout(timeOut, TimeUnit.MINUTES)
             .build()
         val retrofit: Retrofit = Retrofit.Builder().baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
