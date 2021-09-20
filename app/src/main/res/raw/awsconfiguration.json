@@ -1,0 +1,20 @@
+{
+  "Version": "1.0",
+  "IdentityManager": {
+    "Default": {}
+  },
+"CredentialsProvider": {
+  "CognitoIdentity": {
+    "Default": {
+      "PoolId": "ap-south-1:8944688a-260e-4682-9717-e394242bb4e4",
+      "Region": "ap-south-1"
+    }
+  }
+},
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "goodman-mobile-pool-bucket",
+      "Region": "ap-south-1"
+    }
+  }
+}
