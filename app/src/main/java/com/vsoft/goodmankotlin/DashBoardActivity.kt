@@ -13,6 +13,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProviders
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.vsoft.goodmankotlin.database.VideoModel
@@ -22,10 +26,7 @@ import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.DieIdDetailsModel
 import com.vsoft.goodmankotlin.model.VideoUploadSaveResponse
-import com.vsoft.goodmankotlin.utils.CommonUtils
-import com.vsoft.goodmankotlin.utils.DialogUtils
-import com.vsoft.goodmankotlin.utils.NetworkUtils
-import com.vsoft.goodmankotlin.utils.RetrofitClient
+import com.vsoft.goodmankotlin.utils.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -55,12 +56,20 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private lateinit var versionDetails:TextView
     private var totalVideoCount:Int = 0
     private var currentIndex:Int=0
+    // The TransferUtility is the primary class for managing transfer to S3
+    var transferUtility: TransferUtility? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
-
         initProgress()
         init()
+        initAws()
+    }
+
+    private fun initAws() {
+        // Initializes TransferUtility, always do this before using it.
+        val util = AwsUtil()
+        transferUtility = util.getTransferUtility(this)
     }
 
     private fun init() {
@@ -355,6 +364,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             file.name,
             RequestBody.create(MediaType.parse("video/*"), file)
         )
+        //beginUpload(file)
         saveVideoToServer(item, metaDataFilePart, videoFilePart)
     }
 
@@ -419,7 +429,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     runOnUiThread({
 //                        Toast.makeText(applicationContext, "video upload failure", Toast.LENGTH_LONG).show()
                         if(t.localizedMessage.equals("timeout",true)){
-                            sync()
+                            //sync()
                         }else{
                             showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
                                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
@@ -532,4 +542,55 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
     }
 
+    /*
+     * Begins to upload the file specified by the file path.
+     */
+    private fun beginUpload(file: File) {
+        val observer: TransferObserver =
+            transferUtility!!.upload(
+                file.name,
+                file
+            )
+
+        /*
+         * Note that usually we set the transfer listener after initializing the
+         * transfer. However it isn't required in this sample app. The flow is
+         * click upload button -> start an activity for image selection
+         * startActivityForResult -> onActivityResult -> beginUpload -> onResume
+         * -> set listeners to in progress transfers.
+         */
+        observer.setTransferListener(UploadListener())
+    }
+
+    /*
+     * A TransferListener class that can listen to a upload task and be notified
+     * when the status changes.
+     */
+    internal class UploadListener : TransferListener {
+        // TAG for logging;
+        val TAG = "UploadActivity"
+        // Simply updates the UI list when notified.
+        override fun onError(id: Int, e: java.lang.Exception) {
+            Log.e(
+                TAG,
+                "Error during upload: $id", e
+            )
+        }
+
+        override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
+            Log.d(
+                TAG, String.format(
+                    "onProgressChanged: %d, total: %d, current: %d",
+                    id, bytesTotal, bytesCurrent
+                )
+            )
+        }
+
+        override fun onStateChanged(id: Int, newState: TransferState) {
+            Log.d(
+                TAG,
+                "onStateChanged: $id, $newState"
+            )
+        }
+    }
 }

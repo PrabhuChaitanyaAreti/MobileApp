@@ -14,13 +14,13 @@ class RetrofitClient {
     //private var BASE_URL1:String = "http://111.93.3.148:13808"
        //  http://3.218.249.156:12808
         private var BASE_URL:String="http://3.218.249.156:12808"
-        private var timeOut:Long=20
+        private var timeOut:Long= Long.MAX_VALUE
 
     init {
         val okHttpClient = OkHttpClient.Builder()
-//            .connectTimeout(timeOut, TimeUnit.MINUTES)
-//            .readTimeout(timeOut, TimeUnit.MINUTES)
-//            .writeTimeout(timeOut, TimeUnit.MINUTES)
+            .connectTimeout(timeOut, TimeUnit.HOURS)
+            .readTimeout(timeOut, TimeUnit.HOURS)
+            .writeTimeout(timeOut, TimeUnit.HOURS)
             .build()
         val retrofit: Retrofit = Retrofit.Builder().baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
