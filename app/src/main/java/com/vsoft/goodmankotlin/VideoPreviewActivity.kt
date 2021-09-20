@@ -33,15 +33,15 @@ import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.PunchResponse
 import com.vsoft.goodmankotlin.utils.*
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import com.vsoft.goodmankotlin.video_response.VideoAnnotationResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import okhttp3.*
+
 
 class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
@@ -309,12 +309,25 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                             file.name,
                             RequestBody.create(MediaType.parse("video/*"), file)
                         )
-                        val call: Call<PunchResponse?>? =
+                        val call: Call<VideoAnnotationResponse?>? =
                             RetrofitClient.getInstance()!!.getMyApi()!!.uploadDyeVideo(filePart)
-                        call!!.enqueue(object : Callback<PunchResponse?> {
+
+                        val thread = Thread {
+                            try {
+                                //Your code goes here
+                                val request: Request = call!!.clone().request()
+                                val client = OkHttpClient()
+                                val test = client.newCall(request).execute()
+                                println(test.body()!!.string())
+                            } catch (e: java.lang.Exception) {
+                                Log.e("PrintException", e.message!!)
+                            }
+                        }
+                        thread.start()
+                        call!!.enqueue(object : Callback<VideoAnnotationResponse?> {
                             override fun onResponse(
-                                call: Call<PunchResponse?>,
-                                response: Response<PunchResponse?>
+                                call: Call<VideoAnnotationResponse?>,
+                                response: Response<VideoAnnotationResponse?>
                             ) {
                                 try {
                                     if (progressDialog!!.isShowing) {
@@ -329,7 +342,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                                         "submit onClick onResponse code ::: " + response.code()
                                     )
                                     if(response.code()==200){
-                                    if (response.body()?.getGt()!=null) {
+                                    if (response.body()?.gt!=null) {
                                         // Storing data into SharedPreferences
                                         val sharedPreferences =
                                             getSharedPreferences(
@@ -398,7 +411,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                                     }
                             }
 
-                            override fun onFailure(call: Call<PunchResponse?>, t: Throwable) {
+                            override fun onFailure(call: Call<VideoAnnotationResponse?>, t: Throwable) {
                                 // DialogUtils.showNormalAlert(VideoPreviewActivity.this, "Alert!!", "" + t);
                                 val intent =
                                     Intent(this@VideoPreviewActivity, MaskingActivity::class.java)

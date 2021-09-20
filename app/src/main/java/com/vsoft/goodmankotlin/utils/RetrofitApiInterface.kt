@@ -1,6 +1,7 @@
 package com.vsoft.goodmankotlin.utils
 
 import com.vsoft.goodmankotlin.model.*
+import com.vsoft.goodmankotlin.video_response.VideoAnnotationResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -25,7 +26,7 @@ interface RetrofitApiInterface {
     fun uploadDyeImage(@Part filePart: MultipartBody.Part?): Call<PunchResponse?>?
     @Multipart
     @POST("/placeholder/api/video")
-    fun uploadDyeVideo(@Part file: MultipartBody.Part?): Call<PunchResponse?>?
+    fun uploadDyeVideo(@Part file: MultipartBody.Part?): Call<VideoAnnotationResponse?>?
     @Multipart
     @POST("/uploadFile")
     fun saveVideo(@Part meta_data:MultipartBody.Part?, @Part file: MultipartBody.Part?): Call<VideoUploadSaveResponse?>?
