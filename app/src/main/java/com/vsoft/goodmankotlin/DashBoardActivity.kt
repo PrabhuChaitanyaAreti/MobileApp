@@ -419,7 +419,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     runOnUiThread({
 //                        Toast.makeText(applicationContext, "video upload failure", Toast.LENGTH_LONG).show()
                         if(t.localizedMessage.equals("timeout",true)){
-                            sync()
+                           // sync()
                         }else{
                             showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
                                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
