@@ -300,6 +300,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             } else {
                 isSyncing=true
                 Log.i("Videos observed size", "${videosList?.size}")
+                currentIndex=totalVideoCount-videosList!!.size
                 runOnUiThread({
                     progressDialog.setMessage("Syncing ...${++currentIndex}/$totalVideoCount")
 //                    Toast.makeText(
@@ -596,9 +597,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                // runOnUiThread({
                     //Toast.makeText(applicationContext, "video upload exists 200", Toast.LENGTH_LONG).show()
 
-                    item.status = true
+                   // item.status = true
                   //  val status: Int = vm.update(item)
-                    Log.i("response update status ", "$status")
+                   // Log.i("response update status ", "$status")
                     //sync()
                 //})
             }
