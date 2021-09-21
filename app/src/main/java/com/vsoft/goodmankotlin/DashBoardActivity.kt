@@ -327,7 +327,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     @Throws(IOException::class)
-    private fun save(context: Context, item: VideoModel) {
+     fun save(context: Context, item: VideoModel) {
         Log.i("Id:", "${item.id}")
         Log.i("Status:", "${item.status}")
         Log.i("video die type :", item.die_top_bottom)
@@ -364,8 +364,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             file.name,
             RequestBody.create(MediaType.parse("video/*"), file)
         )
-        beginUpload(file,item)
-       // saveVideoToServer(item, metaDataFilePart, videoFilePart)
+        //beginUpload(file,item)
+        saveVideoToServer(item, metaDataFilePart, videoFilePart)
     }
 
     private fun saveVideoToServer(
@@ -593,13 +593,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 "onStateChanged: $id, $newState"
             )
             if(newState.equals("COMPLETED")){
-                //runOnUiThread({
+               // runOnUiThread({
                     //Toast.makeText(applicationContext, "video upload exists 200", Toast.LENGTH_LONG).show()
 
-                    //item.status = true
-                    //val status: Int = vm.update(item)
-                   // Log.i("response update status ", "$status")
-                 //   sync()
+                    item.status = true
+                  //  val status: Int = vm.update(item)
+                    Log.i("response update status ", "$status")
+                    //sync()
                 //})
             }
         }
