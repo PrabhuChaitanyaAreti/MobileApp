@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
@@ -38,8 +39,12 @@ import java.io.FileWriter
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import com.vsoft.goodmankotlin.utils.ProgressRequestBody
 
-class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback {
+
+
+
+class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback,ProgressRequestBody.UploadCallbacks {
     private lateinit var addOperator: LinearLayout
     private lateinit var addDie: LinearLayout
     private lateinit var sync: LinearLayout
@@ -56,6 +61,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private lateinit var versionDetails:TextView
     private var totalVideoCount:Int = 0
     private var currentIndex:Int=0
+    private var progressBar: ProgressBar? = null
     // The TransferUtility is the primary class for managing transfer to S3
     var transferUtility: TransferUtility? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -170,6 +176,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private fun initProgress() {
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        //progressDialog.setIndeterminate(true);
+        progressDialog.setProgress(0);
     }
 
     override fun onClick(v: View?) {
@@ -360,10 +369,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         )
 
         val file = File(path) // initialize file here
+        val fileBody = ProgressRequestBody(file, "video/*",this)
         val videoFilePart = MultipartBody.Part.createFormData(
             CommonUtils.SYNC_VIDEO_API_FILE,
             file.name,
-            RequestBody.create(MediaType.parse("video/*"), file)
+            fileBody
         )
         //beginUpload(file)
         saveVideoToServer(item, metaDataFilePart, videoFilePart)
@@ -593,5 +603,17 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 "onStateChanged: $id, $newState"
             )
         }
+    }
+
+    override fun onProgressUpdate(percentage: Int) {
+        progressDialog!!.setProgress(percentage);
+    }
+
+    override fun onError() {
+        //Error
+    }
+
+    override fun onFinish() {
+        progressDialog!!.setProgress(100);
     }
 }
