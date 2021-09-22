@@ -118,10 +118,10 @@
 
     <!--Video Preview Screen-->
     <string name="video_preview_save_click_1">Die details are saved. Please use sync in dashboard to send the data to server.</string>
-    <string name="video_preview_save_click_2">Die top is recorded.Do you want to record die bottom?</string>
-    <string name="video_preview_save_click_3">Die bottom is recorded.Do you want to record die top?</string>
+    <string name="video_preview_save_click_2">Top Die is recorded.Do you want to record Bottom Die?</string>
+    <string name="video_preview_save_click_3">Bottom Die is recorded.Do you want to record Top Die?</string>
     <string name="progress_dialog_message_video_preview">Please wait .. Processing video may take some time.</string>
-    <string name="video_preview_alert_message">You can use retake to retake a video after cancelling this dialog or press OK to navigate to Dashboard?</string>
+    <string name="video_preview_alert_message">Do you want to navigate to dash board?</string>
     <string name="video_preview_ratake">Do you want to Retake the video?</string>
 
     <!--Masking Screen-->

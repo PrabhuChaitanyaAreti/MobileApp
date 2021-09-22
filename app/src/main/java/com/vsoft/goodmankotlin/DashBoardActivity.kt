@@ -204,7 +204,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             getDieAndPartData()
         }
         if (v?.id == sync.id) {
-            sync()
+            if (NetworkUtils.isNetworkAvailable(this)) {
+                sync()
+            }else{
+                showCustomAlert(
+                    this@DashBoardActivity.resources.getString(R.string.network_alert_message),CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                    listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
+            }
         }
         if (v?.id == skip.id) {
             if (CommonUtils.checkMemory()) {
@@ -300,6 +306,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             } else {
                 isSyncing=true
                 Log.i("Videos observed size", "${videosList?.size}")
+                totalVideoCount=videosList!!.size
                 currentIndex=totalVideoCount-videosList!!.size
                 runOnUiThread({
                     progressDialog.setMessage("Syncing ...${++currentIndex}/$totalVideoCount")
@@ -329,6 +336,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
     @Throws(IOException::class)
      fun save(context: Context, item: VideoModel) {
+        if (NetworkUtils.isNetworkAvailable(this)) {
         Log.i("Id:", "${item.id}")
         Log.i("Status:", "${item.status}")
         Log.i("video die type :", item.die_top_bottom)
@@ -367,6 +375,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         )
         //beginUpload(file,item)
         saveVideoToServer(item, metaDataFilePart, videoFilePart)
+        }else{
+            showCustomAlert(
+                this@DashBoardActivity.resources.getString(R.string.network_alert_message),CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
+        }
     }
 
     private fun saveVideoToServer(
@@ -387,6 +400,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     try {
                         Log.i("response  ", "$response")
                         val statusCode = response.body()!!.statusCode
+                        Log.i("statusCode  ", "$statusCode")
                         if (statusCode == 200) {
                             runOnUiThread({
                                // Toast.makeText(applicationContext, "video upload success 200", Toast.LENGTH_LONG).show()
@@ -425,13 +439,22 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 }
 
                 override fun onFailure(call: Call<VideoUploadSaveResponse?>, t: Throwable) {
-                    Log.i("onFailure  ", "${t.printStackTrace()}")
+                    Log.i("onFailure  printStackTrace :::: ", "${t.printStackTrace()}")
+                    Log.i("onFailure  toString :::: ", t.toString())
+                    Log.i("onFailure  localizedMessage :::: ", t.localizedMessage)
+                    t.message?.let { Log.i("onFailure  message :::: ", it) }
                     --currentIndex
                     runOnUiThread({
 //                        Toast.makeText(applicationContext, "video upload failure", Toast.LENGTH_LONG).show()
                         if(t.localizedMessage.equals("timeout",true)){
                             //sync()
-                        }else{
+                        }else if(t.localizedMessage.contains("Failed to connect to",true)){
+                            showCustomAlert(
+                                this@DashBoardActivity.resources.getString(R.string.network_alert_message),
+                                CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                            )
+                       } else {
                             showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
                                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
                         }
