@@ -442,7 +442,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                         if(t.localizedMessage.equals("timeout",true)){
                             //sync()
                         }else{
-                            showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
+                            showCustomAlert("Internet connectivity issues.Please check your internet connection",CommonUtils.WEB_SERVICE_CALL_FAILED,
                                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
                         }
                         if (progressDialog.isShowing) {
