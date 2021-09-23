@@ -307,7 +307,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             } else {
                 isSyncing=true
                 Log.i("Videos observed size", "${videosList?.size}")
-                totalVideoCount=videosList!!.size
+                //totalVideoCount=videosList!!.size
                 currentIndex=totalVideoCount-videosList!!.size
                 runOnUiThread({
                     progressDialog.setMessage("Syncing ...${++currentIndex}/$totalVideoCount")
