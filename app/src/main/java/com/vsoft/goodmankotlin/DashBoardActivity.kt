@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProviders
+import com.microsoft.appcenter.analytics.Analytics
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
@@ -426,19 +427,24 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                             showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_server_alert_message), CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
                             })
                         }
-                        if (progressDialog.isShowing) {
-                            progressDialog.dismiss()
+                        if(progressDialog!=null) {
+                            if (progressDialog.isShowing) {
+                                progressDialog.dismiss()
+                            }
                         }
                     } catch (e: Exception) {
                         --currentIndex
                         e.printStackTrace()
-                        if (progressDialog.isShowing) {
-                            progressDialog.dismiss()
+                        if(progressDialog!=null) {
+                            if (progressDialog.isShowing) {
+                                progressDialog.dismiss()
+                            }
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<VideoUploadSaveResponse?>, t: Throwable) {
+                    Analytics.trackEvent("Sync Video: "+t.printStackTrace());
                     Log.i("onFailure  printStackTrace :::: ", "${t.printStackTrace()}")
                     Log.i("onFailure  toString :::: ", t.toString())
                     Log.i("onFailure  localizedMessage :::: ", t.localizedMessage)
@@ -447,8 +453,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     runOnUiThread({
 //                        Toast.makeText(applicationContext, "video upload failure", Toast.LENGTH_LONG).show()
                         if(t.localizedMessage.equals("timeout",true)){
-                            //sync()
-                        }else if(t.localizedMessage.contains("Failed to connect to",true)){
+                            sync()
+                        }else if(t.localizedMessage.contains("Failed to connect to",true)||t.localizedMessage.contains("connection",true)){
                             showCustomAlert(
                                 this@DashBoardActivity.resources.getString(R.string.network_alert_message),
                                 CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
@@ -458,8 +464,10 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                             showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
                                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
                         }
-                        if (progressDialog.isShowing) {
-                            progressDialog.dismiss()
+                        if(progressDialog!=null) {
+                            if (progressDialog.isShowing) {
+                                progressDialog.dismiss()
+                            }
                         }
                     })
 

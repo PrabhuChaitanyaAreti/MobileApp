@@ -27,6 +27,8 @@ interface RetrofitApiInterface {
     @Multipart
     @POST("/placeholder/api/video")
     fun uploadDyeVideo(@Part file: MultipartBody.Part?): Call<VideoAnnotationResponse?>?
+
+    @Headers("Connection:close")
     @Multipart
     @POST("/uploadFile")
     fun saveVideo(@Part meta_data:MultipartBody.Part?, @Part file: MultipartBody.Part?): Call<VideoUploadSaveResponse?>?
