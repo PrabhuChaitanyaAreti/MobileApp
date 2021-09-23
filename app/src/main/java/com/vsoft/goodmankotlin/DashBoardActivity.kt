@@ -458,9 +458,6 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     }
 
                 }
-
-
-
             })
         } else {
             runOnUiThread {
