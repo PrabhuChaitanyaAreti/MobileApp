@@ -151,6 +151,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                         if (statusCode == 200) {
                             val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                             editor.putBoolean(CommonUtils.LOGIN_STATUS, true)
+                            editor.putString(CommonUtils.LOGIN_USER_ID, userId)
                             editor.apply()
                             navigateToDashBoard()
                         } else if (statusCode == 401) {

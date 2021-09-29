@@ -227,7 +227,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             if (isPauseResume) {
                 isPauseResume = false
                 videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
-                mMediaRecorder!!.resume()
+               // mMediaRecorder!!.resume()
 
                 println("resume recordSecondsLeft  $recordSecondsLeft")
                 if (mMediaRecorder != null) {
@@ -259,7 +259,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             } else {
                 isPauseResume = true
                 videoRecordPlayPause!!.setImageResource(R.drawable.video_record_play)
-                mMediaRecorder!!.pause()
+//                mMediaRecorder!!.pause()
 
                 println("pause recordSecondsLeft  $recordSecondsLeft")
                 videoMaxTimeInMillis = (recordSecondsLeft.toInt() * 1000).toLong()
@@ -436,8 +436,8 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     override fun onPause() {
         super.onPause()
         setMicMuted(false)
-        releaseMediaRecorder()
-        releaseCamera()
+//        releaseMediaRecorder()
+//        releaseCamera()
     }
 
     override fun onResume() {

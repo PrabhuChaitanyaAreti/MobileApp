@@ -74,6 +74,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
     private var sharedPreferences: SharedPreferences? = null
 
+    private var userId = ""
+    private var operatorStr = ""
     private var dieIdStr = ""
     private var partIdStr = ""
     private var dieTypeStr = ""
@@ -92,13 +94,18 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
         )
 
 
-        dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
-        partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
+        userId = sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
+        operatorStr = sharedPreferences!!.getString(CommonUtils.SAVE_OPERATOR_ID, "").toString()
         dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
         isNewDie = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_NEW_DIE, false)
         isDieTop = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_TOP, false)
         isDieBottom = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, false)
+        dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
+        partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
 
+
+        Log.d("TAG", "VideoPreviewActivity  sharedPreferences  userId $userId")
+        Log.d("TAG", "VideoPreviewActivity  sharedPreferences  operatorStr $operatorStr")
         Log.d("TAG", "VideoPreviewActivity  sharedPreferences  dieIdStr $dieIdStr")
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  partIdStr $partIdStr")
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  dieTypeStr $dieTypeStr")
@@ -227,7 +234,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                                 path,
                                 timeStamp,
                                 false,
-                                dieTypeStr
+                                dieTypeStr,
+                                userId,operatorStr
                             )
                         )
 
@@ -248,7 +256,9 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                                 path,
                                 timeStamp,
                                 false,
-                                dieTypeStr
+                                dieTypeStr,
+                                userId,
+                                operatorStr
                             )
                         )
 
@@ -272,7 +282,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                                 path,
                                 timeStamp,
                                 false,
-                                dieTypeStr
+                                dieTypeStr,
+                                userId,operatorStr
                             )
                         )
 

@@ -282,56 +282,65 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     private fun sync() {
-        var videosList: List<VideoModel>? = null
-        subscribeOnBackground {
-            videosList = vm.getVideos()
-            if (videosList!!.isEmpty()) {
-                if(!isSyncing) {
+        val batterLevel: Int = BatteryUtil.getBatteryPercentage(this)
+        Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
+        if (batterLevel >= 15) {
+            var videosList: List<VideoModel>? = null
+            subscribeOnBackground {
+                videosList = vm.getVideos()
+                if (videosList!!.isEmpty()) {
+                    if (!isSyncing) {
+                        runOnUiThread({
+                            showCustomAlert(
+                                this@DashBoardActivity.resources.getString(R.string.no_videos_available),
+                                CommonUtils.VIDEO_SYNC_DIALOG,
+                                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                            )
+                        })
+                    } else {
+                        isSyncing = false
+                        currentIndex = 0
+                        runOnUiThread({
+                            showCustomAlert(
+                                this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success),
+                                CommonUtils.VIDEO_SYNC_DIALOG,
+                                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                            )
+                        })
+                    }
+                } else {
+                    isSyncing = true
+                    Log.i("Videos observed size", "${videosList?.size}")
+                    //totalVideoCount=videosList!!.size
+                    currentIndex = totalVideoCount - videosList!!.size
                     runOnUiThread({
-                        showCustomAlert(
-                            this@DashBoardActivity.resources.getString(R.string.no_videos_available),
-                            CommonUtils.VIDEO_SYNC_DIALOG,
-                            listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
-                        )
-                    })
-                }else{
-                    isSyncing=false
-                    currentIndex=0
-                    runOnUiThread({
-                        showCustomAlert(
-                            this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success), CommonUtils.VIDEO_SYNC_DIALOG,
-                            listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
-                        )
-                    })
-                }
-            } else {
-                isSyncing=true
-                Log.i("Videos observed size", "${videosList?.size}")
-                //totalVideoCount=videosList!!.size
-                currentIndex=totalVideoCount-videosList!!.size
-                runOnUiThread({
-                    progressDialog.setMessage("Syncing ...${++currentIndex}/$totalVideoCount")
+                        progressDialog.setMessage("Syncing ...${++currentIndex}/$totalVideoCount")
 //                    Toast.makeText(
 //                        applicationContext,
 //                        "syncvideos list size " + videosList!!.size,
 //                        Toast.LENGTH_LONG
 //                    ).show()
-                })
-                val iterator = videosList!!.listIterator()
-                if (iterator.hasNext()) {
-                    val item = iterator.next()
-                    if (!item.status) {
-                        save(this, item)
-                    }
-                } else {
-                    runOnUiThread({
-                        showCustomAlert(
-                            this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success), CommonUtils.VIDEO_SYNC_DIALOG,
-                            listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
-                        )
                     })
+                    val iterator = videosList!!.listIterator()
+                    if (iterator.hasNext()) {
+                        val item = iterator.next()
+                        if (!item.status) {
+                            save(this, item)
+                        }
+                    } else {
+                        runOnUiThread({
+                            showCustomAlert(
+                                this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success),
+                                CommonUtils.VIDEO_SYNC_DIALOG,
+                                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                            )
+                        })
+                    }
                 }
             }
+        } else {
+            showCustomAlert(this@DashBoardActivity.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
+                listOf(this@DashBoardActivity.resources.getString(R.string.alert_exit)))
         }
     }
 
@@ -346,6 +355,20 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID, item.die_id)
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID, item.part_id)
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM, item.die_top_bottom)
+            //jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID, item.operator_id)
+
+            if(item.operator_id.equals("Unknown")){
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID, "Operator 1")
+            }else{
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID, item.operator_id)
+            }
+
+            if(item.user_id.equals("Unknown")){
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_USER_ID, sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString())
+            }else{
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_USER_ID, item.user_id)
+            }
+
         val path = item.video_path
         val filename: String = path.substring(path.lastIndexOf("/") + 1)
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_FILE_NAME, filename)
@@ -498,7 +521,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             }
             if (functionality.equals(CommonUtils.LOGOUT_DIALOG, true)) {
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-                editor.clear()
+                editor.remove(CommonUtils.LOGIN_STATUS)
+                //editor.clear()
                 editor.apply()
                 navigateToLogin()
             }

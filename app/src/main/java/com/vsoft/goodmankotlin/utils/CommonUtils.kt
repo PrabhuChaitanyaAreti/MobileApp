@@ -53,6 +53,8 @@ class CommonUtils {
         const val LOGIN_STATUS="loginStatus"
         const val SPLASH_DURATION=1*1000
 
+        const val LOGIN_USER_ID="login_user_id"
+
 
         const val IS_DIE_DATA_AVAILABLE="is_die_data_available"
         const val DIE_DATA="die_data"
@@ -60,6 +62,8 @@ class CommonUtils {
         const val DIE_DATA_SYNC_DAYS=2
 
 
+        const val SYNC_VIDEO_API_OPERATOR_ID="operator_id"
+        const val SYNC_VIDEO_API_USER_ID="user_id"
         const val SYNC_VIDEO_API_DIE_ID="Die Id"
         const val SYNC_VIDEO_API_PART_ID="Part Id"
         const val SYNC_VIDEO_API_DIE_TOP_BOTTOM="top_bottom"
@@ -67,6 +71,7 @@ class CommonUtils {
         const val SYNC_VIDEO_API_META_DATA="meta_data"
         const val SYNC_VIDEO_API_FILE="file"
 
+        const val SAVE_OPERATOR_ID="operatorIdStr"
         const val SAVE_DIE_ID="dieIdStr"
         const val SAVE_PART_ID="partIdStr"
         const val SAVE_IS_NEW_DIE="IsNewDie"

@@ -12,4 +12,6 @@ data class VideoModel(val die_id: String,
                       val time_stamp: String,
                       var status: Boolean,
                       var die_top_bottom: String,
+                      var user_id: String,
+                      var operator_id: String,
                       @PrimaryKey(autoGenerate = false) val id: Int? = null)

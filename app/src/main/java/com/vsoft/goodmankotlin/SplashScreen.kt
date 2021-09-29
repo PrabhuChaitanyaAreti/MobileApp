@@ -8,6 +8,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.TextUtils
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.karumi.dexter.Dexter
@@ -27,6 +29,7 @@ import com.vsoft.goodmankotlin.utils.DialogUtils
 class SplashScreen : AppCompatActivity(), CustomDialogCallback {
 
     private var sharedPreferences: SharedPreferences?=null
+    private var userId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +43,10 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
         sharedPreferences = this.getSharedPreferences(
             CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE)
+
+        userId = sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
+
+        Log.d("TAG", "SplashScreen  sharedPreferences  userId $userId")
     }
 
     override fun onStart() {
@@ -48,7 +55,11 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
             // Your Code
             if (CameraUtils.checkPermissions(applicationContext)) {
                 if(sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS,false)){
-                    navigateToDashBoard()
+                    if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
+                        navigateToDashBoard()
+                    }else {
+                        navigateToLogin()
+                    }
                 }else {
                     navigateToLogin()
                 }
@@ -84,7 +95,11 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
                         if(sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS,false)){
-                            navigateToDashBoard()
+                            if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
+                                navigateToDashBoard()
+                            }else {
+                                navigateToLogin()
+                            }
                         }else {
                             navigateToLogin()
                         }
