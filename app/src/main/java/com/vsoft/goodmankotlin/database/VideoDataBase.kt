@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [VideoModel::class], version = 2, exportSchema = true)
+@Database(entities = [VideoModel::class], version = 3, exportSchema = true)
 abstract class VideoDataBase : RoomDatabase() {
 
     abstract fun videoDao(): VideoDao
@@ -24,6 +24,7 @@ abstract class VideoDataBase : RoomDatabase() {
                    // .fallbackToDestructiveMigration()
                   //  .addCallback(roomCallback)
                     .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_2_3)
                     .allowMainThreadQueries()
                     .build()
 
@@ -41,6 +42,22 @@ abstract class VideoDataBase : RoomDatabase() {
                     Log.e("MIGRATION_1_2", "start")
                    // database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'status' INTEGER NOT NULL DEFAULT 0")
                     database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'die_top_bottom' TEXT NOT NULL DEFAULT 'Unknown'")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        /*
+   * This is used for Room Database migration 1 to 2
+   */
+        private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                try {
+                    Log.e("MIGRATION_2_3", "start")
+                    // database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'status' INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'user_id' TEXT NOT NULL DEFAULT 'Unknown'")
+                    database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'operator_id' TEXT NOT NULL DEFAULT 'Unknown'")
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

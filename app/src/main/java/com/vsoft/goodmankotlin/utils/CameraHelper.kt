@@ -143,6 +143,14 @@ class CameraHelper {
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "CameraSample");*/
+
+          var  sharedPreferences = context.getSharedPreferences(
+                CommonUtils.SHARED_PREF_FILE,
+                Context.MODE_PRIVATE
+            )
+        var userId=    sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
+            var opeartorId=    sharedPreferences!!.getString(CommonUtils.SAVE_OPERATOR_ID, "").toString()
+
             val mediaStorageDir: File
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //                mediaStorageDir = File(
@@ -181,7 +189,7 @@ class CameraHelper {
             } else if (type == MEDIA_TYPE_VIDEO) {
                 mediaFile = File(
                     (mediaStorageDir.path + File.separator +
-                            "VID_" + timeStamp + ".mp4")
+                            userId+"_"+opeartorId+"_"+ "VID_" + timeStamp + ".mp4")
                 )
 
               /*  mediaFile = File(

@@ -89,7 +89,7 @@
 
         <Button
             android:id="@+id/loginButton"
-            android:layout_width="wrap_content"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/button_bg"
@@ -97,8 +97,6 @@
             android:layout_marginTop="20dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:paddingLeft="100dp"
-            android:paddingRight="100dp"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"

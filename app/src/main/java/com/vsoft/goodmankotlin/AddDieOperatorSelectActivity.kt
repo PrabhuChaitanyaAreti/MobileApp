@@ -131,6 +131,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
         btnContinue.setOnClickListener(View.OnClickListener {
             val dieIdStr=dieBT!!.text.toString()
             val partIdStr=partBT!!.text.toString()
+            val operatorStr=operatorBT!!.text.toString()
             if (operatorBT?.text.toString().isEmpty()) {
                 runOnUiThread {
                     if (!isFinishing) {
@@ -165,9 +166,11 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                     }else{
                         Log.d("TAG", "AddDieActivity   dieIdStr $dieIdStr")
                         Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
+                        Log.d("TAG", "AddDieActivity   operatorStr $operatorStr")
                         Log.d("TAG", "AddDieActivity   dieTypeStr $dieTypeStr")
 
                         val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                        editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
                         editor.putString(CommonUtils.SAVE_DIE_ID, dieIdStr)
                         editor.putString(CommonUtils.SAVE_PART_ID, partIdStr)
                         editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE, true)
@@ -197,6 +200,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
 
                 val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
+                editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
                 editor.putString(CommonUtils.SAVE_DIE_ID,dieIdStr)
                 editor.putString(CommonUtils.SAVE_PART_ID,partIdStr)
                 editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE,false)
