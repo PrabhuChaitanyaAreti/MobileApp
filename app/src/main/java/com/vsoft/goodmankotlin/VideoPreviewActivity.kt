@@ -43,7 +43,7 @@ import java.util.*
 import okhttp3.*
 
 
-class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
+class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnClickListener{
 
     private val tag = VideoPreviewActivity::class.java.simpleName
     private var path = ""
@@ -51,8 +51,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
     private var isPlay = false
     private var currentPos: Long = 0
     private var totalDuration: Long = 0
-    private var mHandler: Handler? = null
-    private var handler: Handler? = null
     private var absPlayerInternal: SimpleExoPlayer? = null
 
     private var progressDialog: ProgressDialog? = null
@@ -71,7 +69,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
     private lateinit var vm: VideoViewModel
 
-
     private var sharedPreferences: SharedPreferences? = null
 
     private var userId = ""
@@ -83,7 +80,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
     private var isDieTop = false
     private var isDieBottom = false
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_preview)
@@ -92,7 +88,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE
         )
-
 
         userId = sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
         operatorStr = sharedPreferences!!.getString(CommonUtils.SAVE_OPERATOR_ID, "").toString()
@@ -158,8 +153,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
             val appNameStringRes = R.string.app_name
             val trackSelectorDef: TrackSelector = DefaultTrackSelector()
-            //absPlayerInternal =
-            //  ExoPlayerFactory.newSimpleInstance(this, trackSelectorDef) //creating a player instance
             absPlayerInternal = SimpleExoPlayer.Builder(this)
                 .setTrackSelector(trackSelectorDef)
                 .build()
@@ -170,9 +163,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             val mediaSource: MediaSource = ProgressiveMediaSource.Factory(defaultDataSourceFactory)
                 .createMediaSource(uriOfContentUrl) // creating a media source
 
-
             absPlayerInternal!!.prepare(mediaSource)
-            //absPlayerInternal.setPlayWhenReady(true); // start loading video and play it at the moment a chunk of it is available offline
 
             //absPlayerInternal.setPlayWhenReady(true); // start loading video and play it at the moment a chunk of it is available offline
             pvMain!!.player = absPlayerInternal // attach surface to the view
@@ -188,33 +179,11 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             }
             pause = findViewById(R.id.pause)
             pause!!.setImageResource(R.drawable.video_record_play)
-            pause!!.setOnClickListener {
-                if (isPlay) {
-                    isPlay = false
-                    //  pvMain.onPause();
-                    absPlayerInternal!!.playWhenReady = false
-                    pause!!.setImageResource(R.drawable.video_record_play)
-                } else {
-                    isPlay = true
-                    //  pvMain.onResume();
-                    absPlayerInternal!!.playWhenReady = true
-                    pause!!.setImageResource(R.drawable.video_record_pause)
-                }
-            }
+            pause!!.setOnClickListener(this)
 
             retakeVideo = findViewById(R.id.retakeVideo)
-            retakeVideo!!.setOnClickListener {
-                showCustomAlert(
-                    this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                    this@VideoPreviewActivity.resources.getString(R.string.video_preview_ratake),
-                    CommonUtils.RETAKE_DIALOG,
-                    listOf(
-                        this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
-                        this@VideoPreviewActivity.resources.getString(R.string.alert_no)
-                    )
-                )
+            retakeVideo!!.setOnClickListener(this)
 
-            }
             videoSubmit = findViewById(R.id.videoSubmit)
             if (isNewDie) {
                 videoSubmit!!.text = this@VideoPreviewActivity.resources.getString(R.string.save)
@@ -222,256 +191,11 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
                 videoSubmit!!.text =
                     this@VideoPreviewActivity.resources.getString(R.string.btn_submit)
             }
-            videoSubmit!!.setOnClickListener {
-                if (isNewDie) {
-                    if (isDieTop && isDieBottom) {
-                        val timeStamp =
-                            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-                        vm.insert(
-                            VideoModel(
-                                dieIdStr,
-                                partIdStr,
-                                path,
-                                timeStamp,
-                                false,
-                                dieTypeStr,
-                                userId,operatorStr
-                            )
-                        )
+            videoSubmit!!.setOnClickListener(this)
 
-                        showCustomAlert(
-                            this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                            this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1),
-                            CommonUtils.DIE_BOTH_DIALOG,
-                            listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
-                        )
+            // Video preview with Exoplayer
+            videoPreview()
 
-                    } else if (isDieTop) {
-                        val timeStamp =
-                            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-                        vm.insert(
-                            VideoModel(
-                                dieIdStr,
-                                partIdStr,
-                                path,
-                                timeStamp,
-                                false,
-                                dieTypeStr,
-                                userId,
-                                operatorStr
-                            )
-                        )
-
-                        showCustomAlert(
-                            this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                            this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_2),
-                            CommonUtils.DIE_TOP_DIALOG,
-                            listOf(
-                                this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
-                                this@VideoPreviewActivity.resources.getString(R.string.alert_no)
-                            )
-                        )
-
-                    } else {
-                        val timeStamp =
-                            SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-                        vm.insert(
-                            VideoModel(
-                                dieIdStr,
-                                partIdStr,
-                                path,
-                                timeStamp,
-                                false,
-                                dieTypeStr,
-                                userId,operatorStr
-                            )
-                        )
-
-                        showCustomAlert(
-                            this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                            this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_3),
-                            CommonUtils.DIE_BOTTOM_DIALOG,
-                            listOf(
-                                this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
-                                this@VideoPreviewActivity.resources.getString(R.string.alert_no)
-                            )
-                        )
-                    }
-                } else {
-
-                    if (absPlayerInternal!!.isPlaying) {
-                        absPlayerInternal!!.stop()
-                    }
-                    pause!!.isEnabled = false
-                    pause!!.setOnClickListener(null)
-                    seekBar!!.isEnabled = false
-                    seekBar!!.setOnSeekBarChangeListener(null)
-                    Log.d("TAG", "btnSendEdge onClick imagePath::: $path")
-                    progressDialog = ProgressDialog(this@VideoPreviewActivity)
-                    progressDialog!!.setCancelable(false)
-                    progressDialog!!.setMessage(this@VideoPreviewActivity.resources.getString(R.string.progress_dialog_message_video_preview))
-                    if (NetworkUtils.isNetworkAvailable(this@VideoPreviewActivity)) {
-                        Handler(Looper.getMainLooper()).post {
-                            progressDialog!!.show()
-                        }
-                        val file = File(path) // initialize file here
-                        val filePart = MultipartBody.Part.createFormData(
-                            "video",
-                            file.name,
-                            RequestBody.create(MediaType.parse("video/*"), file)
-                        )
-                        val call: Call<VideoAnnotationResponse?>? =
-                            RetrofitClient.getInstance()!!.getMyApi()!!.uploadDyeVideo(filePart)
-
-                        val thread = Thread {
-                            try {
-                                //Your code goes here
-                                val request: Request = call!!.clone().request()
-                                val client = OkHttpClient()
-                                val test = client.newCall(request).execute()
-                                println(test.body()!!.string())
-                            } catch (e: java.lang.Exception) {
-                                Log.e("PrintException", e.message!!)
-                            }
-                        }
-                        thread.start()
-                        call!!.enqueue(object : Callback<VideoAnnotationResponse?> {
-                            override fun onResponse(
-                                call: Call<VideoAnnotationResponse?>,
-                                response: Response<VideoAnnotationResponse?>
-                            ) {
-                                try {
-                                    if (progressDialog!!.isShowing) {
-                                        progressDialog!!.dismiss()
-                                    }
-                                    Log.d(
-                                        "TAG",
-                                        "submit onClick onResponse message ::: " + response.message()
-                                    )
-                                    Log.d(
-                                        "TAG",
-                                        "submit onClick onResponse code ::: " + response.code()
-                                    )
-                                    if(response.code()==200){
-                                    if (response.body()?.gt!=null) {
-                                        // Storing data into SharedPreferences
-                                        val sharedPreferences =
-                                            getSharedPreferences(
-                                                CommonUtils.SHARED_PREF_FILE,
-                                                MODE_PRIVATE
-                                            )
-                                        // Creating an Editor object to edit(write to the file)
-                                        val myEdit = sharedPreferences.edit()
-                                        // Storing the key and its value as the data fetched from edittext
-                                        // Once the changes have been made,
-                                        // we need to commit to apply those changes made,
-                                        // otherwise, it will throw an error
-                                        val gson = Gson()
-                                        val json: String = gson.toJson(response.body())
-                                        myEdit.putString(CommonUtils.RESPONSE, json)
-                                        myEdit.apply()
-                                        val intent = Intent(
-                                            this@VideoPreviewActivity,
-                                            MaskingActivity::class.java
-                                        )
-                                        startActivity(intent)
-                                        finish()
-                                    }else {
-                                        if (progressDialog!!.isShowing) {
-                                            progressDialog!!.dismiss()
-                                        }
-                                        DialogUtils.showCustomAlert(
-                                            this@VideoPreviewActivity,
-                                            CustomDialogModel(
-                                                this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                                                "Empty data, Contact Admin.",
-                                                null,
-                                                listOf(
-                                                    this@VideoPreviewActivity.resources.getString(
-                                                        R.string.alert_ok
-                                                    )
-                                                )
-                                            ), this@VideoPreviewActivity, "invalidResponse"
-                                        )
-
-                                    }
-                                    }else if(response.code()==404) {
-                                        if (progressDialog!!.isShowing) {
-                                            progressDialog!!.dismiss()
-                                        }
-                                        DialogUtils.showCustomAlert(
-                                            this@VideoPreviewActivity,
-                                            CustomDialogModel(
-                                                this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                                                "Something went wrong, Contact Admin.",
-                                                null,
-                                                listOf(
-                                                    this@VideoPreviewActivity.resources.getString(
-                                                        R.string.alert_ok
-                                                    )
-                                                )
-                                            ), this@VideoPreviewActivity, "invalidResponse"
-                                        )
-                                    }
-
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                        if (progressDialog!!.isShowing) {
-                                            progressDialog!!.dismiss()
-                                        }
-                                    }
-                            }
-
-                            override fun onFailure(call: Call<VideoAnnotationResponse?>, t: Throwable) {
-                                // DialogUtils.showNormalAlert(VideoPreviewActivity.this, "Alert!!", "" + t);
-                                val intent =
-                                    Intent(this@VideoPreviewActivity, MaskingActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                                if (progressDialog!!.isShowing) {
-                                    progressDialog!!.dismiss()
-                                }
-                            }
-                        })
-                    } else {
-                        showCustomAlert(
-                            this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                            this@VideoPreviewActivity.resources.getString(R.string.network_alert_message),
-                            CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
-                            listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
-                        )
-                    }
-                }
-            }
-
-            // video_index = getIntent().getIntExtra("pos" , 0);
-            mHandler = Handler(Looper.getMainLooper())
-            handler = Handler(Looper.getMainLooper())
-            absPlayerInternal!!.addListener(object : Player.EventListener {
-                override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
-                    val dur = absPlayerInternal!!.duration
-                    Log.e("dur", "::::$dur:::")
-                    if (dur > 0) {
-                        totalDuration = absPlayerInternal!!.duration.toDouble().toLong()
-                        setVideoProgress()
-                    }
-                }
-
-                override fun onTracksChanged(
-                    trackGroups: TrackGroupArray,
-                    trackSelections: TrackSelectionArray
-                ) {
-                }
-
-                override fun onLoadingChanged(isLoading: Boolean) {}
-                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {}
-                override fun onRepeatModeChanged(repeatMode: Int) {}
-                override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
-                override fun onPlayerError(error: ExoPlaybackException) {}
-                override fun onPositionDiscontinuity(reason: Int) {}
-                override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {}
-                override fun onSeekProcessed() {}
-            })
         } else {
             showCustomAlert(
                 this@VideoPreviewActivity.resources.getString(R.string.battery_alert_title),
@@ -481,6 +205,310 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             )
         }
     }
+
+    private fun videoPreview() {
+        absPlayerInternal!!.addListener(object : Player.EventListener {
+            override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
+                val dur = absPlayerInternal!!.duration
+                Log.e("dur", "::::$dur:::")
+                if (dur > 0) {
+                    totalDuration = absPlayerInternal!!.duration.toDouble().toLong()
+                    setVideoProgress()
+                }
+            }
+
+            override fun onTracksChanged(
+                trackGroups: TrackGroupArray,
+                trackSelections: TrackSelectionArray
+            ) {
+            }
+
+            override fun onLoadingChanged(isLoading: Boolean) {}
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                Log.d("onPlayerStateChanged", "playbackState:::: $playbackState")
+                if (playbackState == Player.STATE_ENDED) {
+                    isPlay = false
+                    currentPos=0;
+                    absPlayerInternal!!.seekTo(currentPos)
+                    //  pvMain.onPause();
+                    absPlayerInternal!!.playWhenReady = false
+                    pause!!.setImageResource(R.drawable.video_record_play)
+                    val dur = absPlayerInternal!!.duration
+                    Log.e("dur", "::::$dur:::")
+                    if (dur > 0) {
+                        totalDuration = absPlayerInternal!!.duration.toDouble().toLong()
+                        setVideoProgress()
+                    }
+                }
+            }
+            override fun onRepeatModeChanged(repeatMode: Int) {}
+            override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
+            override fun onPlayerError(error: ExoPlaybackException) {}
+            override fun onPositionDiscontinuity(reason: Int) {}
+            override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {}
+            override fun onSeekProcessed() {}
+        })
+    }
+
+    override fun onClick(v: View?) {
+        if (v == retakeVideo) {
+                showCustomAlert(
+                    this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                    this@VideoPreviewActivity.resources.getString(R.string.video_preview_ratake),
+                    CommonUtils.RETAKE_DIALOG,
+                    listOf(
+                        this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                        this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                    )
+                )
+        }
+        if(v==videoSubmit){
+            if (isNewDie) {
+               saveVideo()
+            } else {
+                submitVideo()
+            }
+        }
+        if(v==pause){
+            playPauseVideo()
+        }
+    }
+
+    private fun playPauseVideo() {
+        if (isPlay) {
+            isPlay = false
+            //  pvMain.onPause();
+            absPlayerInternal!!.playWhenReady = false
+            pause!!.setImageResource(R.drawable.video_record_play)
+        } else {
+            isPlay = true
+            //  pvMain.onResume();
+            absPlayerInternal!!.playWhenReady = true
+            pause!!.setImageResource(R.drawable.video_record_pause)
+        }
+    }
+
+    private fun saveVideo() {
+        if (isDieTop && isDieBottom) {
+            val timeStamp =
+                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            vm.insert(
+                VideoModel(
+                    dieIdStr,
+                    partIdStr,
+                    path,
+                    timeStamp,
+                    false,
+                    dieTypeStr,
+                    userId,operatorStr
+                )
+            )
+
+            showCustomAlert(
+                this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1),
+                CommonUtils.DIE_BOTH_DIALOG,
+                listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
+            )
+
+        } else if (isDieTop) {
+            val timeStamp =
+                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            vm.insert(
+                VideoModel(
+                    dieIdStr,
+                    partIdStr,
+                    path,
+                    timeStamp,
+                    false,
+                    dieTypeStr,
+                    userId,
+                    operatorStr
+                )
+            )
+
+            showCustomAlert(
+                this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_2),
+                CommonUtils.DIE_TOP_DIALOG,
+                listOf(
+                    this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                    this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                )
+            )
+
+        } else {
+            val timeStamp =
+                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            vm.insert(
+                VideoModel(
+                    dieIdStr,
+                    partIdStr,
+                    path,
+                    timeStamp,
+                    false,
+                    dieTypeStr,
+                    userId,operatorStr
+                )
+            )
+
+            showCustomAlert(
+                this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_3),
+                CommonUtils.DIE_BOTTOM_DIALOG,
+                listOf(
+                    this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                    this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                )
+            )
+        }
+    }
+    private fun submitVideo() {
+
+        if (absPlayerInternal!!.isPlaying) {
+            absPlayerInternal!!.stop()
+        }
+        pause!!.isEnabled = false
+        pause!!.setOnClickListener(null)
+        seekBar!!.isEnabled = false
+        seekBar!!.setOnSeekBarChangeListener(null)
+        Log.d("TAG", "btnSendEdge onClick imagePath::: $path")
+        progressDialog = ProgressDialog(this@VideoPreviewActivity)
+        progressDialog!!.setCancelable(false)
+        progressDialog!!.setMessage(this@VideoPreviewActivity.resources.getString(R.string.progress_dialog_message_video_preview))
+        if (NetworkUtils.isNetworkAvailable(this@VideoPreviewActivity)) {
+            Handler(Looper.getMainLooper()).post {
+                progressDialog!!.show()
+            }
+            val file = File(path) // initialize file here
+            val filePart = MultipartBody.Part.createFormData(
+                "video",
+                file.name,
+                RequestBody.create(MediaType.parse("video/*"), file)
+            )
+            val call: Call<VideoAnnotationResponse?>? =
+                RetrofitClient.getInstance()!!.getMyApi()!!.uploadDyeVideo(filePart)
+
+            val thread = Thread {
+                try {
+                    //Your code goes here
+                    val request: Request = call!!.clone().request()
+                    val client = OkHttpClient()
+                    val test = client.newCall(request).execute()
+                    println(test.body()!!.string())
+                } catch (e: java.lang.Exception) {
+                    Log.e("PrintException", e.message!!)
+                }
+            }
+            thread.start()
+            call!!.enqueue(object : Callback<VideoAnnotationResponse?> {
+                override fun onResponse(
+                    call: Call<VideoAnnotationResponse?>,
+                    response: Response<VideoAnnotationResponse?>
+                ) {
+                    try {
+                        if (progressDialog!!.isShowing) {
+                            progressDialog!!.dismiss()
+                        }
+                        Log.d(
+                            "TAG",
+                            "submit onClick onResponse message ::: " + response.message()
+                        )
+                        Log.d(
+                            "TAG",
+                            "submit onClick onResponse code ::: " + response.code()
+                        )
+                        if(response.code()==200){
+                            if (response.body()?.gt!=null) {
+                                // Storing data into SharedPreferences
+                                val sharedPreferences =
+                                    getSharedPreferences(
+                                        CommonUtils.SHARED_PREF_FILE,
+                                        MODE_PRIVATE
+                                    )
+                                // Creating an Editor object to edit(write to the file)
+                                val myEdit = sharedPreferences.edit()
+                                // Storing the key and its value as the data fetched from edittext
+                                // Once the changes have been made,
+                                // we need to commit to apply those changes made,
+                                // otherwise, it will throw an error
+                                val gson = Gson()
+                                val json: String = gson.toJson(response.body())
+                                myEdit.putString(CommonUtils.RESPONSE, json)
+                                myEdit.apply()
+                                val intent = Intent(
+                                    this@VideoPreviewActivity,
+                                    MaskingActivity::class.java
+                                )
+                                startActivity(intent)
+                                finish()
+                            }else {
+                                if (progressDialog!!.isShowing) {
+                                    progressDialog!!.dismiss()
+                                }
+                                DialogUtils.showCustomAlert(
+                                    this@VideoPreviewActivity,
+                                    CustomDialogModel(
+                                        this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                                        "Empty data, Contact Admin.",
+                                        null,
+                                        listOf(
+                                            this@VideoPreviewActivity.resources.getString(
+                                                R.string.alert_ok
+                                            )
+                                        )
+                                    ), this@VideoPreviewActivity, "invalidResponse"
+                                )
+
+                            }
+                        }else if(response.code()==404) {
+                            if (progressDialog!!.isShowing) {
+                                progressDialog!!.dismiss()
+                            }
+                            DialogUtils.showCustomAlert(
+                                this@VideoPreviewActivity,
+                                CustomDialogModel(
+                                    this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                                    "Something went wrong, Contact Admin.",
+                                    null,
+                                    listOf(
+                                        this@VideoPreviewActivity.resources.getString(
+                                            R.string.alert_ok
+                                        )
+                                    )
+                                ), this@VideoPreviewActivity, "invalidResponse"
+                            )
+                        }
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        if (progressDialog!!.isShowing) {
+                            progressDialog!!.dismiss()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<VideoAnnotationResponse?>, t: Throwable) {
+                    // DialogUtils.showNormalAlert(VideoPreviewActivity.this, "Alert!!", "" + t);
+                    val intent =
+                        Intent(this@VideoPreviewActivity, MaskingActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                    if (progressDialog!!.isShowing) {
+                        progressDialog!!.dismiss()
+                    }
+                }
+            })
+        } else {
+            showCustomAlert(
+                this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                this@VideoPreviewActivity.resources.getString(R.string.network_alert_message),
+                CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
+            )
+        }
+    }
+
 
     // display video progress
     fun setVideoProgress() {
@@ -541,7 +569,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
 
     override fun onDestroy() {
         super.onDestroy()
-        //CommonUtils.freeMemory()
         absPlayerInternal!!.release()
         if (absPlayerInternal!!.isPlaying) {
             absPlayerInternal!!.stop()
@@ -669,4 +696,5 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback {
             }
         }
     }
+
 }

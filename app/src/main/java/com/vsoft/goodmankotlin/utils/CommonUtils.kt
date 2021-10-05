@@ -17,7 +17,6 @@ import kotlin.system.exitProcess
 class CommonUtils {
     companion object {
 
-
         const val IS_NEW_DIE = "is_new_die"
 
         const val BATTERY_DIALOG = "batteryDialog"
@@ -40,6 +39,9 @@ class CommonUtils {
         const val NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY="noPartIdRelatedToDieIdInList"
 
         const val VALIDATION_OPERATOR_SELECT_DIALOG = "validation_alert_select_dialog"
+
+        const val VALIDATION_ALERT_DIE_ID_SELECT_DIALOG_NOT_AVAILABLE = "validation_alert_Die_ID_select_dialog_not_available"
+        const val VALIDATION_ALERT_PART_ID_SELECT_DIALOG_NOT_AVAILABLE = "validation_alert_part_ID_select_dialog_not_available"
 
         const val MEMORY_DIALOG="memoryDialog"
 
@@ -92,6 +94,7 @@ class CommonUtils {
         const val OPERATOR_SELECTION_DIE_ID="DieID"
         const val OPERATOR_SELECTION_PART_ID="PartID"
 
+        const val OPERATOR_SELECTION_0="Select Operator"
         const val OPERATOR_SELECTION_1="Operator1"
         const val OPERATOR_SELECTION_2="Operator2"
         const val OPERATOR_SELECTION_3="Operator3"
@@ -124,22 +127,16 @@ class CommonUtils {
             val pathContents = path.split("[\\\\/]").toTypedArray()
             if (pathContents != null) {
                 val pathContentsLength = pathContents.size
-                //  System.out.println("Path Contents Length: " + pathContentsLength);
-//                for (i in pathContents.indices) {
-//                    //System.out.println("Path " + i + ": " + pathContents[i]);
-//                }
                 //lastPart: s659629384_752969_4472.jpg
                 val lastPart = pathContents[pathContentsLength - 1]
                 val lastPartContents = lastPart.split("\\.").toTypedArray()
                 if (lastPartContents != null && lastPartContents.size > 1) {
                     val lastPartContentLength = lastPartContents.size
-                    //  System.out.println("Last Part Length: " + lastPartContentLength);
                     //filenames can contain . , so we assume everything before
                     //the last . is the name, everything after the last . is the
                     //extension
                     var name = ""
                     for (i in 0 until lastPartContentLength) {
-                        //  System.out.println("Last Part " + i + ": "+ lastPartContents[i]);
                         if (i < lastPartContents.size - 1) {
                             name += lastPartContents[i]
                             if (i < lastPartContentLength - 2) {
@@ -149,39 +146,11 @@ class CommonUtils {
                     }
                     val extension = lastPartContents[lastPartContentLength - 1]
                     filename = "$name.$extension"
-                    //System.out.println("Name: " + name);
-                    //System.out.println("Extension: " + extension);
-                    //System.out.println("Filename: " + filename);
                 }
             }
             return filename
         }
 
-        fun getOptimalPreviewSize(sizes: List<Camera.Size>?, w: Int, h: Int): Camera.Size? {
-            val aspectTolerance = 0.1
-            val targetRatio = h.toDouble() / w
-            if (sizes == null) return null
-            var optimalSize: Camera.Size? = null
-            var minDiff = Double.MAX_VALUE
-            for (size in sizes) {
-                val ratio = size.width.toDouble() / size.height
-                if (abs(ratio - targetRatio) > aspectTolerance) continue
-                if (abs(size.height - h) < minDiff) {
-                    optimalSize = size
-                    minDiff = abs(size.height - h).toDouble()
-                }
-            }
-            if (optimalSize == null) {
-                minDiff = Double.MAX_VALUE
-                for (size in sizes) {
-                    if (abs(size.height - h) < minDiff) {
-                        optimalSize = size
-                        minDiff = abs(size.height - h).toDouble()
-                    }
-                }
-            }
-            return optimalSize
-        }
 
         /**
          * Alert dialog to navigate to app settings
@@ -317,28 +286,9 @@ class CommonUtils {
             //ADD THE ERROR MESSAGE
             e.printStackTrace()
         }
-//        val fdelete = File(filePath)
-//        if (fdelete.exists()) {
-//            if (fdelete.delete()) {
-//                System.out.println("file Deleted :$filePath")
-//            } else {
-//                System.out.println("file not Deleted :$filePath")
-//            }
-//        }
     }
 
-
-//        fun freeMemory() {
-//            System.gc()
-//            System.runFinalization()
-//            Runtime.getRuntime().gc()
-//        }
     fun appExit(activity: Activity){
-   /* if(Build.VERSION.SDK_INT>=16 && Build.VERSION.SDK_INT<21){
-        activity!!.finishAffinity()
-    } else if(Build.VERSION.SDK_INT>=21){
-        activity!!.finishAndRemoveTask();
-    }*/
     activity.finishAffinity();
     exitProcess(0)
 }

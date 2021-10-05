@@ -22,11 +22,11 @@
     <string name="operator_colon">Operator :</string>
     <string name="enter_operator">Enter Operator</string>
 
-    <string name="die_id_colon">Die Id :</string>
-    <string name="enter_die_id_1">Enter Die Id</string>
+    <string name="die_id_colon">Die ID :</string>
+    <string name="enter_die_id_1">Enter Die ID</string>
 
-    <string name="part_id_colon">Part Id :</string>
-    <string name="enter_part_id_1">Enter Part Id</string>
+    <string name="part_id_colon">Part ID :</string>
+    <string name="enter_part_id_1">Enter Part ID</string>
 
     <string name="die_type_colon">Die Type :</string>
 
@@ -47,7 +47,7 @@
     <string name="alert_exit">Exit</string>
     <string name="continue_str">Continue</string>
     <string name="settings_str">Settings</string>
-    <string name="dashboard_navigation_alert_message">Do you want to navigate to dash board?</string>
+    <string name="dashboard_navigation_alert_message">Do you want to navigate to Dashboard?</string>
 
     <!--Battery Messages-->
     <string name="battery_alert_title">Low Battery</string>
@@ -77,7 +77,7 @@
     <!--Dashboard Screen-->
     <string name="progress_dialog_message_sync_videos">Please wait .. Syncing video will take time..</string>
     <string name="add_operator_alert_message">Functionality will be updated soon..</string>
-    <string name="logout_alert_message">Would you like to logout?</string>
+    <string name="logout_alert_message">Would you like to Logout?</string>
     <string name="exit_app_alert_message">Do you want to exit app?</string>
     <string name="sync_videos_alert_message_success">All available dies are synced successfully.</string>
     <string name="no_videos_available">No video data available to sync !!</string>
@@ -93,11 +93,11 @@
     <string name="add_die_die_type_select">Select Die Type</string>
     <string name="add_die_die_type_top">Top</string>
     <string name="add_die_die_type_bottom">Bottom</string>
-    <string name="add_die_alert_die_type_select">Please Select Die Type</string>
-    <string name="add_die_alert_enter_part_id">Please enter Part Id</string>
-    <string name="add_die_alert_enter_die_id">Please enter Die Id</string>
-    <string name="dieIdNotAvailableWarningMessage">Die id not available in the list, Do you want to add it ?</string>
-    <string name="partIdNotAvailableWarningMessage">Part id not related to DieId, Do you want to add it ?</string>
+    <string name="add_die_alert_die_type_select">Please select Die Type</string>
+    <string name="add_die_alert_enter_part_id">Please enter Part ID</string>
+    <string name="add_die_alert_enter_die_id">Please enter Die ID</string>
+    <string name="dieIdNotAvailableWarningMessage">Die ID not available in the list, Do you want to add it ?</string>
+    <string name="partIdNotAvailableWarningMessage">Part ID not related to Die ID, Do you want to add it ?</string>
     <string name="WarningDialogAddDie">Add Die</string>
     <string name="WarningDialogAddPart">Add Part</string>
     <string name="WarningDialogReCheck">Re-Check</string>
@@ -106,8 +106,12 @@
     <!--Operator Select Screen-->
     <string name="progress_dialog_message_dies_parts">Please wait .. Fetching die and part data..</string>
     <string name="op_se_alert_title_error">Error</string>
-    <string name="op_se_alert_message_die_id_part_id">Please enter die Id before select Part ID</string>
-    <string name="op_se_alert_message_operator">Please enter operator</string>
+    <string name="op_se_alert_message_die_id_part_id">Please enter Die ID before select Part ID</string>
+    <string name="op_se_alert_message_select_operator">Please Select Operator</string>
+    <string name="op_se_alert_message_operator">Please enter Operator</string>
+    <string name="op_se_alert_message_operator_select11">The Operator you have selected is not available in the list.</string>
+    <string name="op_se_alert_message_die_id_select">The Die ID you have selected is not available in the list.</string>
+    <string name="op_se_alert_message_part_id_select">The Part ID you have selected is not available in the list.</string>
     <string name="op_se_alert_message_part_id">Please enter Part ID</string>
     <string name="op_se_alert_message_die_id">Please enter Die ID</string>
 
@@ -117,12 +121,12 @@
     <string name="video_recording_timer_alert_message">No activity detected. Video Recording screen will close.Select Continue option to continue video recording.</string>
 
     <!--Video Preview Screen-->
-    <string name="video_preview_save_click_1">Die details are saved. Please use sync in dashboard to send the data to server.</string>
+    <string name="video_preview_save_click_1">Die details are saved. Please click on Sync in Dashboard to send the data to server.</string>
     <string name="video_preview_save_click_2">Top Die is recorded.Do you want to record Bottom Die?</string>
     <string name="video_preview_save_click_3">Bottom Die is recorded.Do you want to record Top Die?</string>
     <string name="progress_dialog_message_video_preview">Please wait .. Processing video may take some time.</string>
-    <string name="video_preview_alert_message">Do you want to navigate to dash board?</string>
-    <string name="video_preview_ratake">Do you want to Retake the video?</string>
+    <string name="video_preview_alert_message">Do you want to navigate to Dashboard?</string>
+    <string name="video_preview_ratake">Do you want to Retake the Video?</string>
 
     <!--Masking Screen-->
     <string name="instructions"><b>Instructions :</b> Please insert a punch into the displayed die.</string>

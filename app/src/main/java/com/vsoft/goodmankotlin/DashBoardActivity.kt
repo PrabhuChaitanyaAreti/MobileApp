@@ -41,12 +41,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback {
-    private lateinit var addOperator: LinearLayout
+    //private lateinit var addOperator: LinearLayout
     private lateinit var addDie: LinearLayout
     private lateinit var sync: LinearLayout
     private lateinit var skip: LinearLayout
     private lateinit var logout: LinearLayout
     private lateinit var syncDie:LinearLayout
+    private lateinit var syncVideosCount:TextView
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
     private var sharedPreferences: SharedPreferences? = null
@@ -76,14 +77,16 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private fun init() {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        addOperator = findViewById(R.id.addOperator)
+       // addOperator = findViewById(R.id.addOperator)
         addDie = findViewById(R.id.addDie)
         sync = findViewById(R.id.sync)
         skip = findViewById(R.id.skip)
         logout = findViewById(R.id.logout)
         syncDie=findViewById(R.id.syncDie)
+        syncVideosCount=findViewById(R.id.syncVideosCount)
+        syncVideosCount.visibility=View.GONE
 
-        addOperator.setOnClickListener(this)
+        //addOperator.setOnClickListener(this)
         addDie.setOnClickListener(this)
         sync.setOnClickListener(this)
         skip.setOnClickListener(this)
@@ -101,14 +104,15 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         subscribeOnBackground {
             videosList = vm.getVideos()
                 Log.d("TAG", "DashBoardActivity  videosList!!.size ${videosList!!.size}")
-            runOnUiThread({
-                totalVideoCount=videosList!!.size
+            runOnUiThread {
+                totalVideoCount = videosList!!.size
+               syncVideoCountDisplay(videosList!!.size)
 //                Toast.makeText(
 //                    applicationContext,
 //                    "llVideosList size " + videosList!!.size,
 //                    Toast.LENGTH_LONG
 //                ).show()
-            })
+            }
 //           if(videosList!!.size>0) {
 //                val iterator = videosList!!.listIterator()
 //                if (iterator.hasNext()) {
@@ -174,13 +178,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     override fun onClick(v: View?) {
-        if (v?.id == addOperator.id) {
+       /* if (v?.id == addOperator.id) {
             showCustomAlert(
                 this@DashBoardActivity.resources.getString(R.string.add_operator_alert_message),
                 CommonUtils.NO_OPERATOR_FUNCTIONALITY_IMPLEMENTED_DIALOG,
                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
             )
-        }
+        }*/
 
         if (v?.id == addDie.id) {
             if (CommonUtils.checkMemory()) {
@@ -261,7 +265,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         /*val mainIntent = Intent(this, OperatorSelectActivityWithWebservice::class.java)
         startActivity(mainIntent)*/
 
-        val mainIntent = Intent(this, AddDieOperatorSelectActivity::class.java)
+        val mainIntent = Intent(this, OperatorSelectActivity::class.java)
         mainIntent.putExtra(CommonUtils.IS_NEW_DIE,false)
         startActivity(mainIntent)
     }
@@ -276,7 +280,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
       /*  val mainIntent = Intent(this@DashBoardActivity, AddDieActivityNew::class.java)
         startActivity(mainIntent)*/
 
-        val mainIntent = Intent(this, AddDieOperatorSelectActivity::class.java)
+        val mainIntent = Intent(this, OperatorSelectActivity::class.java)
         mainIntent.putExtra(CommonUtils.IS_NEW_DIE,true)
         startActivity(mainIntent)
     }
@@ -288,6 +292,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             var videosList: List<VideoModel>? = null
             subscribeOnBackground {
                 videosList = vm.getVideos()
+                 syncVideoCountDisplay(videosList!!.size)
                 if (videosList!!.isEmpty()) {
                     if (!isSyncing) {
                         runOnUiThread({
@@ -341,6 +346,17 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         } else {
             showCustomAlert(this@DashBoardActivity.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_exit)))
+        }
+    }
+
+    private fun syncVideoCountDisplay(size: Int) {
+        runOnUiThread {
+            if(size>0){
+                syncVideosCount.text = size.toString()
+                syncVideosCount.visibility=View.VISIBLE
+            }else{
+                syncVideosCount.visibility=View.GONE
+            }
         }
     }
 

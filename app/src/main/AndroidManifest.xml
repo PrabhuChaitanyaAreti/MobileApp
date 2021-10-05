@@ -71,6 +71,12 @@
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
+            android:name=".OperatorSelectActivity"
+            android:exported="true"
+            android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+        <activity
             android:name=".AddDieOperatorSelectActivity"
             android:exported="true"
             android:screenOrientation="userLandscape"

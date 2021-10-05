@@ -49,10 +49,13 @@ class DialogUtils {
                     button.background=context?.resources?.getDrawable(R.drawable.button_bg)
                     button.setTextColor(Color.parseColor("#FFFFFF"))
                     button.isAllCaps=false
-                    button.setOnClickListener({
-                        customDialogCallback.onCustomDialogButtonClicked(button.text as String,functionality)
+                    button.setOnClickListener {
+                        customDialogCallback.onCustomDialogButtonClicked(
+                            button.text as String,
+                            functionality
+                        )
                         customDialog.dismiss()
-                    })
+                    }
                     llButtons?.addView(button)
                 }
             }

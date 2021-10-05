@@ -87,24 +87,6 @@ class CameraHelper {
             return Camera.open()
         }
 
-
-        /**
-         * @return the default rear/back facing camera on the device. Returns null if camera is not
-         * available.
-         */
-        fun getDefaultBackFacingCameraInstance(): Camera? {
-            return getDefaultCamera(Camera.CameraInfo.CAMERA_FACING_BACK)
-        }
-
-        /**
-         * @return the default front facing camera on the device. Returns null if camera is not
-         * available.
-         */
-        fun getDefaultFrontFacingCameraInstance(): Camera? {
-            return getDefaultCamera(Camera.CameraInfo.CAMERA_FACING_FRONT)
-        }
-
-
         /**
          *
          * @param position Physical position of the camera i.e Camera.CameraInfo.CAMERA_FACING_FRONT
@@ -135,14 +117,6 @@ class CameraHelper {
          * @return A file object pointing to the newly created file.
          */
         fun getOutputMediaFile(type: Int,context: Context): File? {
-            // To be safe, you should check that the SDCard is mounted
-            // using Environment.getExternalStorageState() before doing this.
-            /*  if (!Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
-            return  null;
-        }
-
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "CameraSample");*/
 
           var  sharedPreferences = context.getSharedPreferences(
                 CommonUtils.SHARED_PREF_FILE,
@@ -153,18 +127,8 @@ class CameraHelper {
 
             val mediaStorageDir: File
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//                mediaStorageDir = File(
-//                    Environment
-//                        .getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).path + "/Goodman/Videos"
-//                )
-              //  mediaStorageDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)!!.path+ "/Goodman/Videos")
                 mediaStorageDir = context.getExternalFilesDir(null)!!
             } else {
-//                mediaStorageDir = File(
-//                    Environment
-//                        .getExternalStorageDirectory().path + "/Goodman/Videos"
-//                )
-                //mediaStorageDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)!!.path+ "/Goodman/Videos")
                 mediaStorageDir = context.getExternalFilesDir(null)!!
             }
             // This location works best if you want the created images to be shared
@@ -192,10 +156,6 @@ class CameraHelper {
                             userId+"_"+opeartorId+"_"+ "VID_" + timeStamp + ".mp4")
                 )
 
-              /*  mediaFile = File(
-                    (mediaStorageDir.path + File.separator +
-                            "check1.mp4")
-                )*/
             } else {
                 return null
             }
