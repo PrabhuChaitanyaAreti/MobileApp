@@ -34,7 +34,6 @@ import com.vsoft.goodmankotlin.utils.CameraHelper
 
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
     View.OnClickListener, CustomDialogCallback {
-
     private var mCamera: Camera? = null
     private var mMediaRecorder: MediaRecorder? = null
     private var mOutputFile: File? = null
@@ -87,6 +86,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_record)
 
+
         sharedPreferences = this.getSharedPreferences(
             CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE
@@ -109,6 +109,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         partIdTxt = findViewById(R.id.partIdTxt)
         dieIdTxt = findViewById(R.id.dieIdTxt)
         dieTypeTxt = findViewById(R.id.dieTypeTxt)
+
 
         initProgress()
 
@@ -158,6 +159,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         }
 
     }
+
     private fun initProgress(){
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
@@ -179,6 +181,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             if (appExitCounter != null) {
                 appExitCounter!!.cancel()
                 appExitCounter = null
+
             }
             showDialog()
 
@@ -206,17 +209,21 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 if (appExitCounter != null) {
                     appExitCounter!!.cancel()
                     appExitCounter = null
+
                 }
                 if (recordMCountDown != null) {
                     recordMCountDown!!.cancel()
                     recordMCountDown = null
                 }
+
                 recordMCountDown = object : CountDownTimer(videoMaxTimeInMillis, 1000) {
                     override fun onFinish() {
+                        println("resume onFinish  ")
                         stopRecording()
                     }
 
                     override fun onTick(millisUntilFinished: Long) {
+
                         recordSecondsLeft =
                             millisUntilFinished / 1000
                         timeLeftTxt!!.text = "$recordSecondsLeft/$totalTimer"
@@ -266,6 +273,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
             i.putExtra(CommonUtils.VIDEO_SAVING_FILE_PATH, inputPath)
             startActivity(i)
+
         } catch (e: RuntimeException) {
             Log.d(
                 tag,
@@ -326,10 +334,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     override fun onPause() {
         super.onPause()
         setMicMuted(false)
+
     }
 
     override fun onResume() {
         super.onResume()
+
         setMicMuted(true)
     }
     private fun releaseMediaRecorder() {
@@ -454,6 +464,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     e.printStackTrace()
                     // prepare didn't work, release the camera
                     releaseMediaRecorder()
+
                     return false
                 }
 
@@ -562,6 +573,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 if (appExitCounter != null) {
                     appExitCounter!!.cancel()
                     appExitCounter = null
+
                 }
                 showCustomAlert(this@VideoRecordActivity.resources.getString(R.string.video_recording_timer_alert_title),
                     this@VideoRecordActivity.resources.getString(R.string.video_recording_timer_alert_message),CommonUtils.TIMER_DIALOG,
@@ -575,6 +587,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private fun getCameraCharacteristics() {
         Log.d(tag, "getCameraCharacteristics")
         try {
+
             val mSupportedSizes = parameters!!.supportedPreviewSizes
             cameraSizesArray = arrayOfNulls<String?>(mSupportedSizes.size)
             for (i in mSupportedSizes.indices) {
@@ -662,6 +675,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 tag,
                 "spinner ok click Integer.parseInt(separated[1]) " + separated[1].toInt()
             )
+
             val selectedWidth = separated[0].toInt()
             val selectedHeight = separated[1].toInt()
             Log.d(
@@ -676,6 +690,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             if (mCamera != null) {
                 if (parameters != null) {
 
+
                     val optimalSize: Camera.Size? =
                         choosePreviewSize(parameters!!, selectedWidth, selectedHeight)
                     Log.d(
@@ -686,7 +701,6 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                         tag,
                         "spinner ok click optimalSize!!.height ${optimalSize.height}"
                     )
-
 
                 }
             }
@@ -708,12 +722,18 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                         ppsfv.width + "x" + ppsfv.height
             )
         }
+
+        //for (Camera.Size size : parms.getSupportedPreviewSizes()) {
+        //    Log.d(TAG, "supported: " + size.width + "x" + size.height);
+        //}
         for (size: Camera.Size in params.supportedPreviewSizes) {
             if (size.width == width && size.height == height) {
+                // parms.setPreviewSize(width, height)
                 return size
             }
         }
         Log.d("", "Unable to set preview size to " + width + "x" + height)
+
         return ppsfv
     }
     override fun onBackPressed() {
@@ -740,12 +760,14 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.alert_exit),true)) {
             if (functionality.equals(CommonUtils.BATTERY_DIALOG, true)) {
                 try {
+
                     CommonUtils.appExit(this@VideoRecordActivity)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }else if(functionality.equals(CommonUtils.TIMER_DIALOG, true)){
                 try {
+
 
                     CommonUtils.appExit(this@VideoRecordActivity)
                 } catch (e: Exception) {
@@ -779,6 +801,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         }
     }
     private fun setMicMuted(state: Boolean) {
+
         val myAudioManager =
             applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         // get the working mode and keep it
@@ -795,6 +818,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     }
     override fun onDestroy() {
         super.onDestroy()
+
         setMicMuted(false)
         releaseMediaRecorder()
         releaseCamera()

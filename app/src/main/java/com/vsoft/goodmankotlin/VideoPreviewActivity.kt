@@ -43,7 +43,7 @@ import java.util.*
 import okhttp3.*
 
 
-class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnClickListener{
+class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnClickListener {
 
     private val tag = VideoPreviewActivity::class.java.simpleName
     private var path = ""
@@ -88,7 +88,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
             CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE
         )
-
         userId = sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
         operatorStr = sharedPreferences!!.getString(CommonUtils.SAVE_OPERATOR_ID, "").toString()
         dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
@@ -97,7 +96,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         isDieBottom = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, false)
         dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
         partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
-
 
         Log.d("TAG", "VideoPreviewActivity  sharedPreferences  userId $userId")
         Log.d("TAG", "VideoPreviewActivity  sharedPreferences  operatorStr $operatorStr")
@@ -132,23 +130,23 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
             println("VideoPreviewActivity videoFileName is $videoFileName")
 
             if (dieIdStr.isNotEmpty() && !TextUtils.isEmpty(dieIdStr) && dieIdStr != "null") {
-                dieIdTxt!!.text= "Die ID: $dieIdStr"
-                dieIdTxt!!.visibility= View.VISIBLE
-            }else{
-                dieIdTxt!!.visibility= View.GONE
+                dieIdTxt!!.text = "Die ID: $dieIdStr"
+                dieIdTxt!!.visibility = View.VISIBLE
+            } else {
+                dieIdTxt!!.visibility = View.GONE
             }
             if (partIdStr.isNotEmpty() && !TextUtils.isEmpty(partIdStr) && partIdStr != "null") {
-                partIdTxt!!.text= "Part ID: $partIdStr"
-                partIdTxt!!.visibility= View.VISIBLE
-            }else{
-                partIdTxt!!.visibility= View.GONE
+                partIdTxt!!.text = "Part ID: $partIdStr"
+                partIdTxt!!.visibility = View.VISIBLE
+            } else {
+                partIdTxt!!.visibility = View.GONE
             }
 
             if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
-                dieTypeTxt!!.text="Die Type: "+dieTypeStr.uppercase(Locale.getDefault())
-                dieTypeTxt!!.visibility= View.VISIBLE
-            }else{
-                dieTypeTxt!!.visibility= View.GONE
+                dieTypeTxt!!.text = "Die Type: " + dieTypeStr.uppercase(Locale.getDefault())
+                dieTypeTxt!!.visibility = View.VISIBLE
+            } else {
+                dieTypeTxt!!.visibility = View.GONE
             }
 
             val appNameStringRes = R.string.app_name
@@ -228,7 +226,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 Log.d("onPlayerStateChanged", "playbackState:::: $playbackState")
                 if (playbackState == Player.STATE_ENDED) {
                     isPlay = false
-                    currentPos=0;
+                    currentPos = 0;
                     absPlayerInternal!!.seekTo(currentPos)
                     //  pvMain.onPause();
                     absPlayerInternal!!.playWhenReady = false
@@ -241,6 +239,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     }
                 }
             }
+
             override fun onRepeatModeChanged(repeatMode: Int) {}
             override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
             override fun onPlayerError(error: ExoPlaybackException) {}
@@ -252,24 +251,24 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
 
     override fun onClick(v: View?) {
         if (v == retakeVideo) {
-                showCustomAlert(
-                    this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                    this@VideoPreviewActivity.resources.getString(R.string.video_preview_ratake),
-                    CommonUtils.RETAKE_DIALOG,
-                    listOf(
-                        this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
-                        this@VideoPreviewActivity.resources.getString(R.string.alert_no)
-                    )
+            showCustomAlert(
+                this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                this@VideoPreviewActivity.resources.getString(R.string.video_preview_ratake),
+                CommonUtils.RETAKE_DIALOG,
+                listOf(
+                    this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                    this@VideoPreviewActivity.resources.getString(R.string.alert_no)
                 )
+            )
         }
-        if(v==videoSubmit){
+        if (v == videoSubmit) {
             if (isNewDie) {
-               saveVideo()
+                saveVideo()
             } else {
                 submitVideo()
             }
         }
-        if(v==pause){
+        if (v == pause) {
             playPauseVideo()
         }
     }
@@ -361,8 +360,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     this@VideoPreviewActivity.resources.getString(R.string.alert_no)
                 )
             )
+
         }
     }
+
     private fun submitVideo() {
 
         if (absPlayerInternal!!.isPlaying) {
@@ -418,8 +419,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                             "TAG",
                             "submit onClick onResponse code ::: " + response.code()
                         )
-                        if(response.code()==200){
-                            if (response.body()?.gt!=null) {
+                        if (response.code() == 200) {
+                            if (response.body()?.gt != null) {
                                 // Storing data into SharedPreferences
                                 val sharedPreferences =
                                     getSharedPreferences(
@@ -442,7 +443,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                                 )
                                 startActivity(intent)
                                 finish()
-                            }else {
+                            } else {
                                 if (progressDialog!!.isShowing) {
                                     progressDialog!!.dismiss()
                                 }
@@ -461,7 +462,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                                 )
 
                             }
-                        }else if(response.code()==404) {
+                        } else if (response.code() == 404) {
                             if (progressDialog!!.isShowing) {
                                 progressDialog!!.dismiss()
                             }
@@ -691,7 +692,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-            }else if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
+            } else if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
 
             }
         }

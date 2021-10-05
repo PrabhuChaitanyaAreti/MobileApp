@@ -134,6 +134,10 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             val partIdStr=partBT!!.text.toString()
          //   val operatorStr=operatorBT!!.text.toString()
             /*if (operatorBT?.text.toString().isEmpty()) {
+=======
+            val operatorStr=operatorBT!!.text.toString()
+            if (operatorBT?.text.toString().isEmpty()) {
+>>>>>>> 9c349fa89945ee3df9aeaa491b2b57c0c27f29d1
                 runOnUiThread {
                     if (!isFinishing) {
                         showCustomAlert(this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
@@ -167,11 +171,11 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                     }else{
                         Log.d("TAG", "AddDieActivity   dieIdStr $dieIdStr")
                         Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
-                      //  Log.d("TAG", "AddDieActivity   operatorStr $operatorStr")
+                        Log.d("TAG", "AddDieActivity   operatorStr $operatorStr")
                         Log.d("TAG", "AddDieActivity   dieTypeStr $dieTypeStr")
 
                         val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                       // editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
+                        editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
                         editor.putString(CommonUtils.SAVE_DIE_ID, dieIdStr)
                         editor.putString(CommonUtils.SAVE_PART_ID, partIdStr)
                         editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE, true)
@@ -201,7 +205,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
 
                 val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
-              //  editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
+                editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
                 editor.putString(CommonUtils.SAVE_DIE_ID,dieIdStr)
                 editor.putString(CommonUtils.SAVE_PART_ID,partIdStr)
                 editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE,false)

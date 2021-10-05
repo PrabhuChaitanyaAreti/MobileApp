@@ -98,6 +98,7 @@
     <string name="add_die_alert_enter_die_id">Please enter Die ID</string>
     <string name="dieIdNotAvailableWarningMessage">Die ID not available in the list, Do you want to add it ?</string>
     <string name="partIdNotAvailableWarningMessage">Part ID not related to Die ID, Do you want to add it ?</string>
+
     <string name="WarningDialogAddDie">Add Die</string>
     <string name="WarningDialogAddPart">Add Part</string>
     <string name="WarningDialogReCheck">Re-Check</string>
