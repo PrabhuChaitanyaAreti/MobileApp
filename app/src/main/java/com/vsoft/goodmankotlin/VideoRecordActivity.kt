@@ -117,7 +117,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
 
-        if (batterLevel >= 15) {
+        if (batterLevel >= CommonUtils.BATTERY_LEVEL_PERCENTAGE) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             if (checkPermissions()) {
                 surface_view!!.surfaceTextureListener = this

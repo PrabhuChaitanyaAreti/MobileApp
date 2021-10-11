@@ -122,7 +122,10 @@ class CameraHelper {
                 CommonUtils.SHARED_PREF_FILE,
                 Context.MODE_PRIVATE
             )
-        var userId=    sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
+            var dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
+            var partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
+            var dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
+            var userId=    sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
             var opeartorId=    sharedPreferences!!.getString(CommonUtils.SAVE_OPERATOR_ID, "").toString()
 
             val mediaStorageDir: File
@@ -151,9 +154,14 @@ class CameraHelper {
                             "IMG_" + timeStamp + ".jpg"
                 )
             } else if (type == MEDIA_TYPE_VIDEO) {
+//                mediaFile = File(
+//                    (mediaStorageDir.path + File.separator +
+//                            userId+"_"+opeartorId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "VID_" + timeStamp + ".mp4")
+//                )
+
                 mediaFile = File(
                     (mediaStorageDir.path + File.separator +
-                            userId+"_"+opeartorId+"_"+ "VID_" + timeStamp + ".mp4")
+                            userId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "VID_" + timeStamp + ".mp4")
                 )
 
             } else {

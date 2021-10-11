@@ -288,7 +288,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private fun sync() {
         val batterLevel: Int = BatteryUtil.getBatteryPercentage(this)
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
-        if (batterLevel >= 15) {
+        if (batterLevel >= CommonUtils.BATTERY_LEVEL_PERCENTAGE) {
             var videosList: List<VideoModel>? = null
             subscribeOnBackground {
                 videosList = vm.getVideos()

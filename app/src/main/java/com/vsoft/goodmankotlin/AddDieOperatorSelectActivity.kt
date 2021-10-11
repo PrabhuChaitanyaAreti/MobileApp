@@ -179,6 +179,8 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                         editor.putString(CommonUtils.SAVE_DIE_ID, dieIdStr)
                         editor.putString(CommonUtils.SAVE_PART_ID, partIdStr)
                         editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE, true)
+                        editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, false)
+                        editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, false)
 
                         if(dieTypeStr.equals(CommonUtils.ADD_DIE_TOP,true)){
                             editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)

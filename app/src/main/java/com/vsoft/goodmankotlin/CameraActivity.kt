@@ -90,7 +90,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
 
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
 
-        if (batterLevel >= 15) {
+        if (batterLevel >= CommonUtils.BATTERY_LEVEL_PERCENTAGE) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             myContext = this
             val toolbar = findViewById<Toolbar>(R.id.toolbar)

@@ -125,6 +125,8 @@
     <string name="video_preview_save_click_1">Die details are saved. Please click on Sync in Dashboard to send the data to server.</string>
     <string name="video_preview_save_click_2">Top Die is recorded.Do you want to record Bottom Die?</string>
     <string name="video_preview_save_click_3">Bottom Die is recorded.Do you want to record Top Die?</string>
+    <string name="video_preview_top_die_details_message">Do you want to record Top Die Details?</string>
+    <string name="video_preview_bottom_die_details_message">Do you want to record Bottom Die Details?</string>
     <string name="progress_dialog_message_video_preview">Please wait .. Processing video may take some time.</string>
     <string name="video_preview_alert_message">Do you want to navigate to Dashboard?</string>
     <string name="video_preview_ratake">Do you want to Retake the Video?</string>

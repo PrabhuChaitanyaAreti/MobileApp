@@ -79,6 +79,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     private var isNewDie = false
     private var isDieTop = false
     private var isDieBottom = false
+    private var isDieTopDetails = false
+    private var isDieBottomDetails = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +96,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         isNewDie = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_NEW_DIE, false)
         isDieTop = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_TOP, false)
         isDieBottom = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, false)
+        isDieTopDetails = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, false)
+        isDieBottomDetails = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, false)
         dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
         partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
 
@@ -105,6 +109,8 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  IsNewDie $isNewDie")
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieTop $isDieTop")
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieBottom $isDieBottom")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieTopDetails $isDieTopDetails")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieBottomDetails $isDieBottomDetails")
 
 
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
@@ -122,7 +128,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
 
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
 
-        if (batterLevel >= 15) {
+        if (batterLevel >= CommonUtils.BATTERY_LEVEL_PERCENTAGE) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             path = intent.extras!!.getString(CommonUtils.VIDEO_SAVING_FILE_PATH).toString()
             Log.d(tag, "VideoPreviewActivity onCreate $path")
@@ -288,7 +294,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     }
 
     private fun saveVideo() {
-        if (isDieTop && isDieBottom) {
+        if (isDieTop && isDieBottom ) {
             val timeStamp =
                 SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
             vm.insert(
@@ -303,13 +309,58 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 )
             )
 
-            showCustomAlert(
-                this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1),
-                CommonUtils.DIE_BOTH_DIALOG,
-                listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
-            )
-
+            if (isDieTop && isDieTopDetails ) {
+                if (isDieBottom ) {
+                    showCustomAlert(
+                        this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message),
+                        CommonUtils.DIE_BOTTOM_DETAIL_DIALOG,
+                        listOf(
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                        )
+                    )
+                }else {
+                    showCustomAlert(
+                        this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message),
+                        CommonUtils.DIE_TOP_DETAIL_DIALOG,
+                        listOf(
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                        )
+                    )
+                }
+            }else if (isDieBottom && isDieBottomDetails ) {
+                if (isDieTop){
+                    showCustomAlert(
+                        this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message),
+                        CommonUtils.DIE_TOP_DETAIL_DIALOG,
+                        listOf(
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                        )
+                    )
+                }else {
+                    showCustomAlert(
+                        this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message),
+                        CommonUtils.DIE_BOTTOM_DETAIL_DIALOG,
+                        listOf(
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                            this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                        )
+                    )
+                }
+            }else{
+                showCustomAlert(
+                    this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                    this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1),
+                    CommonUtils.DIE_BOTH_DIALOG,
+                    listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
+                )
+            }
         } else if (isDieTop) {
             val timeStamp =
                 SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
@@ -325,16 +376,16 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     operatorStr
                 )
             )
-
             showCustomAlert(
                 this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_2),
-                CommonUtils.DIE_TOP_DIALOG,
+                this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message),
+                CommonUtils.DIE_TOP_DETAIL_DIALOG,
                 listOf(
                     this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
                     this@VideoPreviewActivity.resources.getString(R.string.alert_no)
                 )
             )
+
 
         } else {
             val timeStamp =
@@ -350,17 +401,15 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     userId,operatorStr
                 )
             )
-
             showCustomAlert(
                 this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_3),
-                CommonUtils.DIE_BOTTOM_DIALOG,
+                this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message),
+                CommonUtils.DIE_BOTTOM_DETAIL_DIALOG,
                 listOf(
                     this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
                     this@VideoPreviewActivity.resources.getString(R.string.alert_no)
                 )
             )
-
         }
     }
 
@@ -613,9 +662,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         ) {
             if (functionality.equals(CommonUtils.BATTERY_DIALOG, true)) {
                 try {
-//                    val previewIntent = Intent()
-//                    setResult(RESULT_CANCELED, previewIntent)
-//                    finishAffinity()
                     CommonUtils.appExit(this@VideoPreviewActivity)
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -645,8 +691,27 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 true
             )
         ) {
+            if (functionality.equals(CommonUtils.DIE_TOP_DETAIL_DIALOG, true)) {
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, true)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP_DETAILS)
+                editor.apply()
 
-            if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
+                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else if (functionality.equals(CommonUtils.DIE_BOTTOM_DETAIL_DIALOG, true)) {
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, true)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM_DETAILS)
+                editor.apply()
+
+                val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
@@ -655,18 +720,16 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)
                 finish()
-            }
-            if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
+            }else if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-                editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
+               editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
                 editor.apply()
 
                 val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)
                 finish()
-            }
-            if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
+            }else if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
                 absPlayerInternal!!.release()
                 if (absPlayerInternal!!.isPlaying) {
                     absPlayerInternal!!.stop()
@@ -684,15 +747,55 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 true
             )
         ) {
-            if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
+            if (functionality.equals(CommonUtils.DIE_TOP_DETAIL_DIALOG, true)) {
+              if(isDieBottom&&isDieBottomDetails){
+                  val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                  intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                  startActivity(intent)
+              }else{
+                  val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                  editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, true)
+                  editor.apply()
+                  showCustomAlert(
+                      this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                      this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_2),
+                      CommonUtils.DIE_TOP_DIALOG,
+                      listOf(
+                          this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                          this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                      )
+                  )
+              }
+
+            } else if (functionality.equals(CommonUtils.DIE_BOTTOM_DETAIL_DIALOG, true)) {
+               if(isDieTop&&isDieTopDetails){
+                   val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+                   intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                   startActivity(intent)
+               }else{
+                    val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                     editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, true)
+                    editor.apply()
+                   showCustomAlert(
+                       this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                       this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_3),
+                       CommonUtils.DIE_BOTTOM_DIALOG,
+                       listOf(
+                           this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
+                           this@VideoPreviewActivity.resources.getString(R.string.alert_no)
+                       )
+                   )
+               }
+            } else if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
                 val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             } else if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
-                val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+             val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
-            } else if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
+            }
+            else if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
 
             }
         }

@@ -17,6 +17,8 @@ import kotlin.system.exitProcess
 class CommonUtils {
     companion object {
 
+        const val BATTERY_LEVEL_PERCENTAGE = 15
+
         const val IS_NEW_DIE = "is_new_die"
 
         const val BATTERY_DIALOG = "batteryDialog"
@@ -27,6 +29,8 @@ class CommonUtils {
         const val DIE_BOTH_DIALOG = "dieBoth"
         const val DIE_TOP_DIALOG = "dieTop"
         const val DIE_BOTTOM_DIALOG = "dieBottom"
+        const val DIE_TOP_DETAIL_DIALOG = "dieTopDetails"
+        const val DIE_BOTTOM_DETAIL_DIALOG = "dieBottomDetails"
         const val VALIDATION_DIALOG="validationDialog"
         const val WEB_SERVICE_RESPONSE_CODE_401="webServiceResponseCode401"
         const val WEB_SERVICE_RESPONSE_CODE_NON_401="webServiceResponseCodeNon401"
@@ -80,10 +84,15 @@ class CommonUtils {
         const val SAVE_DIE_TYPE="dieTypeStr"
         const val SAVE_IS_DIE_TOP="isDieTop"
         const val SAVE_IS_DIE_BOTTOM="isDieBottom"
+        const val SAVE_IS_DIE_TOP_DETAILS="isDieTopDetails"
+        const val SAVE_IS_DIE_BOTTOM_DETAILS="isDieBottomDetails"
 
         const val ADD_DIE_SELECT="Select"
         const val ADD_DIE_TOP="top"
         const val ADD_DIE_BOTTOM="bottom"
+
+        const val ADD_DIE_TOP_DETAILS="top_details"
+        const val ADD_DIE_BOTTOM_DETAILS="bottom_details"
 
 
         const val DIE_TYPE_SELECT="Select Die Type"
