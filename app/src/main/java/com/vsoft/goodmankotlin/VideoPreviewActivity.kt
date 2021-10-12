@@ -749,9 +749,15 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         ) {
             if (functionality.equals(CommonUtils.DIE_TOP_DETAIL_DIALOG, true)) {
               if(isDieBottom&&isDieBottomDetails){
-                  val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                  intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                  startActivity(intent)
+//                  val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+//                  intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                  startActivity(intent)
+                  showCustomAlert(
+                      this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                      this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1),
+                      CommonUtils.DIE_BOTH_DIALOG,
+                      listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
+                  )
               }else{
                   val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                   editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, true)
@@ -769,9 +775,15 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
 
             } else if (functionality.equals(CommonUtils.DIE_BOTTOM_DETAIL_DIALOG, true)) {
                if(isDieTop&&isDieTopDetails){
-                   val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                   intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                   startActivity(intent)
+//                   val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+//                   intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                   startActivity(intent)
+                   showCustomAlert(
+                       this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                       this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1),
+                       CommonUtils.DIE_BOTH_DIALOG,
+                       listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
+                   )
                }else{
                     val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                      editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, true)
@@ -787,13 +799,25 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                    )
                }
             } else if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
-                val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+                showCustomAlert(
+                    this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                    this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1),
+                    CommonUtils.DIE_BOTH_DIALOG,
+                    listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
+                )
+//                val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+//                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                startActivity(intent)
             } else if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
-             val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
+//             val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
+//                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                startActivity(intent)
+                showCustomAlert(
+                    this@VideoPreviewActivity.resources.getString(R.string.app_name),
+                    this@VideoPreviewActivity.resources.getString(R.string.video_preview_save_click_1),
+                    CommonUtils.DIE_BOTH_DIALOG,
+                    listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
+                )
             }
             else if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
 
