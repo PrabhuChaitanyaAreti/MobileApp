@@ -81,6 +81,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     private var isDieBottom = false
     private var isDieTopDetails = false
     private var isDieBottomDetails = false
+    private var isFirstDieTop = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,8 +99,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         isDieBottom = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, false)
         isDieTopDetails = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, false)
         isDieBottomDetails = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, false)
+        isFirstDieTop = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_FIRST_DIE_TOP, false)
         dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
         partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
+
 
         Log.d("TAG", "VideoPreviewActivity  sharedPreferences  userId $userId")
         Log.d("TAG", "VideoPreviewActivity  sharedPreferences  operatorStr $operatorStr")
@@ -111,6 +114,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieBottom $isDieBottom")
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieTopDetails $isDieTopDetails")
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieBottomDetails $isDieBottomDetails")
+        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isFirstDieTop $isFirstDieTop")
 
 
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
@@ -294,6 +298,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     }
 
     private fun saveVideo() {
+        Log.d("TAG", "saveVideo onClick video path::: $path")
         if (isDieTop && isDieBottom ) {
             val timeStamp =
                 SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
@@ -309,7 +314,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 )
             )
 
-            if (isDieTop && isDieTopDetails ) {
+            if (isDieTop && isDieTopDetails && isFirstDieTop) {
                 if (isDieBottom ) {
                     showCustomAlert(
                         this@VideoPreviewActivity.resources.getString(R.string.app_name),

@@ -483,7 +483,10 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 }
 
                 override fun onFailure(call: Call<VideoUploadSaveResponse?>, t: Throwable) {
-                    Analytics.trackEvent("Sync Video: "+t.printStackTrace());
+                    val str=""+BuildConfig.VERSION_CODE+"("+BuildConfig.VERSION_NAME+")"+""+t.printStackTrace()+""+t.toString()+""+t.localizedMessage
+                    Log.i("onFailure  str :::: ", str)
+                    Analytics.trackEvent("Sync Video: $str");
+                   // Analytics.trackEvent("Sync Video: "+t.printStackTrace());
                     Log.i("onFailure  printStackTrace :::: ", "${t.printStackTrace()}")
                     Log.i("onFailure  toString :::: ", t.toString())
                     Log.i("onFailure  localizedMessage :::: ", t.localizedMessage)

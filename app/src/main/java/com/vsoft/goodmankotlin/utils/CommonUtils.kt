@@ -81,6 +81,7 @@ class CommonUtils {
         const val SAVE_DIE_ID="dieIdStr"
         const val SAVE_PART_ID="partIdStr"
         const val SAVE_IS_NEW_DIE="IsNewDie"
+        const val SAVE_IS_FIRST_DIE_TOP="isFirstDieTop"
         const val SAVE_DIE_TYPE="dieTypeStr"
         const val SAVE_IS_DIE_TOP="isDieTop"
         const val SAVE_IS_DIE_BOTTOM="isDieBottom"
