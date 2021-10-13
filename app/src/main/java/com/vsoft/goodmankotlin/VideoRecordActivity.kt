@@ -253,6 +253,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
     private fun stopRecording() {
         try {
+            isRecording = false
             parameters!!.flashMode = Camera.Parameters.FLASH_MODE_OFF
             mCamera!!.parameters = parameters
             if (mMediaRecorder != null) {
@@ -264,7 +265,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             videoOnlineImageButton!!.setImageResource(R.drawable.video_record_start_new)
             releaseMediaRecorder() // release the MediaRecorder object
             mCamera!!.lock() // take camera access back from MediaRecorder
-            isRecording = false
+
             releaseCamera()
             Log.d(tag, "onVideoSaved ${mOutputFile.toString()}")
             val inputPath = mOutputFile.toString()
@@ -273,13 +274,27 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
             i.putExtra(CommonUtils.VIDEO_SAVING_FILE_PATH, inputPath)
             startActivity(i)
+            finish()
 
         } catch (e: RuntimeException) {
-            Log.d(
+            Log.d("videostruck","video stop catch block>>>")
+                Log.d(
                 tag,
                 "RuntimeException: stop() is called immediately after start()"
             )
-            mOutputFile!!.delete()
+           // mOutputFile!!.delete()
+            releaseMediaRecorder() // release the MediaRecorder object
+            mCamera!!.lock() // take camera access back from MediaRecorder
+
+            releaseCamera()
+            Log.d(tag, "onVideoSaved ${mOutputFile.toString()}")
+            val inputPath = mOutputFile.toString()
+            Log.d("videostruck", "onVideoSaved inputPath>>>> $inputPath")
+
+            val i = Intent(this@VideoRecordActivity, VideoPreviewActivity::class.java)
+            i.putExtra(CommonUtils.VIDEO_SAVING_FILE_PATH, inputPath)
+            startActivity(i)
+            finish()
         }
     }
 

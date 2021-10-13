@@ -102,8 +102,10 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
         var videosList: List<VideoModel>?
         subscribeOnBackground {
+            removeEmptyVideos()
             videosList = vm.getVideos()
-                Log.d("TAG", "DashBoardActivity  videosList!!.size ${videosList!!.size}")
+            Log.i("DashBoardActivity videosList.size::: ", videosList!!.size.toString())
+          //  Log.d("TAG", "DashBoardActivity  videosList!!.size ${videosList!!.size}")
             runOnUiThread {
                 totalVideoCount = videosList!!.size
                syncVideoCountDisplay(videosList!!.size)
@@ -169,6 +171,32 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             }
         }
 
+
+    }
+
+    private fun removeEmptyVideos() {
+        try {
+            val videosList = vm.getVideos()
+            Log.i("removeEmptyVideos videosList.size::: ", videosList.size.toString())
+            videosList.forEach {
+                val fileSize: File = File(it.video_path)
+                Log.i("save path ", it.video_path)
+                val file_size_kb = fileSize.length() / 1024
+                val file_size_mb = (fileSize.length() / 1024)/1024
+                Log.i("video  fileSize.length() bytes  ", ""+ fileSize.length())
+                Log.i("video file_size_kb  ", ""+file_size_kb)
+                Log.i("video file_size_mb  ", ""+file_size_mb)
+                if (!(fileSize.length() > 0)) {
+                    it.status = true
+                    val status: Int = vm.update(it)
+                    Log.i("response update status ", "$status")
+        //                                CommonUtils.deletePath(item.video_path)
+        //                                vm.delete(item)
+                }
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
 
     }
 
@@ -394,32 +422,47 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         Log.i("save jsonString ", jsonString)
         Log.i("save path ", path)
         val fileSize: File = File(path)
-        val file_size = (fileSize.length() / 1024)/1024
-        Log.i("video file_size  ", ""+file_size)
-        val rootFolder: File? = context.getExternalFilesDir(null)
-        val jsonFile = File(rootFolder, "post.json")
-        val writer = FileWriter(jsonFile)
-        writer.write(jsonString)
-        writer.close()
-        val metaDataFilePart = MultipartBody.Part.createFormData(
-            CommonUtils.SYNC_VIDEO_API_META_DATA,
-            jsonFile.name,
-            RequestBody.create(MediaType.parse("*/*"), jsonFile)
-        )
 
-        val file = File(path) // initialize file here
-        val videoFilePart = MultipartBody.Part.createFormData(
-            CommonUtils.SYNC_VIDEO_API_FILE,
-            file.name,
-            RequestBody.create(MediaType.parse("video/*"), file)
-        )
-        //beginUpload(file,item)
-        saveVideoToServer(item, metaDataFilePart, videoFilePart)
-        }else{
-            showCustomAlert(
-                this@DashBoardActivity.resources.getString(R.string.network_alert_message),CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
-                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
-        }
+        val file_size_kb = fileSize.length() / 1024
+            val file_size_mb = (fileSize.length() / 1024)/1024
+            Log.i("video  fileSize.length() bytes  ", ""+ fileSize.length())
+        Log.i("video file_size_kb  ", ""+file_size_kb)
+            Log.i("video file_size_mb  ", ""+file_size_mb)
+            if (fileSize.length() > 0) {
+                val rootFolder: File? = context.getExternalFilesDir(null)
+                val jsonFile = File(rootFolder, "post.json")
+                val writer = FileWriter(jsonFile)
+                writer.write(jsonString)
+                writer.close()
+                val metaDataFilePart = MultipartBody.Part.createFormData(
+                    CommonUtils.SYNC_VIDEO_API_META_DATA,
+                    jsonFile.name,
+                    RequestBody.create(MediaType.parse("*/*"), jsonFile)
+                )
+
+                val file = File(path) // initialize file here
+                val videoFilePart = MultipartBody.Part.createFormData(
+                    CommonUtils.SYNC_VIDEO_API_FILE,
+                    file.name,
+                    RequestBody.create(MediaType.parse("video/*"), file)
+                )
+                //beginUpload(file,item)
+                saveVideoToServer(item, metaDataFilePart, videoFilePart)
+            }else{
+                item.status = true
+                val status: Int = vm.update(item)
+                Log.i("response update status ", "$status")
+                                CommonUtils.deletePath(item.video_path)
+                                vm.delete(item)
+                sync()
+            }
+            } else {
+                showCustomAlert(
+                    this@DashBoardActivity.resources.getString(R.string.network_alert_message),
+                    CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                    listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                )
+            }
     }
 
     private fun saveVideoToServer(
