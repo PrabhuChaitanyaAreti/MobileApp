@@ -31,6 +31,8 @@ class CommonUtils {
         const val DIE_BOTTOM_DIALOG = "dieBottom"
         const val DIE_TOP_DETAIL_DIALOG = "dieTopDetails"
         const val DIE_BOTTOM_DETAIL_DIALOG = "dieBottomDetails"
+        const val DIE_RECORD_OPTIONS_DIALOG = "dieRecordOptionsDialog"
+        const val IS_VIDEO_RECORD_SCREEN = "isVideoRecordScreen"
         const val VALIDATION_DIALOG="validationDialog"
         const val WEB_SERVICE_RESPONSE_CODE_401="webServiceResponseCode401"
         const val WEB_SERVICE_RESPONSE_CODE_NON_401="webServiceResponseCodeNon401"
@@ -87,6 +89,7 @@ class CommonUtils {
         const val SAVE_IS_DIE_BOTTOM="isDieBottom"
         const val SAVE_IS_DIE_TOP_DETAILS="isDieTopDetails"
         const val SAVE_IS_DIE_BOTTOM_DETAILS="isDieBottomDetails"
+       // const val SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT="dieTopBottomDetailsCount"
 
         const val ADD_DIE_SELECT="Select"
         const val ADD_DIE_TOP="top"

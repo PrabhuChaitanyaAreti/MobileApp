@@ -47,6 +47,9 @@ class VideoRepository(application: Application) {
     fun getVideos(): List<VideoModel> {
            return videoDao.getVideos(false)
     }
+    fun getSyncedVideos(): List<VideoModel> {
+        return videoDao.getVideos(true)
+    }
     fun getAllVideosList(): List<VideoModel> {
         return videoDao.getAllVideosList()
     }
@@ -56,5 +59,9 @@ class VideoRepository(application: Application) {
             status= videoDao.update(false, id!!)
         }
         return status
+    }
+
+    fun getDieCount(dieIdStr: String, partIdStr: String, dieTypeStr: String):Int{
+        return videoDao.getDieCount(dieIdStr, partIdStr,dieTypeStr)
     }
 }

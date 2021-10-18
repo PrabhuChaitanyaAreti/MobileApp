@@ -31,7 +31,6 @@ import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
-import com.vsoft.goodmankotlin.model.PunchResponse
 import com.vsoft.goodmankotlin.utils.*
 import com.vsoft.goodmankotlin.video_response.VideoAnnotationResponse
 import retrofit2.Call
@@ -82,6 +81,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     private var isDieTopDetails = false
     private var isDieBottomDetails = false
     private var isFirstDieTop = false
+    private var dieTopBottomDetailsCount=0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,6 +102,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         isFirstDieTop = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_FIRST_DIE_TOP, false)
         dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
         partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
+     //   dieTopBottomDetailsCount =sharedPreferences!!.getInt(CommonUtils.SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT, 0)
 
 
         Log.d("TAG", "VideoPreviewActivity  sharedPreferences  userId $userId")
@@ -117,7 +118,35 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         Log.d("TAG", "VideoPreviewActivity sharedPreferences  isFirstDieTop $isFirstDieTop")
 
 
+
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
+
+        if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+            var typeStr=""
+            var details_count=0
+            if(dieTypeStr.contains("_")){
+                val splitArray: List<String> = dieTypeStr.split("_")
+              //  typeStr=splitArray[0]+"_"+splitArray[1]
+                typeStr=splitArray[0]
+
+                details_count=splitArray[2].toInt()
+            }else{
+                typeStr=dieTypeStr
+            }
+            Log.d("TAG", "VideoPreviewActivity modified typeStr $typeStr")
+            dieTopBottomDetailsCount = vm.getDieCount(dieIdStr,partIdStr,typeStr)
+            Log.d("TAG", "VideoPreviewActivity details_count  $details_count")
+            Log.d("TAG", "VideoPreviewActivity db  before dieTopBottomDetailsCount $dieTopBottomDetailsCount")
+            if(details_count!=dieTopBottomDetailsCount){
+                dieTopBottomDetailsCount++
+                dieTopBottomDetailsCount++
+            }else{
+                dieTopBottomDetailsCount++
+            }
+            Log.d("TAG", "VideoPreviewActivity db after dieTopBottomDetailsCount $dieTopBottomDetailsCount")
+        }
+
+
 
         pvMain = findViewById(R.id.pv_main)
         current = findViewById(R.id.current)
@@ -298,6 +327,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     }
 
     private fun saveVideo() {
+       // dieTopBottomDetailsCount++
         Log.d("TAG", "saveVideo onClick video path::: $path")
         if (isDieTop && isDieBottom ) {
             val timeStamp =
@@ -318,7 +348,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 if (isDieBottom ) {
                     showCustomAlert(
                         this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message)+" "+dieTopBottomDetailsCount+" ?",
                         CommonUtils.DIE_BOTTOM_DETAIL_DIALOG,
                         listOf(
                             this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
@@ -328,7 +358,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 }else {
                     showCustomAlert(
                         this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message)+" "+dieTopBottomDetailsCount+" ?",
                         CommonUtils.DIE_TOP_DETAIL_DIALOG,
                         listOf(
                             this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
@@ -340,7 +370,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 if (isDieTop){
                     showCustomAlert(
                         this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message)+" "+dieTopBottomDetailsCount+" ?",
                         CommonUtils.DIE_TOP_DETAIL_DIALOG,
                         listOf(
                             this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
@@ -350,7 +380,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 }else {
                     showCustomAlert(
                         this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message),
+                        this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message)+" "+dieTopBottomDetailsCount+" ?",
                         CommonUtils.DIE_BOTTOM_DETAIL_DIALOG,
                         listOf(
                             this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
@@ -383,7 +413,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
             )
             showCustomAlert(
                 this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message),
+                this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message)+" "+dieTopBottomDetailsCount+" ?",
                 CommonUtils.DIE_TOP_DETAIL_DIALOG,
                 listOf(
                     this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
@@ -408,7 +438,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
             )
             showCustomAlert(
                 this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message),
+                this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message)+" "+dieTopBottomDetailsCount+" ?",
                 CommonUtils.DIE_BOTTOM_DETAIL_DIALOG,
                 listOf(
                     this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
@@ -697,28 +727,34 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
             )
         ) {
             if (functionality.equals(CommonUtils.DIE_TOP_DETAIL_DIALOG, true)) {
+                //dieTopBottomDetailsCount++
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, true)
-                editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP_DETAILS)
+                //editor.putInt(CommonUtils.SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT, dieTopBottomDetailsCount)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP_DETAILS+"_"+dieTopBottomDetailsCount)
                 editor.apply()
 
                 val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)
                 finish()
             } else if (functionality.equals(CommonUtils.DIE_BOTTOM_DETAIL_DIALOG, true)) {
+                //dieTopBottomDetailsCount++
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, true)
-                editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM_DETAILS)
+                //editor.putInt(CommonUtils.SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT, dieTopBottomDetailsCount)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM_DETAILS+"_"+dieTopBottomDetailsCount)
                 editor.apply()
 
                 val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)
                 finish()
             } else if (functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)) {
+                //dieTopBottomDetailsCount=0
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
+               // editor.putInt(CommonUtils.SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT, 0)
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
                 editor.apply()
 
@@ -726,8 +762,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 startActivity(intent)
                 finish()
             }else if (functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
+               // dieTopBottomDetailsCount=0
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
+               // editor.putInt(CommonUtils.SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT, 0)
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
                 editor.apply()
 
@@ -735,6 +773,15 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 startActivity(intent)
                 finish()
             }else if (functionality.equals(CommonUtils.RETAKE_DIALOG, true)) {
+                /*  //  if(dieTopBottomDetailsCount>0) {
+                     //  dieTopBottomDetailsCount--
+                      val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                       editor.putInt(
+                           CommonUtils.SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT,
+                           dieTopBottomDetailsCount
+                       )
+                       editor.apply()
+               // }*/
                 absPlayerInternal!!.release()
                 if (absPlayerInternal!!.isPlaying) {
                     absPlayerInternal!!.stop()
@@ -766,6 +813,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
               }else{
                   val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                   editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, true)
+                  editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, false)
                   editor.apply()
                   showCustomAlert(
                       this@VideoPreviewActivity.resources.getString(R.string.app_name),
@@ -790,8 +838,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                        listOf(this@VideoPreviewActivity.resources.getString(R.string.alert_ok))
                    )
                }else{
+
                     val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                      editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, true)
+                   editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, false)
                     editor.apply()
                    showCustomAlert(
                        this@VideoPreviewActivity.resources.getString(R.string.app_name),

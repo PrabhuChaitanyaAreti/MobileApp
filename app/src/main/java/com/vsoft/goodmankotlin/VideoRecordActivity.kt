@@ -30,6 +30,8 @@ import java.io.IOException
 import java.util.*
 import android.media.AudioManager
 import android.text.TextUtils
+import androidx.lifecycle.ViewModelProviders
+import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.utils.CameraHelper
 
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
@@ -81,6 +83,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private var dieIdStr = ""
     private var partIdStr = ""
     private var dieTypeStr = ""
+    private var isVideoRecordScreen=false
+    private var isTopDie=false
+
+    private lateinit var vm: VideoViewModel
+
+    private var dieTopBottomDetailsCount=0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,11 +103,95 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
         partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
         dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
+        isVideoRecordScreen = sharedPreferences!!.getBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, false)
+
 
         Log.d("TAG", "VideoRecordActivity  sharedPreferences  dieIdStr $dieIdStr")
         Log.d("TAG", "VideoRecordActivity sharedPreferences  partIdStr $partIdStr")
         Log.d("TAG", "VideoRecordActivity sharedPreferences  dieTypeStr $dieTypeStr")
+        Log.d("TAG", "VideoRecordActivity sharedPreferences  isVideoRecordScreen $isVideoRecordScreen")
 
+
+        initCameraView1()
+
+        if(isVideoRecordScreen){
+           // initCameraView()
+            videoOnlineImageButton!!.visibility=View.VISIBLE
+        }else {
+            videoOnlineImageButton!!.visibility=View.GONE
+
+            val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+            editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, true)
+            editor.apply()
+
+            vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
+
+            if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+                var typeStr = ""
+                if (dieTypeStr.contains("_")) {
+                    val splitArray: List<String> = dieTypeStr.split("_")
+                    //  typeStr=splitArray[0]+"_"+splitArray[1]
+                    typeStr = splitArray[0]
+                } else {
+                    typeStr = dieTypeStr
+                }
+                Log.d("TAG", "VideoPreviewActivity modified typeStr $typeStr")
+                isTopDie = typeStr.equals(CommonUtils.ADD_DIE_TOP)
+                Log.d("TAG", "VideoPreviewActivity modified isTopDie $isTopDie")
+                dieTopBottomDetailsCount = vm.getDieCount(dieIdStr, partIdStr, typeStr)
+                Log.d(
+                    "TAG",
+                    "VideoPreviewActivity db  dieTopBottomDetailsCount $dieTopBottomDetailsCount"
+                )
+            }else{
+                videoOnlineImageButton!!.visibility=View.VISIBLE
+            }
+            Log.d("TAG", "VideoPreviewActivity modified isTopDie $isTopDie")
+            Log.d(
+                "TAG",
+                "VideoPreviewActivity db  dieTopBottomDetailsCount $dieTopBottomDetailsCount"
+            )
+            if (dieTopBottomDetailsCount > 0) {
+                var message = ""
+                var option1 = ""
+                var option2 = ""
+
+                if (isTopDie) {
+                    message =
+                        this@VideoRecordActivity.resources.getString(R.string.video_record_message_1)
+                    option1 =
+                        this@VideoRecordActivity.resources.getString(R.string.video_record_option_1)
+                    option2 =
+                        this@VideoRecordActivity.resources.getString(R.string.video_record_option_2)
+                } else {
+                    message =
+                        this@VideoRecordActivity.resources.getString(R.string.video_record_message_2)
+                    option1 =
+                        this@VideoRecordActivity.resources.getString(R.string.video_record_option_3)
+                    option2 =
+                        this@VideoRecordActivity.resources.getString(R.string.video_record_option_4)
+                }
+                if(dieTopBottomDetailsCount>1){
+                    dieTopBottomDetailsCount++
+                }
+                showCustomAlert(
+                    this@VideoRecordActivity.resources.getString(R.string.app_name),
+                    message,
+                    CommonUtils.DIE_RECORD_OPTIONS_DIALOG,
+                    listOf(
+                        option1,
+                        option2
+                    )
+                )
+
+            } else {
+              //  initCameraView()
+                videoOnlineImageButton!!.visibility=View.VISIBLE
+            }
+        }
+    }
+
+    private fun initCameraView1() {
         surface_view = findViewById(R.id.surface_view)
         settingsImgIcon = findViewById(R.id.settingsImgIcon)
         videoOnlineImageButton = findViewById(R.id.videoOnlineImageButton)
@@ -148,6 +240,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 dieTypeTxt!!.visibility=View.GONE
             }
 
+
             videoOnlineImageButton!!.setOnClickListener(this)
             flashImgIcon!!.setOnClickListener(this)
             settingsImgIcon!!.setOnClickListener(this)
@@ -157,7 +250,6 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 this@VideoRecordActivity.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
                 listOf(this@VideoRecordActivity.resources.getString(R.string.alert_exit)))
         }
-
     }
 
     private fun initProgress(){
@@ -358,6 +450,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         setMicMuted(true)
     }
     private fun releaseMediaRecorder() {
+        try{
         if (mMediaRecorder != null) {
             mMediaRecorder!!.reset()
             mMediaRecorder!!.release()
@@ -366,9 +459,13 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 mCamera!!.lock()
             }
         }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 
     private fun releaseCamera() {
+        try{
         if (mCamera != null) {
             mCamera!!.release()
             mCamera = null
@@ -381,56 +478,63 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             recordMCountDown!!.cancel()
             recordMCountDown = null
         }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 
     private fun prepareVideoRecorder(): Boolean {
-        mMediaRecorder = MediaRecorder()
+        try {
+            mMediaRecorder = MediaRecorder()
 
-        // Step 1: Unlock and set camera to MediaRecorder
-        if (mCamera != null) {
-            mCamera!!.stopPreview()
-            mCamera!!.unlock()
-            mMediaRecorder!!.setCamera(mCamera)
+            // Step 1: Unlock and set camera to MediaRecorder
+            if (mCamera != null) {
+                mCamera!!.stopPreview()
+                mCamera!!.unlock()
+                mMediaRecorder!!.setCamera(mCamera)
 
-            // Step 2: Set sources
-            mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
-            mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
+                // Step 2: Set sources
+                mMediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
+                mMediaRecorder!!.setVideoSource(MediaRecorder.VideoSource.CAMERA)
 
-            // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-            mMediaRecorder!!.setProfile(profile)
+                // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
+                mMediaRecorder!!.setProfile(profile)
 
-            // Step 4: Set output file
-            mOutputFile = CameraHelper.getOutputMediaFile(
-                CameraHelper.MEDIA_TYPE_VIDEO,
-                this@VideoRecordActivity
-            )
-            if (mOutputFile == null) {
+                // Step 4: Set output file
+                mOutputFile = CameraHelper.getOutputMediaFile(
+                    CameraHelper.MEDIA_TYPE_VIDEO,
+                    this@VideoRecordActivity
+                )
+                if (mOutputFile == null) {
+                    return false
+                }
+                mMediaRecorder!!.setOutputFile(mOutputFile!!.path)
+                // END_INCLUDE (configure_media_recorder)
+
+                // Step 5: Prepare configured MediaRecorder
+                try {
+                    mMediaRecorder!!.prepare()
+                } catch (e: IllegalStateException) {
+                    Log.d(
+                        tag,
+                        "IllegalStateException preparing MediaRecorder: " + e.message
+                    )
+                    releaseMediaRecorder()
+                    return false
+                } catch (e: IOException) {
+                    Log.d(
+                        tag,
+                        "IOException preparing MediaRecorder: " + e.message
+                    )
+                    releaseMediaRecorder()
+                    return false
+                }
+                return true
+            } else {
                 return false
             }
-            mMediaRecorder!!.setOutputFile(mOutputFile!!.path)
-            // END_INCLUDE (configure_media_recorder)
-
-            // Step 5: Prepare configured MediaRecorder
-            try {
-                mMediaRecorder!!.prepare()
-            } catch (e: IllegalStateException) {
-                Log.d(
-                    tag,
-                    "IllegalStateException preparing MediaRecorder: " + e.message
-                )
-                releaseMediaRecorder()
-                return false
-            } catch (e: IOException) {
-                Log.d(
-                    tag,
-                    "IOException preparing MediaRecorder: " + e.message
-                )
-                releaseMediaRecorder()
-                return false
-            }
-            return true
-        }else
-        {
+        }catch (e:Exception){
+            e.printStackTrace()
             return false
         }
 
@@ -803,21 +907,87 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             }
         }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.alert_ok),true)) {
             if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
-                if (appExitCounter != null) {
-                    appExitCounter!!.cancel()
-                    appExitCounter = null
+                try {
+                    if (mOutputFile.toString().isNotEmpty() && !TextUtils.isEmpty(mOutputFile.toString()) && mOutputFile.toString() != "null") {
+                        Log.d(tag, "onVideoSaved ${mOutputFile.toString()}")
+                        val inputPath = mOutputFile.toString()
+                        Log.d(tag, "onVideoSaved inputPath $inputPath")
+                        CommonUtils.deletePath(inputPath)
+                    }
+                    setMicMuted(false)
+                    releaseMediaRecorder()
+                    releaseCamera()
+                }catch (e:Exception){
+                    e.printStackTrace()
                 }
+
+
                 val intent = Intent(this, DashBoardActivity::class.java)
                 intent.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             }
         }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.alert_cancel),true)) {
                 //No action required. Just exit dialog.
+        }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.video_record_option_1),true)) {
+            if (functionality.equals(CommonUtils.DIE_RECORD_OPTIONS_DIALOG, true)) {
+                val typeStr=CommonUtils.ADD_DIE_TOP
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE,typeStr )
+                editor.apply()
+
+                dieTypeTxt!!.text="Die Type: "+ typeStr.uppercase(Locale.getDefault())
+                videoOnlineImageButton!!.visibility=View.VISIBLE
+
+              //  initCameraView()
+            }
+        }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.video_record_option_2),true)) {
+            if (functionality.equals(CommonUtils.DIE_RECORD_OPTIONS_DIALOG, true)) {
+                val typeStr=CommonUtils.ADD_DIE_TOP_DETAILS+"_"+dieTopBottomDetailsCount
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, true)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, typeStr)
+                editor.apply()
+
+                dieTypeTxt!!.text="Die Type: "+ typeStr.uppercase(Locale.getDefault())
+                videoOnlineImageButton!!.visibility=View.VISIBLE
+
+              //  initCameraView()
+            }
+        }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.video_record_option_3),true)) {
+            if (functionality.equals(CommonUtils.DIE_RECORD_OPTIONS_DIALOG, true)) {
+                val typeStr=CommonUtils.ADD_DIE_BOTTOM
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, typeStr)
+                editor.apply()
+
+                dieTypeTxt!!.text="Die Type: "+ typeStr.uppercase(Locale.getDefault())
+                videoOnlineImageButton!!.visibility=View.VISIBLE
+
+              //  initCameraView()
+            }
+        }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.video_record_option_4),true)) {
+            if (functionality.equals(CommonUtils.DIE_RECORD_OPTIONS_DIALOG, true)) {
+                val typeStr=CommonUtils.ADD_DIE_BOTTOM_DETAILS+"_"+dieTopBottomDetailsCount
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
+                editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, true)
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, typeStr)
+                editor.apply()
+
+                dieTypeTxt!!.text="Die Type: "+ typeStr.uppercase(Locale.getDefault())
+                videoOnlineImageButton!!.visibility=View.VISIBLE
+
+               // initCameraView()
+            }
         }
+
     }
     private fun setMicMuted(state: Boolean) {
-
-        val myAudioManager =
+     try{
+         val myAudioManager =
             applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         // get the working mode and keep it
         val workingAudioMode = myAudioManager.mode
@@ -830,6 +1000,9 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
         // set back the original working mode
         myAudioManager.mode = workingAudioMode
+     }catch (e:Exception){
+e.printStackTrace()
+     }
     }
     override fun onDestroy() {
         super.onDestroy()

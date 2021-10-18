@@ -103,6 +103,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         var videosList: List<VideoModel>?
         subscribeOnBackground {
             removeEmptyVideos()
+            removeSyncVideos()
             videosList = vm.getVideos()
             Log.i("DashBoardActivity videosList.size::: ", videosList!!.size.toString())
           //  Log.d("TAG", "DashBoardActivity  videosList!!.size ${videosList!!.size}")
@@ -172,6 +173,21 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
 
 
+    }
+
+    private fun removeSyncVideos() {
+        try {
+            val videosList = vm.getSyncedVideos()
+            Log.i("removeSyncVideos videosList.size::: ", videosList.size.toString())
+            if(videosList.isNotEmpty()){
+                videosList.forEach {
+                    CommonUtils.deletePath(it.video_path)
+                    vm.delete(it)
+                }
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
     }
 
     private fun removeEmptyVideos() {
@@ -487,19 +503,21 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                         if (statusCode == 200) {
                             runOnUiThread({
                                // Toast.makeText(applicationContext, "video upload success 200", Toast.LENGTH_LONG).show()
-                                item.status = true
-                                val status: Int = vm.update(item)
-                                Log.i("response update status ", "$status")
-//                                CommonUtils.deletePath(item.video_path)
-//                                vm.delete(item)
+                                //item.status = true
+                               // val status: Int = vm.update(item)
+                              //  Log.i("response update status ", "$status")
+                               CommonUtils.deletePath(item.video_path)
+                               vm.delete(item)
                                 sync()
                             })
                         } else if (statusCode == 401) {
                             runOnUiThread({
                                 //Toast.makeText(applicationContext, "video upload exists 200", Toast.LENGTH_LONG).show()
-                                item.status = true
-                                val status: Int = vm.update(item)
-                                Log.i("response update status ", "$status")
+                                //item.status = true
+                                //val status: Int = vm.update(item)
+                                //Log.i("response update status ", "$status")
+                                CommonUtils.deletePath(item.video_path)
+                                vm.delete(item)
                                 sync()
                             })
                         } else {

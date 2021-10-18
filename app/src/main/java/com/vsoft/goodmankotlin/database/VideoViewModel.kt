@@ -32,10 +32,17 @@ class VideoViewModel(app: Application) : AndroidViewModel(app) {
     fun getVideos(): List<VideoModel> {
         return repository.getVideos()
     }
+    fun getSyncedVideos(): List<VideoModel> {
+        return repository.getSyncedVideos()
+    }
     fun getAllVideosList(): List<VideoModel> {
         return repository.getAllVideosList()
     }
     fun updateSyncStatus(id:Int?):Int{
         return repository.updateSyncStatus(id)
+    }
+
+    fun getDieCount(dieIdStr: String, partIdStr: String, dieTypeStr: String):Int{
+        return repository.getDieCount(dieIdStr,partIdStr,dieTypeStr)
     }
 }

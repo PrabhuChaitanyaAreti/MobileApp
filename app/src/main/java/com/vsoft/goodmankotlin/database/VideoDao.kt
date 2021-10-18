@@ -30,4 +30,8 @@ interface VideoDao {
 
     @Query("UPDATE video_table SET status=:status WHERE id = :id")
     fun update(status: Boolean?, id: Int):Int
+
+    //@Query("SELECT * FROM video_table WHERE die_id=:dieIdStr AND part_id=:partIdStr AND die_top_bottom=:dieTypeStr")
+    @Query("SELECT COUNT(*) FROM video_table WHERE die_id = :dieIdStr AND part_id = :partIdStr AND die_top_bottom LIKE  '%' || :dieTypeStr  || '%'")
+    fun getDieCount(dieIdStr: String, partIdStr: String,dieTypeStr:String): Int
 }

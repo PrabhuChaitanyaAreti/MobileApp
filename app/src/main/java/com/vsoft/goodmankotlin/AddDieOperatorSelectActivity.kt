@@ -181,6 +181,8 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                         editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE, true)
                         editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, false)
                         editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, false)
+                       // editor.putInt(CommonUtils.SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT, 0)
+                        editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, false)
 
                         if(dieTypeStr.equals(CommonUtils.ADD_DIE_TOP,true)){
                             editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
@@ -219,6 +221,8 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, false)
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, false)
                 editor.putBoolean(CommonUtils.SAVE_IS_FIRST_DIE_TOP, false)
+               // editor.putInt(CommonUtils.SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT, 0)
+               editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, false)
                 editor.apply()
                 val mainIntent =
                     Intent(this@AddDieOperatorSelectActivity, VideoRecordActivity::class.java)
