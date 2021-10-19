@@ -130,12 +130,12 @@
     <string name="progress_dialog_message_video_preview">Please wait .. Processing video may take some time.</string>
     <string name="video_preview_alert_message">Do you want to navigate to Dashboard?</string>
     <string name="video_preview_ratake">Do you want to Retake the Video?</string>
-    <string name="video_record_message_1">Top Die is already recorded.Do you want to record Top or Top Details ?. Please choose below options</string>
-    <string name="video_record_message_2">Bottom Die is already recorded.Do you want to record Bottom or Bottom Details ?. Please choose below options</string>
-    <string name="video_record_option_1">Top</string>
-    <string name="video_record_option_2">Top Details</string>
-    <string name="video_record_option_3">Bottom</string>
-    <string name="video_record_option_4">Bottom Details</string>
+    <string name="video_record_message_1">Top Die video is available. Please select an action below.</string>
+    <string name="video_record_message_2">Bottom Die video is available. Please select an action below.</string>
+    <string name="video_record_option_1">Record Top Video</string>
+    <string name="video_record_option_2">Record Top Details Video</string>
+    <string name="video_record_option_3">Record Bottom Video</string>
+    <string name="video_record_option_4">Record Bottom Details Video</string>
 
 
     <!--Masking Screen-->

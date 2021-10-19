@@ -121,7 +121,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
 
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
 
-        if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+       /* if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
             var typeStr=""
             var details_count=0
             if(dieTypeStr.contains("_")){
@@ -144,6 +144,44 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 dieTopBottomDetailsCount++
             }
             Log.d("TAG", "VideoPreviewActivity db after dieTopBottomDetailsCount $dieTopBottomDetailsCount")
+        }*/
+
+        if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+            var typeStr=""
+            var details_count=0
+            if(dieTypeStr.contains("_")){
+                val splitArray: List<String> = dieTypeStr.split("_")
+                //  typeStr=splitArray[0]+"_"+splitArray[1]
+                typeStr=splitArray[0]
+
+                details_count=splitArray[2].toInt()
+            }else{
+                typeStr=dieTypeStr
+            }
+            Log.d("TAG", "VideoPreviewActivity modified typeStr $typeStr")
+            Log.d("TAG", "VideoPreviewActivity details_count  $details_count")
+            val isDieType =   vm.isDieTypeExist(typeStr)
+            Log.d("TAG", "VideoPreviewActivity modified isDieType $isDieType")
+
+            if(isDieType) {
+               val isTopDie = typeStr.equals(CommonUtils.ADD_DIE_TOP)
+                Log.d("TAG", "VideoPreviewActivity modified isTopDie $isTopDie")
+                if(isTopDie){
+                    dieTopBottomDetailsCount = vm.getDieDetailsCount(dieIdStr, partIdStr, "top_details")
+                }else{
+                    dieTopBottomDetailsCount = vm.getDieDetailsCount(dieIdStr, partIdStr,"bottom_details")
+                }
+
+                Log.d("TAG", "VideoPreviewActivity db  before dieTopBottomDetailsCount $dieTopBottomDetailsCount")
+                if(details_count!=dieTopBottomDetailsCount){
+                    dieTopBottomDetailsCount++
+                    dieTopBottomDetailsCount++
+                }else{
+                    dieTopBottomDetailsCount++
+                }
+                Log.d("TAG", "VideoPreviewActivity db after dieTopBottomDetailsCount $dieTopBottomDetailsCount")
+
+            }
         }
 
 

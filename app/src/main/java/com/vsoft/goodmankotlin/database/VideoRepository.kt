@@ -61,7 +61,15 @@ class VideoRepository(application: Application) {
         return status
     }
 
-    fun getDieCount(dieIdStr: String, partIdStr: String, dieTypeStr: String):Int{
-        return videoDao.getDieCount(dieIdStr, partIdStr,dieTypeStr)
+    fun getDieCount(dieIdStr: String, partIdStr: String, dieTypeStr1: String):Int{
+        return videoDao.getDieCount(dieIdStr, partIdStr,dieTypeStr1)
+    }
+
+    fun getDieDetailsCount(dieIdStr: String, partIdStr: String, dieTypeStr1: String):Int{
+        return videoDao.getDieDetailsCount(dieIdStr, partIdStr,dieTypeStr1)
+    }
+
+    fun isDieTypeExist(dieTypeStr: String):Boolean{
+        return videoDao.isDieTypeExist(dieTypeStr)
     }
 }

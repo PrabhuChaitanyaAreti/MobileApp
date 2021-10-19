@@ -89,6 +89,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private lateinit var vm: VideoViewModel
 
     private var dieTopBottomDetailsCount=0
+    private var typeStr = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,26 +128,38 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
 
             if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
-                var typeStr = ""
+
                 if (dieTypeStr.contains("_")) {
                     val splitArray: List<String> = dieTypeStr.split("_")
-                    //  typeStr=splitArray[0]+"_"+splitArray[1]
                     typeStr = splitArray[0]
                 } else {
                     typeStr = dieTypeStr
                 }
-                Log.d("TAG", "VideoPreviewActivity modified typeStr $typeStr")
-                isTopDie = typeStr.equals(CommonUtils.ADD_DIE_TOP)
-                Log.d("TAG", "VideoPreviewActivity modified isTopDie $isTopDie")
-                dieTopBottomDetailsCount = vm.getDieCount(dieIdStr, partIdStr, typeStr)
-                Log.d(
-                    "TAG",
-                    "VideoPreviewActivity db  dieTopBottomDetailsCount $dieTopBottomDetailsCount"
-                )
+                Log.d("TAG", "VideoRecordActivity modified typeStr $typeStr")
+                val isDieType =   vm.isDieTypeExist(typeStr)
+                Log.d("TAG", "VideoRecordActivity modified isDieType $isDieType")
+
+                if(isDieType) {
+                    isTopDie = typeStr.equals(CommonUtils.ADD_DIE_TOP)
+                    Log.d("TAG", "VideoRecordActivity modified isTopDie $isTopDie")
+                    if(isTopDie){
+                        dieTopBottomDetailsCount = vm.getDieDetailsCount(dieIdStr, partIdStr, "top_details")
+                    }else{
+                        dieTopBottomDetailsCount = vm.getDieDetailsCount(dieIdStr, partIdStr,"bottom_details")
+                    }
+
+                    Log.d(
+                        "TAG",
+                        "VideoRecordActivity db  dieTopBottomDetailsCount $dieTopBottomDetailsCount"
+                    )
+
+                }else{
+                    videoOnlineImageButton!!.visibility=View.VISIBLE
+                }
             }else{
                 videoOnlineImageButton!!.visibility=View.VISIBLE
             }
-            Log.d("TAG", "VideoPreviewActivity modified isTopDie $isTopDie")
+            Log.d("TAG", "VideoRecordActivity modified isTopDie $isTopDie")
             Log.d(
                 "TAG",
                 "VideoPreviewActivity db  dieTopBottomDetailsCount $dieTopBottomDetailsCount"
@@ -171,9 +184,9 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     option2 =
                         this@VideoRecordActivity.resources.getString(R.string.video_record_option_4)
                 }
-                if(dieTopBottomDetailsCount>1){
-                    dieTopBottomDetailsCount++
-                }
+
+                dieTopBottomDetailsCount++
+
                 showCustomAlert(
                     this@VideoRecordActivity.resources.getString(R.string.app_name),
                     message,
@@ -185,8 +198,48 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 )
 
             } else {
+                dieTopBottomDetailsCount = vm.getDieDetailsCount(dieIdStr, partIdStr,typeStr)
+                Log.d(
+                    "TAG",
+                    "VideoPreviewActivity db else dieTopBottomDetailsCount $dieTopBottomDetailsCount"
+                )
               //  initCameraView()
-                videoOnlineImageButton!!.visibility=View.VISIBLE
+                if(dieTopBottomDetailsCount>0){
+                    //dieTopBottomDetailsCount++
+
+                    var message = ""
+                    var option1 = ""
+                    var option2 = ""
+
+                    if (isTopDie) {
+                        message =
+                            this@VideoRecordActivity.resources.getString(R.string.video_record_message_1)
+                        option1 =
+                            this@VideoRecordActivity.resources.getString(R.string.video_record_option_1)
+                        option2 =
+                            this@VideoRecordActivity.resources.getString(R.string.video_record_option_2)
+                    } else {
+                        message =
+                            this@VideoRecordActivity.resources.getString(R.string.video_record_message_2)
+                        option1 =
+                            this@VideoRecordActivity.resources.getString(R.string.video_record_option_3)
+                        option2 =
+                            this@VideoRecordActivity.resources.getString(R.string.video_record_option_4)
+                    }
+
+                    showCustomAlert(
+                        this@VideoRecordActivity.resources.getString(R.string.app_name),
+                        message,
+                        CommonUtils.DIE_RECORD_OPTIONS_DIALOG,
+                        listOf(
+                            option1,
+                            option2
+                        )
+                    )
+                }else{
+                    videoOnlineImageButton!!.visibility=View.VISIBLE
+                }
+
             }
         }
     }
@@ -437,10 +490,13 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         }
     }
 
-
+    override fun onStop() {
+        super.onStop()
+        setMicMuted(true)
+    }
     override fun onPause() {
         super.onPause()
-        setMicMuted(false)
+        setMicMuted(true)
 
     }
 

@@ -31,7 +31,14 @@ interface VideoDao {
     @Query("UPDATE video_table SET status=:status WHERE id = :id")
     fun update(status: Boolean?, id: Int):Int
 
-    //@Query("SELECT * FROM video_table WHERE die_id=:dieIdStr AND part_id=:partIdStr AND die_top_bottom=:dieTypeStr")
-    @Query("SELECT COUNT(*) FROM video_table WHERE die_id = :dieIdStr AND part_id = :partIdStr AND die_top_bottom LIKE  '%' || :dieTypeStr  || '%'")
-    fun getDieCount(dieIdStr: String, partIdStr: String,dieTypeStr:String): Int
+    //@Query("SELECT COUNT(*) FROM video_table WHERE die_id=:dieIdStr AND part_id=:partIdStr AND die_top_bottom=:dieTypeStr")
+    @Query("SELECT COUNT(*) FROM video_table WHERE die_id = :dieIdStr AND part_id = :partIdStr AND die_top_bottom=:dieTypeStr1")
+    //@Query("SELECT COUNT(*) FROM video_table WHERE die_id = :dieIdStr AND part_id = :partIdStr AND die_top_bottom=:dieTypeStr1")
+    fun getDieCount(dieIdStr: String, partIdStr: String,dieTypeStr1:String): Int
+
+    @Query("SELECT COUNT(*) FROM video_table WHERE die_id = :dieIdStr AND part_id = :partIdStr AND die_top_bottom LIKE  '%' || :dieTypeStr1  || '%'")
+    fun getDieDetailsCount(dieIdStr: String, partIdStr: String,dieTypeStr1:String): Int
+
+    @Query("SELECT EXISTS(SELECT * FROM video_table WHERE die_top_bottom = :dieTypeStr)")
+    fun isDieTypeExist(dieTypeStr:String) : Boolean
 }

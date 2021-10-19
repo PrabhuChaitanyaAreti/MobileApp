@@ -42,7 +42,15 @@ class VideoViewModel(app: Application) : AndroidViewModel(app) {
         return repository.updateSyncStatus(id)
     }
 
-    fun getDieCount(dieIdStr: String, partIdStr: String, dieTypeStr: String):Int{
-        return repository.getDieCount(dieIdStr,partIdStr,dieTypeStr)
+    fun getDieCount(dieIdStr: String, partIdStr: String, dieTypeStr1: String):Int{
+        return repository.getDieCount(dieIdStr,partIdStr,dieTypeStr1)
+    }
+
+    fun getDieDetailsCount(dieIdStr: String, partIdStr: String, dieTypeStr1: String):Int{
+        return repository.getDieDetailsCount(dieIdStr,partIdStr,dieTypeStr1)
+    }
+
+    fun isDieTypeExist(dieTypeStr: String):Boolean{
+        return repository.isDieTypeExist(dieTypeStr)
     }
 }
