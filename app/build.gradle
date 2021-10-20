@@ -6,14 +6,7 @@ plugins {
 }
 
 android {
-    /*signingConfigs {
-        debug {
-            storeFile file('/Users/PrabhuChaitanyaAreti/Desktop/GoodmanKeyStore/GoodmanKeystore')
-            storePassword 'goodman123'
-            keyAlias 'goodmankey'
-            keyPassword 'goodman123'
-        }
-    }*/
+
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -21,7 +14,7 @@ android {
         applicationId "com.vsoft.goodmankotlin"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 22
+        versionCode 24
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -100,10 +93,5 @@ dependencies {
     def appCenterSdkVersion = '4.1.0'
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
-    // BEGIN AWS DEPENDENCIES
-    def aws_version = "2.16.+"
-    implementation "com.amazonaws:aws-android-sdk-s3:$aws_version"
-    implementation ("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
-    // END AWS DEPENDENCIES
 
 }

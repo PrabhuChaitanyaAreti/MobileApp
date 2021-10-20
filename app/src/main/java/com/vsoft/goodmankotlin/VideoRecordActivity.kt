@@ -116,7 +116,6 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         initCameraView1()
 
         if(isVideoRecordScreen){
-           // initCameraView()
             videoOnlineImageButton!!.visibility=View.VISIBLE
         }else {
             videoOnlineImageButton!!.visibility=View.GONE
@@ -143,9 +142,9 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     isTopDie = typeStr.equals(CommonUtils.ADD_DIE_TOP)
                     Log.d("TAG", "VideoRecordActivity modified isTopDie $isTopDie")
                     if(isTopDie){
-                        dieTopBottomDetailsCount = vm.getDieDetailsCount(dieIdStr, partIdStr, "top_details")
+                        dieTopBottomDetailsCount = vm.getDieCount(dieIdStr, partIdStr, "top_details")
                     }else{
-                        dieTopBottomDetailsCount = vm.getDieDetailsCount(dieIdStr, partIdStr,"bottom_details")
+                        dieTopBottomDetailsCount = vm.getDieCount(dieIdStr, partIdStr,"bottom_details")
                     }
 
                     Log.d(
@@ -198,14 +197,13 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 )
 
             } else {
-                dieTopBottomDetailsCount = vm.getDieDetailsCount(dieIdStr, partIdStr,typeStr)
+               val dieTopBottomCount = vm.getDieCount(dieIdStr, partIdStr,typeStr)
                 Log.d(
                     "TAG",
                     "VideoPreviewActivity db else dieTopBottomDetailsCount $dieTopBottomDetailsCount"
                 )
-              //  initCameraView()
-                if(dieTopBottomDetailsCount>0){
-                    //dieTopBottomDetailsCount++
+                if(dieTopBottomCount>0){
+                    dieTopBottomDetailsCount++
 
                     var message = ""
                     var option1 = ""
@@ -865,7 +863,6 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             if (mCamera != null) {
                 if (parameters != null) {
 
-
                     val optimalSize: Camera.Size? =
                         choosePreviewSize(parameters!!, selectedWidth, selectedHeight)
                     Log.d(
@@ -994,8 +991,6 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
                 dieTypeTxt!!.text="Die Type: "+ typeStr.uppercase(Locale.getDefault())
                 videoOnlineImageButton!!.visibility=View.VISIBLE
-
-              //  initCameraView()
             }
         }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.video_record_option_2),true)) {
             if (functionality.equals(CommonUtils.DIE_RECORD_OPTIONS_DIALOG, true)) {
@@ -1009,7 +1004,6 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 dieTypeTxt!!.text="Die Type: "+ typeStr.uppercase(Locale.getDefault())
                 videoOnlineImageButton!!.visibility=View.VISIBLE
 
-              //  initCameraView()
             }
         }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.video_record_option_3),true)) {
             if (functionality.equals(CommonUtils.DIE_RECORD_OPTIONS_DIALOG, true)) {
@@ -1022,7 +1016,6 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 dieTypeTxt!!.text="Die Type: "+ typeStr.uppercase(Locale.getDefault())
                 videoOnlineImageButton!!.visibility=View.VISIBLE
 
-              //  initCameraView()
             }
         }else if(buttonName.equals(this@VideoRecordActivity.resources.getString(R.string.video_record_option_4),true)) {
             if (functionality.equals(CommonUtils.DIE_RECORD_OPTIONS_DIALOG, true)) {
@@ -1036,7 +1029,6 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 dieTypeTxt!!.text="Die Type: "+ typeStr.uppercase(Locale.getDefault())
                 videoOnlineImageButton!!.visibility=View.VISIBLE
 
-               // initCameraView()
             }
         }
 
@@ -1057,7 +1049,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         // set back the original working mode
         myAudioManager.mode = workingAudioMode
      }catch (e:Exception){
-e.printStackTrace()
+           e.printStackTrace()
      }
     }
     override fun onDestroy() {

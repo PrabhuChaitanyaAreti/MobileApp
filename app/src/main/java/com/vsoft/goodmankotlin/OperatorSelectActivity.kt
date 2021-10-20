@@ -91,7 +91,6 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
         langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
         operatorListSpinner.adapter = langAdapter1
 
-
         btnContinue.setOnClickListener(View.OnClickListener {
             operatorStr = operatorListSpinner.selectedItem.toString()
             if (operatorStr.isNotEmpty() && !TextUtils.isEmpty(operatorStr) && operatorStr != "null") {

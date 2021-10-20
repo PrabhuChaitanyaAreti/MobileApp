@@ -4,20 +4,11 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.FileProvider
-import com.karumi.dexter.BuildConfig
-import java.io.File
-import java.util.*
 
- class CameraUtils {
+class CameraUtils {
      companion object {
          fun checkPermissions(context: Context?): Boolean {
              return ActivityCompat.checkSelfPermission(

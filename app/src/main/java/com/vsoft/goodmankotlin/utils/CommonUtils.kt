@@ -2,7 +2,6 @@ package com.vsoft.goodmankotlin.utils
 
 import android.app.Activity
 import android.content.Context
-import android.hardware.Camera
 import android.os.Environment
 import androidx.appcompat.app.AlertDialog
 import android.os.StatFs
@@ -10,7 +9,6 @@ import android.text.TextUtils
 import java.io.File
 import java.lang.Exception
 import java.lang.StringBuilder
-import kotlin.math.abs
 import kotlin.system.exitProcess
 
 
@@ -89,7 +87,6 @@ class CommonUtils {
         const val SAVE_IS_DIE_BOTTOM="isDieBottom"
         const val SAVE_IS_DIE_TOP_DETAILS="isDieTopDetails"
         const val SAVE_IS_DIE_BOTTOM_DETAILS="isDieBottomDetails"
-       // const val SAVE_DIE_TOP_BOTTOM_DETAILS_COUNT="dieTopBottomDetailsCount"
 
         const val ADD_DIE_SELECT="Select"
         const val ADD_DIE_TOP="top"
@@ -103,7 +100,6 @@ class CommonUtils {
         const val DIE_TYPE_TOP="Top"
         const val DIE_TYPE_BOTTOM="Bottom"
 
-        const val OPERATOR_SELECTION_OPERATOR="Operator"
         const val OPERATOR_SELECTION_DIE_ID="DieID"
         const val OPERATOR_SELECTION_PART_ID="PartID"
 
