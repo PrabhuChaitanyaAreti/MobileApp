@@ -13,10 +13,10 @@ class RetrofitClient {
    // private var BASE_URL:String = "http://111.93.3.148:12808"
     //private var BASE_URL1:String = "http://111.93.3.148:13808"
        //  http://3.218.249.156:12808
-        private var BASE_URL:String="http://3.218.249.156:12808"
+        //private var BASE_URL:String="http://3.218.249.156:12808"
+            private var BASE_URL:String="http://192.168.10.116:12808"
         //private var timeOut:Long= Long.MAX_VALUE
         private var timeOut:Long= 24
-
     init {
         val okHttpClient = OkHttpClient.Builder()
             .connectTimeout(timeOut, TimeUnit.HOURS)

@@ -62,6 +62,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
+        NetworkSniffTask(this).execute()
         initProgress()
         init()
         initAws()
