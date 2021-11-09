@@ -89,6 +89,7 @@ dependencies {
 
    // implementation 'io.reactivex.rxjava2:rxjava:3.0.0'
    // implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    //UAT changes
     //app center
     def appCenterSdkVersion = '4.1.0'
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
