@@ -93,5 +93,8 @@ dependencies {
     def appCenterSdkVersion = '4.1.0'
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+    //Cumulocity
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
 }

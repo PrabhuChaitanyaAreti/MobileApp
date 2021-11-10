@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.microsoft.appcenter.analytics.Analytics
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.vsoft.goodmankotlin.cumulocity.MqttService
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.database.subscribeOnBackground
@@ -58,6 +59,10 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         setContentView(R.layout.activity_dash_board)
         initProgress()
         init()
+
+        // Start the MQTT Service
+        val i = Intent(this@DashBoardActivity, MqttService::class.java)
+        startService(i)
     }
 
 
