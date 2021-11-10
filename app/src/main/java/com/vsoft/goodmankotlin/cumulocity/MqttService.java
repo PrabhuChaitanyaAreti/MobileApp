@@ -192,7 +192,7 @@ public class MqttService extends Service {
             @Override
             public void run() {
                 try {
-                    String message = "200,c8y_Memory,M,"+DeviceManagement.getDeviceMemory();
+                    String message = "200,c8y_AvailableMemory,GB,"+DeviceManagement.getDeviceMemory();
                     client.publish("s/us",message.getBytes(),QOS,false);
 
                 }catch(MqttException e){

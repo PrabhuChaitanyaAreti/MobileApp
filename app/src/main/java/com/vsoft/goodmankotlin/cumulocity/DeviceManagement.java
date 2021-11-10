@@ -22,9 +22,12 @@ import android.widget.TextView;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 
 public class DeviceManagement {
-
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public static String getDeviceMemory() {
 
@@ -38,8 +41,10 @@ public class DeviceManagement {
         }
         long megAvailable = bytesAvailable / (1024 * 1024);
         Log.e("BATT", "Available MB : " + megAvailable);
-
-        return bytesAvailable + "";
+        double g = (((bytesAvailable/1024.0)/1024.0)/1024.0);
+       // return bytesAvailable + "";
+        df.setRoundingMode(RoundingMode.UP);
+        return  df.format(g)+"";
 
     }
 

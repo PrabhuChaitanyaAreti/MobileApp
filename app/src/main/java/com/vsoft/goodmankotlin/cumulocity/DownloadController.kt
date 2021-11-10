@@ -27,7 +27,7 @@ class DownloadController(
         private const val FILE_BASE_PATH = "file://"
         private const val MIME_TYPE = "application/vnd.android.package-archive"
         private const val PROVIDER_PATH = ".provider"
-        private const val APP_INSTALL_PATH = "\"application/vnd.android.package-archive\""
+        private const val APP_INSTALL_PATH = "application/vnd.android.package-archive"
     }
 
     fun enqueueDownload(apkDownloaderCallBack: ApkDownloaderCallBack) {
@@ -79,6 +79,35 @@ class DownloadController(
                 intent: Intent
             ) {
                // apkDownloaderCallBack.onDownloadCompleted()
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Log.d("DownloadController","-----> installing apk1")
+                    val contentUri = FileProvider.getUriForFile(
+                        context,
+                        BuildConfig.APPLICATION_ID + PROVIDER_PATH,
+                        File(destination)
+                    )
+                    Log.d("DownloadController","----->URI: "+contentUri)
+                    val install = Intent(Intent.ACTION_VIEW)
+                    install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                  //  install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    install.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+                    install.data = contentUri
+                    context.startActivity(install)
+                    context.unregisterReceiver(this)
+                    // finish()
+                } else {
+                    Log.d("DownloadController","-----> installing apk1")
+                    val install = Intent(Intent.ACTION_VIEW)
+                    install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    install.setDataAndType(
+                        uri,
+                        APP_INSTALL_PATH
+                    )
+                    context.startActivity(install)
+                    context.unregisterReceiver(this)
+                    // finish()
+                }*/
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Log.d("DownloadController","-----> installing apk1")
                     val contentUri = FileProvider.getUriForFile(
@@ -89,7 +118,7 @@ class DownloadController(
                     Log.d("DownloadController","----->URI: "+contentUri)
                     val install = Intent(Intent.ACTION_VIEW)
                     install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     install.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
                     install.data = contentUri
                     context.startActivity(install)
@@ -98,7 +127,7 @@ class DownloadController(
                 } else {
                     Log.d("DownloadController","-----> installing apk1")
                     val install = Intent(Intent.ACTION_VIEW)
-                    install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    install.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     install.setDataAndType(
                         uri,
                         APP_INSTALL_PATH
