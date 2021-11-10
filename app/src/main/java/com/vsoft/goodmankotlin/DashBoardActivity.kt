@@ -61,6 +61,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         init()
 
         // Start the MQTT Service
+        MqttService.activityContext=this;
         val i = Intent(this@DashBoardActivity, MqttService::class.java)
         startService(i)
     }

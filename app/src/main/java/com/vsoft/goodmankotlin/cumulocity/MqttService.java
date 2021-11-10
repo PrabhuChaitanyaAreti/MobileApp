@@ -1,6 +1,7 @@
 package com.vsoft.goodmankotlin.cumulocity;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -36,6 +37,8 @@ public class MqttService extends Service {
     private MqttConnectOptions mMqttConnectOptions;
     public static MqttClient client;
     public static final int QOS=0;
+    public static Context activityContext;
+
 
 
     @Override
@@ -50,7 +53,7 @@ public class MqttService extends Service {
     }
 
     public void getLocation(){
-        gpsTracker = new GpsTracker(getApplicationContext());
+       /* gpsTracker = new GpsTracker(getApplicationContext());
         if(gpsTracker.canGetLocation()){
             latitude = gpsTracker.getLatitude();
             longitude = gpsTracker.getLongitude();
@@ -58,7 +61,7 @@ public class MqttService extends Service {
 
         }else{
             gpsTracker.showSettingsAlert();
-        }
+        }*/
     }
 
     private void init() throws MqttException {
@@ -132,7 +135,7 @@ public class MqttService extends Service {
                       public void run() {
                           try {
 
-                              client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
+//                              client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
                               String[] appDetails=payload.split(",");
                               if(appDetails !=null && appDetails.length>3) {
                                   appName = appDetails[2];
@@ -143,11 +146,12 @@ public class MqttService extends Service {
 
                                   Log.i("INSTALL-MQTT","-----> "+appName+" : "+appVersion+" : "+appUrl);
 
-                                  downloadController=new DownloadController(getApplicationContext(),appUrl,appName+".apk",appVersion);
+                                  downloadController=new DownloadController(activityContext,appUrl,appName+".apk",appVersion);
                                   downloadController.enqueueDownload(new ApkDownloaderCallBack() {
                                       @Override
                                       public void onDownloadCompleted() {
                                           try {
+                                              client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
                                               client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
 
                                           } catch (MqttException e) {
