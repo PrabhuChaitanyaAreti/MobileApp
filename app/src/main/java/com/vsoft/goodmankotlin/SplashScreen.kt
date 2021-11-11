@@ -1,6 +1,7 @@
 package com.vsoft.goodmankotlin
 
 import android.Manifest
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,29 +13,35 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.vsoft.goodmankotlin.utils.CameraUtils
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
-import com.vsoft.goodmankotlin.utils.CommonUtils
-import com.vsoft.goodmankotlin.utils.DialogUtils
+import com.vsoft.goodmankotlin.model.DieIdDetailsModel
+import com.vsoft.goodmankotlin.model.ServerDiscoveryResponse
+import com.vsoft.goodmankotlin.utils.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
-class SplashScreen : AppCompatActivity(), CustomDialogCallback {
-
+class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallBack,ConfigureServerTaskCallback {
     private var sharedPreferences: SharedPreferences?=null
     private var userId = ""
-
+    private lateinit var progressDialog: ProgressDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-
+        NetworkSniffTask(this,this).execute()
         AppCenter.start(
             application, CommonUtils.APP_CENTER_ANALYTICS_SECRET_KEY,
             Analytics::class.java, Crashes::class.java
@@ -51,22 +58,7 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
 
     override fun onStart() {
         super.onStart()
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Your Code
-            if (CameraUtils.checkPermissions(applicationContext)) {
-                if(sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS,false)){
-                    if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
-                        navigateToDashBoard()
-                    }else {
-                        navigateToLogin()
-                    }
-                }else {
-                    navigateToLogin()
-                }
-            } else {
-                requestCameraPermission()
-            }
-        }, CommonUtils.SPLASH_DURATION.toLong())
+
     }
     private fun navigateToDashBoard() {
         val i = Intent(this, DashBoardActivity::class.java)
@@ -137,6 +129,38 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
             if (functionality.equals(CommonUtils.PERMISSIONS_DIALOG, true)) {
                 CameraUtils.openSettings(this@SplashScreen)
             }
+        }
+    }
+
+    override fun networkSniffResponse(response: String?,ipAddressList:ArrayList<String>?) {
+        if(response!!.equals("success",true)){
+            Handler(Looper.getMainLooper()).post {
+                ConfigureServerTask(this,this,ipAddressList).execute()
+            }
+        }else{
+
+        }
+    }
+    override fun configureServerResponse(response: String?) {
+        if(response!!.equals("success",true)){
+            Handler(Looper.getMainLooper()).post {
+                // Your Code
+                if (CameraUtils.checkPermissions(applicationContext)) {
+                    if (sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS, false)) {
+                        if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
+                            navigateToDashBoard()
+                        } else {
+                            navigateToLogin()
+                        }
+                    } else {
+                        navigateToLogin()
+                    }
+                } else {
+                    requestCameraPermission()
+                }
+            }
+        }else{
+
         }
     }
 }

@@ -62,10 +62,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
-        NetworkSniffTask(this).execute()
         initProgress()
         init()
-        initAws()
+        //initAws()
     }
 
     private fun initAws() {
@@ -416,7 +415,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 progressDialog.show()
             }
             val call: Call<VideoUploadSaveResponse?>? =
-                RetrofitClient.getInstance()!!.getMyApi()!!.saveVideo(metaData, videoFile)
+                RetrofitClient.getInstance(this)!!.getMyApi()!!.saveVideo(metaData, videoFile)
             call!!.enqueue(object : Callback<VideoUploadSaveResponse?> {
                 override fun onResponse(
                     call: Call<VideoUploadSaveResponse?>,
@@ -551,7 +550,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         if (NetworkUtils.isNetworkAvailable(this)) {
             progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_dies_parts))
             progressDialog.show()
-            val call = RetrofitClient().getMyApi()!!.doGetListDieDetails()
+            val call = RetrofitClient.getInstance(this)!!.getMyApi()!!.doGetListDieDetails()
             call!!.enqueue(object : Callback<DieIdDetailsModel?> {
                 override fun onResponse(
                     call: Call<DieIdDetailsModel?>,

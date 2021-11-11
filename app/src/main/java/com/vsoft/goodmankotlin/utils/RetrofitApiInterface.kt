@@ -21,6 +21,8 @@ interface RetrofitApiInterface {
     fun getPunchData(): Call<PunchResponse?>?
     @GET("/getDieId")
     fun doGetListDieDetails(): Call<DieIdDetailsModel?>?
+    @GET("/discoverIp")
+    fun getServerAddress(): Call<ServerDiscoveryResponse?>?
     @Multipart
     @POST("/placeholder/api/upload")
     fun uploadDyeImage(@Part filePart: MultipartBody.Part?): Call<PunchResponse?>?

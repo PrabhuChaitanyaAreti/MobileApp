@@ -405,7 +405,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
     private fun getDieAndPartData(open: Boolean) {
         if (isNetworkAvailable(this) && !isDataSynced) {
             progressDialog.show()
-            val call = RetrofitClient().getMyApi()!!.doGetListDieDetails()
+            val call = RetrofitClient.getInstance(this)!!.getMyApi()!!.doGetListDieDetails()
             call!!.enqueue(object : Callback<DieIdDetailsModel?> {
                 override fun onResponse(
                     call: Call<DieIdDetailsModel?>,
