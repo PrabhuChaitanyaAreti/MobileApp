@@ -92,10 +92,11 @@ public class MqttService extends Service {
         client.publish("s/us", ("100," + device_name + ",c8y_MQTTDevice").getBytes(), QOS, false);
 
         // set device's hardware information
-        client.publish("s/us", "110,865416056455018,MQTT test model,Rev0.1".getBytes(), QOS, false);
+        client.publish("s/us", ("110,"+clientId+",MQTT test model,Rev0.1").getBytes(), QOS, false);
 
         // add restart operation
-        client.publish("s/us", "114,c8y_Restart,c8y_Command,c8y_Configuration,c8y_Software,c8y_Firmware,c8y_SoftwareList".getBytes(), QOS, false);
+        //client.publish("s/us", "114,c8y_Restart,c8y_Command,c8y_Configuration,c8y_Software,c8y_Firmware,c8y_SoftwareList".getBytes(), QOS, false);
+        client.publish("s/us", "114,c8y_Command,c8y_Configuration,c8y_Software,c8y_Firmware,c8y_SoftwareList".getBytes(), QOS, false);
 
         client.subscribe("s/ds",mqttMessageListener);
 
