@@ -337,19 +337,23 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     private fun saveVideo() {
         Log.d("TAG", "saveVideo onClick video path::: $path")
         if (isDieTop && isDieBottom ) {
-            val timeStamp =
-                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-            vm.insert(
-                VideoModel(
-                    dieIdStr,
-                    partIdStr,
-                    path,
-                    timeStamp,
-                    false,
-                    dieTypeStr,
-                    userId,operatorStr
+            for (i in 1..100) {
+                println(i)
+
+                val timeStamp =
+                    SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                vm.insert(
+                    VideoModel(
+                        dieIdStr,
+                        partIdStr,
+                        path,
+                        timeStamp,
+                        false,
+                        dieTypeStr,
+                        userId, operatorStr
+                    )
                 )
-            )
+            }
 
             if (isDieTop && isDieTopDetails && isFirstDieTop) {
                 if (isDieBottom ) {
@@ -404,20 +408,23 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 )
             }
         } else if (isDieTop) {
-            val timeStamp =
-                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-            vm.insert(
-                VideoModel(
-                    dieIdStr,
-                    partIdStr,
-                    path,
-                    timeStamp,
-                    false,
-                    dieTypeStr,
-                    userId,
-                    operatorStr
+            for (i in 1..100) {
+                println(i)
+                val timeStamp =
+                    SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                vm.insert(
+                    VideoModel(
+                        dieIdStr,
+                        partIdStr,
+                        path,
+                        timeStamp,
+                        false,
+                        dieTypeStr,
+                        userId,
+                        operatorStr
+                    )
                 )
-            )
+            }
             showCustomAlert(
                 this@VideoPreviewActivity.resources.getString(R.string.app_name),
                 this@VideoPreviewActivity.resources.getString(R.string.video_preview_top_die_details_message)+" "+dieTopBottomDetailsCount+" ?",
@@ -430,19 +437,22 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
 
 
         } else {
-            val timeStamp =
-                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-            vm.insert(
-                VideoModel(
-                    dieIdStr,
-                    partIdStr,
-                    path,
-                    timeStamp,
-                    false,
-                    dieTypeStr,
-                    userId,operatorStr
+            for (i in 1..100) {
+                println(i)
+                val timeStamp =
+                    SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                vm.insert(
+                    VideoModel(
+                        dieIdStr,
+                        partIdStr,
+                        path,
+                        timeStamp,
+                        false,
+                        dieTypeStr,
+                        userId, operatorStr
+                    )
                 )
-            )
+            }
             showCustomAlert(
                 this@VideoPreviewActivity.resources.getString(R.string.app_name),
                 this@VideoPreviewActivity.resources.getString(R.string.video_preview_bottom_die_details_message)+" "+dieTopBottomDetailsCount+" ?",

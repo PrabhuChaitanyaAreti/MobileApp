@@ -31,9 +31,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -159,7 +157,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             Log.i("removeSyncVideos videosList.size::: ", videosList.size.toString())
             if(videosList.isNotEmpty()){
                 videosList.forEach {
-                    CommonUtils.deletePath(it.video_path)
+                   // CommonUtils.deletePath(it.video_path)
                     vm.delete(it)
                 }
             }
@@ -364,72 +362,90 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
     }
 
-    @Throws(IOException::class)
+
      fun save(context: Context, item: VideoModel) {
         if (NetworkUtils.isNetworkAvailable(this)) {
-        Log.i("Id:", "${item.id}")
-        Log.i("Status:", "${item.status}")
-        Log.i("video die type :", item.die_top_bottom)
-        val jsonObject = JsonObject()
-        val gson = Gson()
-        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID, item.die_id)
-        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID, item.part_id)
-        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM, item.die_top_bottom)
+            Log.i("Id:", "${item.id}")
+            Log.i("Status:", "${item.status}")
+            Log.i("video die type :", item.die_top_bottom)
+            val jsonObject = JsonObject()
+            val gson = Gson()
+            jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID, item.die_id)
+            jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID, item.part_id)
+            jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM, item.die_top_bottom)
 
-            if(item.operator_id.equals("Unknown")){
+            if (item.operator_id.equals("Unknown")) {
                 jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID, "Operator 1")
-            }else{
+            } else {
                 jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID, item.operator_id)
             }
 
-            if(item.user_id.equals("Unknown")){
-                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_USER_ID, sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString())
-            }else{
+            if (item.user_id.equals("Unknown")) {
+                jsonObject.addProperty(
+                    CommonUtils.SYNC_VIDEO_API_USER_ID,
+                    sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
+                )
+            } else {
                 jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_USER_ID, item.user_id)
             }
 
-        val path = item.video_path
-        val filename: String = path.substring(path.lastIndexOf("/") + 1)
-        jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_FILE_NAME, filename)
 
-        val jsonString = gson.toJson(jsonObject)
+            val timeStamp =
+                SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            val newPathName=item.user_id + "_" + item.operator_id + item.die_id + "_" + item.part_id + "_" + timeStamp + ".mp4"
 
-        Log.i("save jsonString ", jsonString)
-        Log.i("save path ", path)
-        val fileSize: File = File(path)
+            val fileSrc : File = File(item.video_path)
+           // val fileDest : File = File(newPathName)
+            val fileDest : File? = CameraHelper.getOutputMediaFile(
+                CameraHelper.MEDIA_TYPE_VIDEO,
+                this@DashBoardActivity
+            )
 
-        val file_size_kb = fileSize.length() / 1024
-            val file_size_mb = (fileSize.length() / 1024)/1024
-            Log.i("video  fileSize.length() bytes  ", ""+ fileSize.length())
-        Log.i("video file_size_kb  ", ""+file_size_kb)
-            Log.i("video file_size_mb  ", ""+file_size_mb)
-            if (fileSize.length() > 0) {
-                val rootFolder: File? = context.getExternalFilesDir(null)
-                val jsonFile = File(rootFolder, "post.json")
-                val writer = FileWriter(jsonFile)
-                writer.write(jsonString)
-                writer.close()
-                val metaDataFilePart = MultipartBody.Part.createFormData(
-                    CommonUtils.SYNC_VIDEO_API_META_DATA,
-                    jsonFile.name,
-                    RequestBody.create(MediaType.parse("*/*"), jsonFile)
-                )
+            fileSrc.copyTo(fileDest!!)
 
-                val file = File(path) // initialize file here
-                val videoFilePart = MultipartBody.Part.createFormData(
-                    CommonUtils.SYNC_VIDEO_API_FILE,
-                    file.name,
-                    RequestBody.create(MediaType.parse("video/*"), file)
-                )
-                saveVideoToServer(item, metaDataFilePart, videoFilePart)
-            }else{
-                item.status = true
-                val status: Int = vm.update(item)
-                Log.i("response update status ", "$status")
-                                CommonUtils.deletePath(item.video_path)
-                                vm.delete(item)
-                sync()
-            }
+            val path =     fileDest.absolutePath
+
+            val filename: String = path.substring(path.lastIndexOf("/") + 1)
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_FILE_NAME, filename)
+
+                val jsonString = gson.toJson(jsonObject)
+
+                Log.i("save jsonString ", jsonString)
+                Log.i("save path ", path)
+                val fileSize: File = File(path)
+
+                val file_size_kb = fileSize.length() / 1024
+                val file_size_mb = (fileSize.length() / 1024) / 1024
+                Log.i("video  fileSize.length() bytes  ", "" + fileSize.length())
+                Log.i("video file_size_kb  ", "" + file_size_kb)
+                Log.i("video file_size_mb  ", "" + file_size_mb)
+                if (fileSize.length() > 0) {
+                    val rootFolder: File? = context.getExternalFilesDir(null)
+                    val jsonFile = File(rootFolder, "post.json")
+                    val writer = FileWriter(jsonFile)
+                    writer.write(jsonString)
+                    writer.close()
+                    val metaDataFilePart = MultipartBody.Part.createFormData(
+                        CommonUtils.SYNC_VIDEO_API_META_DATA,
+                        jsonFile.name,
+                        RequestBody.create(MediaType.parse("*/*"), jsonFile)
+                    )
+
+                    val file = File(path) // initialize file here
+                    val videoFilePart = MultipartBody.Part.createFormData(
+                        CommonUtils.SYNC_VIDEO_API_FILE,
+                        file.name,
+                        RequestBody.create(MediaType.parse("video/*"), file)
+                    )
+                    saveVideoToServer(item, metaDataFilePart, videoFilePart)
+                } else {
+                    item.status = true
+                    val status: Int = vm.update(item)
+                    Log.i("response update status ", "$status")
+                    // CommonUtils.deletePath(item.video_path)
+                    vm.delete(item)
+                    sync()
+                }
             } else {
                 showCustomAlert(
                     this@DashBoardActivity.resources.getString(R.string.network_alert_message),
@@ -437,7 +453,27 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                 )
             }
+
     }
+
+   /* private fun rename(from: File, to: File): Boolean {
+        return from.parentFile.exists() && from.exists() && from.copyTo(to,true,1024)
+    }*/
+
+    @Throws(IOException::class)
+    fun copy(src: File?, dst: File?) {
+        FileInputStream(src).use { `in` ->
+            FileOutputStream(dst).use { out ->
+                // Transfer bytes from in to out
+                val buf = ByteArray(1024)
+                var len: Int
+                while (`in`.read(buf).also { len = it } > 0) {
+                    out.write(buf, 0, len)
+                }
+            }
+        }
+    }
+
 
     private fun saveVideoToServer(
         item: VideoModel,
@@ -460,13 +496,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                         Log.i("statusCode  ", "$statusCode")
                         if (statusCode == 200) {
                             runOnUiThread {
-                                CommonUtils.deletePath(item.video_path)
+                                //CommonUtils.deletePath(item.video_path)
                                 vm.delete(item)
                                 sync()
                             }
                         } else if (statusCode == 401) {
                             runOnUiThread {
-                                CommonUtils.deletePath(item.video_path)
+                                //CommonUtils.deletePath(item.video_path)
                                 vm.delete(item)
                                 sync()
                             }
