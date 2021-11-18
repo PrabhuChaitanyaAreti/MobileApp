@@ -62,5 +62,21 @@ class DialogUtils {
             customDialog.setView(customDialogView)
             customDialog.show()
         }
+
+        @JvmStatic
+        fun showNormalAlert1(activityContext: Context, s: String, s1: String) {
+            val alertDialogBuilder = AlertDialog.Builder(activityContext)
+            alertDialogBuilder.setTitle("Fail")
+            alertDialogBuilder.setMessage("P")
+            alertDialogBuilder.setPositiveButton(
+                "Ok"
+            ) { arg0, arg1 -> }
+            alertDialogBuilder.setNegativeButton(
+                "Cancel"
+            ) { dialog, which -> }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+
+        }
     }
 }
