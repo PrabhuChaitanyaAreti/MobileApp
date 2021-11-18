@@ -96,7 +96,12 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 //         isDownload = (MqttService.getDownloader() as Nothing?).toString();
 
 
-
+        var isDownload = MqttService.getDownloader()
+        if(isDownload.contains("fail")){
+            download_latest_version.visibility = View.GONE
+        }else{
+            download_latest_version.visibility = View.VISIBLE
+        }
 
        val str="select * from video_table where status="+"'"+false+"'"
         Log.d("TAG", "strstrstrstr: $str")

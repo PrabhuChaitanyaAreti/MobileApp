@@ -181,9 +181,10 @@ public class MqttService extends Service {
                                       @Override
                                       public void onDownloadCompleted() {
                                           try {
+
                                               client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
                                               client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
-
+                                              getDownloader();
                                           } catch (MqttException e) {
                                               e.printStackTrace();
                                           }

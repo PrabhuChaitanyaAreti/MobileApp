@@ -15,7 +15,7 @@
     <string name="sync_die">Sync die</string>
     <string name="operator">Operator</string>
     <string name="logout">Logout</string>
-    <string name="latest_version">Download \n Latest Version</string>
+    <string name="latest_version">Install \n Latest Version</string>
 
     <string name="enter_die_id">Enter Die ID</string>
     <string name="enter_part_id">Enter Part ID</string>

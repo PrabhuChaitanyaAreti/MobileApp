@@ -114,26 +114,27 @@ class DownloadController(
                         BuildConfig.APPLICATION_ID + PROVIDER_PATH,
                         File(destination)
                     )
-                    Log.d("DownloadController","----->URI: "+contentUri)
-                    val install = Intent(Intent.ACTION_VIEW)
-                    install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    install.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
-                    install.data = contentUri
-                    context.startActivity(install)
+//                    Log.d("DownloadController","----->URI: "+contentUri)
+//                    val install = Intent(Intent.ACTION_VIEW)
+//                    install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//                    install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    install.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+//                    install.data = contentUri
+//                    context.startActivity(install)
+//                    context.unregisterReceiver(this)
+//                    // finish()
+                }
+                else {
+//                    Log.d("DownloadController","-----> installing apk1")
+//                    val install = Intent(Intent.ACTION_VIEW)
+//                    install.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                    install.setDataAndType(
+//                        uri,
+//                        APP_INSTALL_PATH
+//                    )
+//                    context.startActivity(install)
                     context.unregisterReceiver(this)
-                    // finish()
-                } else {
-                    Log.d("DownloadController","-----> installing apk1")
-                    val install = Intent(Intent.ACTION_VIEW)
-                    install.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    install.setDataAndType(
-                        uri,
-                        APP_INSTALL_PATH
-                    )
-                    context.startActivity(install)
-                    context.unregisterReceiver(this)
-                    // finish()
+//                    // finish()
                 }
                  apkDownloaderCallBack.onDownloadCompleted()
 
@@ -159,6 +160,8 @@ class DownloadController(
             install.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
             install.data = contentUri
             context.startActivity(install)
+
+
             // finish()
         } else {
             Log.d("DownloadController","-----> installing apk1")
