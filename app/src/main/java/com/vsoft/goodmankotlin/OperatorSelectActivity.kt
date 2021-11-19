@@ -11,9 +11,7 @@ import android.view.*
 import android.widget.*
 import com.google.gson.Gson
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
-import com.vsoft.goodmankotlin.model.CustomDialogModel
-import com.vsoft.goodmankotlin.model.DieIdDetailsModel
-import com.vsoft.goodmankotlin.model.DieIdResponse
+import com.vsoft.goodmankotlin.model.*
 import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils
 import java.util.*
@@ -22,13 +20,13 @@ import kotlin.collections.ArrayList
 class OperatorSelectActivity : Activity(), CustomDialogCallback {
     private lateinit var operatorListSpinner: Spinner
     private lateinit var btnContinue: Button
-    private var responses: List<DieIdResponse> = java.util.ArrayList()
+    private var responses: List<String> = java.util.ArrayList()
     private var isNewDie = false
 
     private lateinit var sharedPreferences: SharedPreferences
 
     private var isDieDataAvailable = false
-    private var dieData = ""
+    private var operatorsData = ""
     private var dieDataSyncTime = ""
     private var operatorStr = ""
 
@@ -48,29 +46,36 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
         btnContinue = findViewById(R.id.btnContinue)
 
         isDieDataAvailable = sharedPreferences.getBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
-        dieData = sharedPreferences.getString(CommonUtils.DIE_DATA, "").toString()
+        operatorsData = sharedPreferences.getString(CommonUtils.OPERATORS_DATA, "").toString()
         dieDataSyncTime = sharedPreferences.getString(CommonUtils.DIE_DATA_SYNC_TIME, "").toString()
 
         Log.d(
             "TAG",
-            "AddDieOperatorSelectActivity  sharedPreferences  isDieDataAvailable $isDieDataAvailable"
+            "OperatorSelectActivity  sharedPreferences  isDieDataAvailable $isDieDataAvailable"
         )
-        Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  dieData $dieData")
+        Log.d("TAG", "OperatorSelectActivity  sharedPreferences  operatorsData $operatorsData")
         Log.d(
             "TAG",
-            "AddDieOperatorSelectActivity  sharedPreferences  dieDataSyncTime $dieDataSyncTime"
+            "OperatorSelectActivity  sharedPreferences  dieDataSyncTime $dieDataSyncTime"
         )
+        val dataModels: ArrayList<String> = ArrayList()
 
         if (isDieDataAvailable) {
             val gson = Gson()
-            val dieIdDetailsModel: DieIdDetailsModel =
-                gson.fromJson(dieData, DieIdDetailsModel::class.java)
-            responses = dieIdDetailsModel.response
-        }
+            val operatorList: OperatorList =
+                gson.fromJson(operatorsData, OperatorList::class.java)
+            responses = operatorList.operatorlist
+
+            val iterator = responses.listIterator()
+            while (iterator.hasNext()){
+                val item=iterator.next()
+                dataModels.add("Operator $item")
+            }
+
 
         operatorListSpinner = findViewById(R.id.operatorListSpinner)
 
-        val dataModels: ArrayList<String> = ArrayList()
+    /*    val dataModels: ArrayList<String> = ArrayList()
         dataModels.add(CommonUtils.OPERATOR_SELECTION_0)
         dataModels.add(CommonUtils.OPERATOR_SELECTION_1)
         dataModels.add(CommonUtils.OPERATOR_SELECTION_2)
@@ -81,7 +86,7 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
         dataModels.add(CommonUtils.OPERATOR_SELECTION_7)
         dataModels.add(CommonUtils.OPERATOR_SELECTION_8)
         dataModels.add(CommonUtils.OPERATOR_SELECTION_9)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_10)
+        dataModels.add(CommonUtils.OPERATOR_SELECTION_10)*/
 
         val langAdapter1 = ArrayAdapter<String>(
             this@OperatorSelectActivity,
@@ -90,6 +95,7 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
         )
         langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
         operatorListSpinner.adapter = langAdapter1
+        }
 
         btnContinue.setOnClickListener(View.OnClickListener {
             operatorStr = operatorListSpinner.selectedItem.toString()

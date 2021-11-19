@@ -1,12 +1,15 @@
 package com.vsoft.goodmankotlin
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.SurfaceTexture
+import android.graphics.drawable.Drawable
 import android.hardware.Camera
 import android.media.CamcorderProfile
 import android.media.MediaRecorder
@@ -30,8 +33,14 @@ import java.io.IOException
 import java.util.*
 import android.media.AudioManager
 import android.text.TextUtils
+import android.view.LayoutInflater
+import androidx.annotation.Nullable
 import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.vsoft.goodmankotlin.database.VideoViewModel
+import com.vsoft.goodmankotlin.touchimage.TouchImageView
 import com.vsoft.goodmankotlin.utils.CameraHelper
 
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
@@ -68,6 +77,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private var cameraSizesArray = emptyArray<String?>()
     private var cameraFPSArray: Array<String>? = null
 
+    private var infoIconImg:ImageView?=null
     private var surface_view: TextureView? = null
     private var settingsImgIcon: ImageView? = null
     private var videoOnlineImageButton: ImageButton? = null
@@ -84,6 +94,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private var partIdStr = ""
     private var dieTypeStr = ""
     private var isVideoRecordScreen=false
+    private var isNewDie=false
     private var isTopDie=false
 
     private lateinit var vm: VideoViewModel
@@ -100,13 +111,13 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             CommonUtils.SHARED_PREF_FILE,
             Context.MODE_PRIVATE
         )
-
+        isNewDie = sharedPreferences!!.getBoolean(CommonUtils.SAVE_IS_NEW_DIE, false)
         dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
         partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
         dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
         isVideoRecordScreen = sharedPreferences!!.getBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, false)
 
-
+        Log.d("TAG", "VideoRecordActivity  sharedPreferences  isNewDie $isNewDie")
         Log.d("TAG", "VideoRecordActivity  sharedPreferences  dieIdStr $dieIdStr")
         Log.d("TAG", "VideoRecordActivity sharedPreferences  partIdStr $partIdStr")
         Log.d("TAG", "VideoRecordActivity sharedPreferences  dieTypeStr $dieTypeStr")
@@ -115,96 +126,59 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
         initCameraView1()
 
-        if(isVideoRecordScreen){
-            videoOnlineImageButton!!.visibility=View.VISIBLE
-        }else {
-            videoOnlineImageButton!!.visibility=View.GONE
+        if(isNewDie) {
 
-            val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-            editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, true)
-            editor.apply()
-
-            vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
-
-            if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
-
-                if (dieTypeStr.contains("_")) {
-                    val splitArray: List<String> = dieTypeStr.split("_")
-                    typeStr = splitArray[0]
-                } else {
-                    typeStr = dieTypeStr
-                }
-                Log.d("TAG", "VideoRecordActivity modified typeStr $typeStr")
-                val isDieType =   vm.isDieTypeExist(typeStr)
-                Log.d("TAG", "VideoRecordActivity modified isDieType $isDieType")
-
-                if(isDieType) {
-                    isTopDie = typeStr.equals(CommonUtils.ADD_DIE_TOP)
-                    Log.d("TAG", "VideoRecordActivity modified isTopDie $isTopDie")
-                    if(isTopDie){
-                        dieTopBottomDetailsCount = vm.getDieCount(dieIdStr, partIdStr, "top_details")
-                    }else{
-                        dieTopBottomDetailsCount = vm.getDieCount(dieIdStr, partIdStr,"bottom_details")
-                    }
-
-                    Log.d(
-                        "TAG",
-                        "VideoRecordActivity db  dieTopBottomDetailsCount $dieTopBottomDetailsCount"
-                    )
-
-                }else{
-                    videoOnlineImageButton!!.visibility=View.VISIBLE
-                }
-            }else{
-                videoOnlineImageButton!!.visibility=View.VISIBLE
-            }
-            Log.d("TAG", "VideoRecordActivity modified isTopDie $isTopDie")
-            Log.d(
-                "TAG",
-                "VideoPreviewActivity db  dieTopBottomDetailsCount $dieTopBottomDetailsCount"
-            )
-            if (dieTopBottomDetailsCount > 0) {
-                var message = ""
-                var option1 = ""
-                var option2 = ""
-
-                if (isTopDie) {
-                    message =
-                        this@VideoRecordActivity.resources.getString(R.string.video_record_message_1)
-                    option1 =
-                        this@VideoRecordActivity.resources.getString(R.string.video_record_option_1)
-                    option2 =
-                        this@VideoRecordActivity.resources.getString(R.string.video_record_option_2)
-                } else {
-                    message =
-                        this@VideoRecordActivity.resources.getString(R.string.video_record_message_2)
-                    option1 =
-                        this@VideoRecordActivity.resources.getString(R.string.video_record_option_3)
-                    option2 =
-                        this@VideoRecordActivity.resources.getString(R.string.video_record_option_4)
-                }
-
-                dieTopBottomDetailsCount++
-
-                showCustomAlert(
-                    this@VideoRecordActivity.resources.getString(R.string.app_name),
-                    message,
-                    CommonUtils.DIE_RECORD_OPTIONS_DIALOG,
-                    listOf(
-                        option1,
-                        option2
-                    )
-                )
-
+            if (isVideoRecordScreen) {
+                videoOnlineImageButton!!.visibility = View.VISIBLE
             } else {
-               val dieTopBottomCount = vm.getDieCount(dieIdStr, partIdStr,typeStr)
+                videoOnlineImageButton!!.visibility = View.GONE
+
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, true)
+                editor.apply()
+
+                vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
+
+                if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+
+                    if (dieTypeStr.contains("_")) {
+                        val splitArray: List<String> = dieTypeStr.split("_")
+                        typeStr = splitArray[0]
+                    } else {
+                        typeStr = dieTypeStr
+                    }
+                    Log.d("TAG", "VideoRecordActivity modified typeStr $typeStr")
+                    val isDieType = vm.isDieTypeExist(typeStr)
+                    Log.d("TAG", "VideoRecordActivity modified isDieType $isDieType")
+
+                    if (isDieType) {
+                        isTopDie = typeStr.equals(CommonUtils.ADD_DIE_TOP)
+                        Log.d("TAG", "VideoRecordActivity modified isTopDie $isTopDie")
+                        if (isTopDie) {
+                            dieTopBottomDetailsCount =
+                                vm.getDieCount(dieIdStr, partIdStr, "top_details")
+                        } else {
+                            dieTopBottomDetailsCount =
+                                vm.getDieCount(dieIdStr, partIdStr, "bottom_details")
+                        }
+
+                        Log.d(
+                            "TAG",
+                            "VideoRecordActivity db  dieTopBottomDetailsCount $dieTopBottomDetailsCount"
+                        )
+
+                    } else {
+                        videoOnlineImageButton!!.visibility = View.VISIBLE
+                    }
+                } else {
+                    videoOnlineImageButton!!.visibility = View.VISIBLE
+                }
+                Log.d("TAG", "VideoRecordActivity modified isTopDie $isTopDie")
                 Log.d(
                     "TAG",
-                    "VideoPreviewActivity db else dieTopBottomDetailsCount $dieTopBottomDetailsCount"
+                    "VideoPreviewActivity db  dieTopBottomDetailsCount $dieTopBottomDetailsCount"
                 )
-                if(dieTopBottomCount>0){
-                    dieTopBottomDetailsCount++
-
+                if (dieTopBottomDetailsCount > 0) {
                     var message = ""
                     var option1 = ""
                     var option2 = ""
@@ -225,6 +199,8 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                             this@VideoRecordActivity.resources.getString(R.string.video_record_option_4)
                     }
 
+                    dieTopBottomDetailsCount++
+
                     showCustomAlert(
                         this@VideoRecordActivity.resources.getString(R.string.app_name),
                         message,
@@ -234,10 +210,50 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                             option2
                         )
                     )
-                }else{
-                    videoOnlineImageButton!!.visibility=View.VISIBLE
-                }
 
+                } else {
+                    val dieTopBottomCount = vm.getDieCount(dieIdStr, partIdStr, typeStr)
+                    Log.d(
+                        "TAG",
+                        "VideoPreviewActivity db else dieTopBottomDetailsCount $dieTopBottomDetailsCount"
+                    )
+                    if (dieTopBottomCount > 0) {
+                        dieTopBottomDetailsCount++
+
+                        var message = ""
+                        var option1 = ""
+                        var option2 = ""
+
+                        if (isTopDie) {
+                            message =
+                                this@VideoRecordActivity.resources.getString(R.string.video_record_message_1)
+                            option1 =
+                                this@VideoRecordActivity.resources.getString(R.string.video_record_option_1)
+                            option2 =
+                                this@VideoRecordActivity.resources.getString(R.string.video_record_option_2)
+                        } else {
+                            message =
+                                this@VideoRecordActivity.resources.getString(R.string.video_record_message_2)
+                            option1 =
+                                this@VideoRecordActivity.resources.getString(R.string.video_record_option_3)
+                            option2 =
+                                this@VideoRecordActivity.resources.getString(R.string.video_record_option_4)
+                        }
+
+                        showCustomAlert(
+                            this@VideoRecordActivity.resources.getString(R.string.app_name),
+                            message,
+                            CommonUtils.DIE_RECORD_OPTIONS_DIALOG,
+                            listOf(
+                                option1,
+                                option2
+                            )
+                        )
+                    } else {
+                        videoOnlineImageButton!!.visibility = View.VISIBLE
+                    }
+
+                }
             }
         }
     }
@@ -252,6 +268,13 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         partIdTxt = findViewById(R.id.partIdTxt)
         dieIdTxt = findViewById(R.id.dieIdTxt)
         dieTypeTxt = findViewById(R.id.dieTypeTxt)
+        infoIconImg=findViewById(R.id.infoIconImg);
+
+        if(isNewDie) {
+            infoIconImg!!.visibility=View.GONE
+        }else{
+            infoIconImg!!.visibility=View.VISIBLE
+        }
 
 
         initProgress()
@@ -296,6 +319,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             flashImgIcon!!.setOnClickListener(this)
             settingsImgIcon!!.setOnClickListener(this)
             videoRecordPlayPause!!.setOnClickListener(this)
+            infoIconImg!!.setOnClickListener(this)
         } else {
             showCustomAlert(this@VideoRecordActivity.resources.getString(R.string.battery_alert_title),
                 this@VideoRecordActivity.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
@@ -391,7 +415,41 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     recordMCountDown = null
                 }
             }
+        }else if(v==infoIconImg){
+            infoDialog()
         }
+    }
+
+    private fun infoDialog() {
+        val factory = LayoutInflater.from(this@VideoRecordActivity)
+        val customDialogView: View = factory.inflate(R.layout.custom_dialog_info, null)
+        val customDialog = android.app.AlertDialog.Builder(this@VideoRecordActivity).create()
+        val closeImg=customDialogView.findViewById<ImageView>(R.id.closeImg)
+        val imageSingle=customDialogView.findViewById<TouchImageView>(R.id.imageSingle)
+
+        closeImg.setOnClickListener(View.OnClickListener {
+            customDialog.dismiss()
+        })
+
+        Glide.with(this@VideoRecordActivity)
+            .load("https://sample-videos.com/img/Sample-jpg-image-50kb.jpg")
+            .into(object : CustomTarget<Drawable?>() {
+                @SuppressLint("SetTextI18n")
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable?>?) {
+                   imageSingle!!.setImageDrawable(resource)
+                    // binding.imageGlide.setImageDrawable(resource)
+                    //binding.textLoaded.visibility = View.VISIBLE
+                    //binding.textLoaded.text = getString(R.string.loaded) + " within ${System.currentTimeMillis() - start} ms"
+                    //Log.d("GlideExampleActivity", binding.textLoaded.text as String)
+                }
+
+                override fun onLoadCleared(@Nullable placeholder: Drawable?) = Unit
+
+            })
+
+
+        customDialog.setView(customDialogView)
+        customDialog.show()
     }
 
     private fun stopRecording() {

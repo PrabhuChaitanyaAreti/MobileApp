@@ -22,6 +22,7 @@ import com.vsoft.goodmankotlin.database.subscribeOnBackground
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.DieIdDetailsModel
+import com.vsoft.goodmankotlin.model.OperatorList
 import com.vsoft.goodmankotlin.model.VideoUploadSaveResponse
 import com.vsoft.goodmankotlin.utils.*
 import okhttp3.MediaType
@@ -603,9 +604,64 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     editor.putString(CommonUtils.DIE_DATA, dieIdDetailsModelStr)
                     editor.putString(CommonUtils.DIE_DATA_SYNC_TIME, timeStamp)
                     editor.apply()
+                    getOperatorsListData()
                 }
 
                 override fun onFailure(call: Call<DieIdDetailsModel?>, t: Throwable) {
+                    call.cancel()
+                    if (progressDialog.isShowing) {
+                        progressDialog.dismiss()
+                    }
+                    val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                    editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
+                    editor.apply()
+
+                }
+            })
+        } else {
+            if (progressDialog.isShowing) {
+                progressDialog.dismiss()
+            }
+            val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+            editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
+            editor.apply()
+
+            showCustomAlert(
+                this@DashBoardActivity.resources.getString(R.string.network_alert_message),CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
+        }
+    }
+
+    private fun getOperatorsListData() {
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_operators))
+            progressDialog.show()
+            val call = RetrofitClient().getMyApi()!!.getOperatorsList()
+            call!!.enqueue(object : Callback<OperatorList?> {
+                override fun onResponse(
+                    call: Call<OperatorList?>,
+                    response: Response<OperatorList?>
+                ) {
+                    println("getOperatorsListData response "+response)
+                    val resourceData = response.body()
+                    println("getOperatorsListData resourceData "+resourceData)
+                    if (progressDialog.isShowing) {
+                        progressDialog.dismiss()
+                    }
+                    isDieDataAvailable=true
+
+                    val gson = Gson()
+                    val dieIdDetailsModelStr = gson.toJson(resourceData)
+                    val timeStamp =
+                        SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
+                    val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                    editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, true)
+                    editor.putString(CommonUtils.OPERATORS_DATA, dieIdDetailsModelStr)
+                    editor.putString(CommonUtils.DIE_DATA_SYNC_TIME, timeStamp)
+                    editor.apply()
+                }
+
+                override fun onFailure(call: Call<OperatorList?>, t: Throwable) {
                     call.cancel()
                     if (progressDialog.isShowing) {
                         progressDialog.dismiss()

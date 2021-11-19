@@ -106,6 +106,7 @@
 
     <!--Operator Select Screen-->
     <string name="progress_dialog_message_dies_parts">Please wait .. Fetching die and part data..</string>
+    <string name="progress_dialog_message_operators">Please wait .. Fetching Operators data..</string>
     <string name="op_se_alert_title_error">Error</string>
     <string name="op_se_alert_message_die_id_part_id">Please enter Die ID before select Part ID</string>
     <string name="op_se_alert_message_select_operator">Please Select Operator</string>

@@ -66,6 +66,7 @@ class CommonUtils {
         const val DIE_DATA="die_data"
         const val DIE_DATA_SYNC_TIME="die_data_sync_time"
         const val DIE_DATA_SYNC_DAYS=2
+        const val OPERATORS_DATA="operators_data"
 
 
         const val SYNC_VIDEO_API_OPERATOR_ID="operator_id"
