@@ -41,6 +41,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private lateinit var addDie: LinearLayout
     private lateinit var sync: LinearLayout
     private lateinit var skip: LinearLayout
+    private lateinit var download_latest_version: LinearLayout
     private lateinit var logout: LinearLayout
     private lateinit var syncDie:LinearLayout
     private lateinit var syncVideosCount:TextView
@@ -74,17 +75,31 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         sync = findViewById(R.id.sync)
         skip = findViewById(R.id.skip)
         logout = findViewById(R.id.logout)
+        download_latest_version = findViewById(R.id.download_latest_version)
         syncDie=findViewById(R.id.syncDie)
         syncVideosCount=findViewById(R.id.syncVideosCount)
         syncVideosCount.visibility=View.GONE
+
 
         addDie.setOnClickListener(this)
         sync.setOnClickListener(this)
         skip.setOnClickListener(this)
         logout.setOnClickListener(this)
+        download_latest_version.setOnClickListener(this)
         syncDie.setOnClickListener(this)
         versionDetails=findViewById(R.id.versionDetails)
-        versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
+        versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+ BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+
+//         isDownload = (MqttService.getDownloader() as Nothing?).toString();
+
+
+        var isDownload = MqttService.getDownloader()
+        if(isDownload.contains("fail")){
+            download_latest_version.visibility = View.GONE
+        }else{
+            download_latest_version.visibility = View.VISIBLE
+        }
 
        val str="select * from video_table where status="+"'"+false+"'"
         Log.d("TAG", "strstrstrstr: $str")
@@ -151,6 +166,16 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+       var isDownload = MqttService.getDownloader()
+        if(isDownload.contains("fail")){
+            download_latest_version.visibility = View.GONE
+        }else{
+            download_latest_version.visibility = View.VISIBLE
+        }
     }
 
     private fun removeSyncVideos() {
@@ -256,9 +281,16 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok), this@DashBoardActivity.resources.getString(R.string.alert_cancel))
             )
         }
+
+        if (v?.id == download_latest_version.id) {
+
+
+
+            MqttService.showInstallAPK()
+        }
     }
 
-    private fun showCustomAlert(
+    public fun showCustomAlert(
         alertMessage: String,
         functionality: String,
         buttonList: List<String>

@@ -1,15 +1,24 @@
 package com.vsoft.goodmankotlin.cumulocity;
 
+import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.cumulocitydemo.DownloadController;import org.eclipse.paho.android.service.MqttAndroidClient;
+import com.cumulocitydemo.DownloadController;
+import com.vsoft.goodmankotlin.DashBoardActivity;
+import com.vsoft.goodmankotlin.R;
+import com.vsoft.goodmankotlin.utils.CommonUtils;
+import com.vsoft.goodmankotlin.utils.DialogUtils;
+
+import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -29,7 +38,7 @@ public class MqttService extends Service {
     final String username    = "rpittala@vsoftconsulting.com";
     final String password    = "Ram@12345";
     String appName="",appVersion="",appUrl="";
-    DownloadController downloadController=null;
+    static DownloadController downloadController=null;
     TextView tv_message;
     private GpsTracker gpsTracker;
     double latitude,longitude;
@@ -39,6 +48,26 @@ public class MqttService extends Service {
     public static final int QOS=0;
     public static Context activityContext;
 
+
+
+    public static void showInstallAPK() {
+
+        if(downloadController != null){
+            downloadController.showInstallAPK();
+        }
+    }
+
+    public static String getDownloader(){
+        var download= "";
+        if(downloadController != null){
+          download = "success";
+        }else {
+            download = "fail";
+
+        }
+
+        return download;
+    }
 
 
     @Override
@@ -152,9 +181,10 @@ public class MqttService extends Service {
                                       @Override
                                       public void onDownloadCompleted() {
                                           try {
+
                                               client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
                                               client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
-
+                                              getDownloader();
                                           } catch (MqttException e) {
                                               e.printStackTrace();
                                           }
