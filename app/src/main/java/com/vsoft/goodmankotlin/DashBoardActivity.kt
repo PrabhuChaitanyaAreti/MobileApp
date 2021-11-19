@@ -16,14 +16,15 @@ import androidx.lifecycle.ViewModelProviders
 import com.microsoft.appcenter.analytics.Analytics
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.vsoft.goodmankotlin.cumulocity.MqttService
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.database.subscribeOnBackground
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.DieIdDetailsModel
-import com.vsoft.goodmankotlin.model.OperatorList
 import com.vsoft.goodmankotlin.model.VideoUploadSaveResponse
+import com.vsoft.goodmankotlin.model.OperatorList
 import com.vsoft.goodmankotlin.utils.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -41,6 +42,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private lateinit var addDie: LinearLayout
     private lateinit var sync: LinearLayout
     private lateinit var skip: LinearLayout
+    private lateinit var download_latest_version: LinearLayout
     private lateinit var logout: LinearLayout
     private lateinit var syncDie:LinearLayout
     private lateinit var syncVideosCount:TextView
@@ -59,6 +61,11 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         setContentView(R.layout.activity_dash_board)
         initProgress()
         init()
+
+        // Start the MQTT Service
+        MqttService.activityContext=this;
+        val i = Intent(this@DashBoardActivity, MqttService::class.java)
+        startService(i)
     }
 
 
@@ -69,17 +76,31 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         sync = findViewById(R.id.sync)
         skip = findViewById(R.id.skip)
         logout = findViewById(R.id.logout)
+        download_latest_version = findViewById(R.id.download_latest_version)
         syncDie=findViewById(R.id.syncDie)
         syncVideosCount=findViewById(R.id.syncVideosCount)
         syncVideosCount.visibility=View.GONE
+
 
         addDie.setOnClickListener(this)
         sync.setOnClickListener(this)
         skip.setOnClickListener(this)
         logout.setOnClickListener(this)
+        download_latest_version.setOnClickListener(this)
         syncDie.setOnClickListener(this)
         versionDetails=findViewById(R.id.versionDetails)
-        versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
+        versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+ BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+
+//         isDownload = (MqttService.getDownloader() as Nothing?).toString();
+
+
+        var isDownload = MqttService.getDownloader()
+        if(isDownload.contains("fail")){
+            download_latest_version.visibility = View.GONE
+        }else{
+            download_latest_version.visibility = View.VISIBLE
+        }
 
        val str="select * from video_table where status="+"'"+false+"'"
         Log.d("TAG", "strstrstrstr: $str")
@@ -146,6 +167,16 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+       var isDownload = MqttService.getDownloader()
+        if(isDownload.contains("fail")){
+            download_latest_version.visibility = View.GONE
+        }else{
+            download_latest_version.visibility = View.VISIBLE
+        }
     }
 
     private fun removeSyncVideos() {
@@ -251,9 +282,16 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok), this@DashBoardActivity.resources.getString(R.string.alert_cancel))
             )
         }
+
+        if (v?.id == download_latest_version.id) {
+
+
+
+            MqttService.showInstallAPK()
+        }
     }
 
-    private fun showCustomAlert(
+    public fun showCustomAlert(
         alertMessage: String,
         functionality: String,
         buttonList: List<String>
@@ -604,7 +642,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     editor.putString(CommonUtils.DIE_DATA, dieIdDetailsModelStr)
                     editor.putString(CommonUtils.DIE_DATA_SYNC_TIME, timeStamp)
                     editor.apply()
-                    getOperatorsListData()
+
+                     getOperatorsListData()
                 }
 
                 override fun onFailure(call: Call<DieIdDetailsModel?>, t: Throwable) {
@@ -632,57 +671,57 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
     }
 
-    private fun getOperatorsListData() {
-        if (NetworkUtils.isNetworkAvailable(this)) {
-            progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_operators))
-            progressDialog.show()
-            val call = RetrofitClient().getMyApi()!!.getOperatorsList()
-            call!!.enqueue(object : Callback<OperatorList?> {
-                override fun onResponse(
-                    call: Call<OperatorList?>,
-                    response: Response<OperatorList?>
-                ) {
-                    println("getOperatorsListData response "+response)
-                    val resourceData = response.body()
-                    println("getOperatorsListData resourceData "+resourceData)
-                    if (progressDialog.isShowing) {
-                        progressDialog.dismiss()
+     private fun getOperatorsListData() {
+            if (NetworkUtils.isNetworkAvailable(this)) {
+                progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_operators))
+                progressDialog.show()
+                val call = RetrofitClient().getMyApi()!!.getOperatorsList()
+                call!!.enqueue(object : Callback<OperatorList?> {
+                    override fun onResponse(
+                        call: Call<OperatorList?>,
+                        response: Response<OperatorList?>
+                    ) {
+                        println("getOperatorsListData response "+response)
+                        val resourceData = response.body()
+                        println("getOperatorsListData resourceData "+resourceData)
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
+                        }
+                        isDieDataAvailable=true
+
+                        val gson = Gson()
+                        val dieIdDetailsModelStr = gson.toJson(resourceData)
+                        val timeStamp =
+                            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
+                        val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                        editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, true)
+                        editor.putString(CommonUtils.OPERATORS_DATA, dieIdDetailsModelStr)
+                        editor.putString(CommonUtils.DIE_DATA_SYNC_TIME, timeStamp)
+                        editor.apply()
                     }
-                    isDieDataAvailable=true
 
-                    val gson = Gson()
-                    val dieIdDetailsModelStr = gson.toJson(resourceData)
-                    val timeStamp =
-                        SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
-                    val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-                    editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, true)
-                    editor.putString(CommonUtils.OPERATORS_DATA, dieIdDetailsModelStr)
-                    editor.putString(CommonUtils.DIE_DATA_SYNC_TIME, timeStamp)
-                    editor.apply()
-                }
+                    override fun onFailure(call: Call<OperatorList?>, t: Throwable) {
+                        call.cancel()
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
+                        }
+                        val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                        editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
+                        editor.apply()
 
-                override fun onFailure(call: Call<OperatorList?>, t: Throwable) {
-                    call.cancel()
-                    if (progressDialog.isShowing) {
-                        progressDialog.dismiss()
                     }
-                    val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-                    editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
-                    editor.apply()
-
+                })
+            } else {
+                if (progressDialog.isShowing) {
+                    progressDialog.dismiss()
                 }
-            })
-        } else {
-            if (progressDialog.isShowing) {
-                progressDialog.dismiss()
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
+                editor.apply()
+
+                showCustomAlert(
+                    this@DashBoardActivity.resources.getString(R.string.network_alert_message),CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                    listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
             }
-            val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-            editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
-            editor.apply()
-
-            showCustomAlert(
-                this@DashBoardActivity.resources.getString(R.string.network_alert_message),CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
-                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
         }
-    }
 }
