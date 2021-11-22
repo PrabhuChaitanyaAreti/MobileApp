@@ -34,27 +34,18 @@ class VideoRepository(application: Application) {
             videoDao.delete(video)
         }
     }
-
-    fun deleteAllVideos() {
-        subscribeOnBackground {
-            videoDao.deleteAllVideos()
-        }
-    }
-
-    fun getAllVideos(): LiveData<List<VideoModel>> {
-        return allVideos
-    }
     fun getVideos(): List<VideoModel> {
            return videoDao.getVideos(false)
     }
-    fun getAllVideosList(): List<VideoModel> {
-        return videoDao.getAllVideosList()
+    fun getSyncedVideos(): List<VideoModel> {
+        return videoDao.getVideos(true)
     }
-    fun updateSyncStatus(id:Int?):Int{
-        var status:Int=-1
-        subscribeOnBackground {
-            status= videoDao.update(false, id!!)
-        }
-        return status
+
+    fun getDieCount(dieIdStr: String, partIdStr: String, dieTypeStr1: String):Int{
+        return videoDao.getDieCount(dieIdStr, partIdStr,dieTypeStr1)
+    }
+
+    fun isDieTypeExist(dieTypeStr: String):Boolean{
+        return videoDao.isDieTypeExist(dieTypeStr)
     }
 }

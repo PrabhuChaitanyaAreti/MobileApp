@@ -49,15 +49,34 @@ class DialogUtils {
                     button.background=context?.resources?.getDrawable(R.drawable.button_bg)
                     button.setTextColor(Color.parseColor("#FFFFFF"))
                     button.isAllCaps=false
-                    button.setOnClickListener({
-                        customDialogCallback.onCustomDialogButtonClicked(button.text as String,functionality)
+                    button.setOnClickListener {
+                        customDialogCallback.onCustomDialogButtonClicked(
+                            button.text as String,
+                            functionality
+                        )
                         customDialog.dismiss()
-                    })
+                    }
                     llButtons?.addView(button)
                 }
             }
             customDialog.setView(customDialogView)
             customDialog.show()
+        }
+
+        @JvmStatic
+        fun showNormalAlert1(activityContext: Context, s: String, s1: String) {
+            val alertDialogBuilder = AlertDialog.Builder(activityContext)
+            alertDialogBuilder.setTitle("Fail")
+            alertDialogBuilder.setMessage("P")
+            alertDialogBuilder.setPositiveButton(
+                "Ok"
+            ) { arg0, arg1 -> }
+            alertDialogBuilder.setNegativeButton(
+                "Cancel"
+            ) { dialog, which -> }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+
         }
     }
 }

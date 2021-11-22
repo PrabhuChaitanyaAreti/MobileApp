@@ -22,6 +22,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
+import com.vsoft.goodmankotlin.cumulocity.MqttService
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.DieIdDetailsModel
@@ -80,12 +81,19 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
             .withPermissions(
                 Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.RECORD_AUDIO
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
             )
             .withListener(object : MultiplePermissionsListener {
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
+
+
+
+                        // close this activity
+                        finish()
                         if(sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS,false)){
                             if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
                                 navigateToDashBoard()

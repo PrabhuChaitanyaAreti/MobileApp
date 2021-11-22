@@ -2,7 +2,6 @@ package com.vsoft.goodmankotlin.utils
 
 import android.app.Activity
 import android.content.Context
-import android.hardware.Camera
 import android.os.Environment
 import androidx.appcompat.app.AlertDialog
 import android.os.StatFs
@@ -10,13 +9,13 @@ import android.text.TextUtils
 import java.io.File
 import java.lang.Exception
 import java.lang.StringBuilder
-import kotlin.math.abs
 import kotlin.system.exitProcess
 
 
 class CommonUtils {
     companion object {
 
+        const val BATTERY_LEVEL_PERCENTAGE = 15
 
         const val IS_NEW_DIE = "is_new_die"
 
@@ -28,6 +27,10 @@ class CommonUtils {
         const val DIE_BOTH_DIALOG = "dieBoth"
         const val DIE_TOP_DIALOG = "dieTop"
         const val DIE_BOTTOM_DIALOG = "dieBottom"
+        const val DIE_TOP_DETAIL_DIALOG = "dieTopDetails"
+        const val DIE_BOTTOM_DETAIL_DIALOG = "dieBottomDetails"
+        const val DIE_RECORD_OPTIONS_DIALOG = "dieRecordOptionsDialog"
+        const val IS_VIDEO_RECORD_SCREEN = "isVideoRecordScreen"
         const val VALIDATION_DIALOG="validationDialog"
         const val WEB_SERVICE_RESPONSE_CODE_401="webServiceResponseCode401"
         const val WEB_SERVICE_RESPONSE_CODE_NON_401="webServiceResponseCodeNon401"
@@ -40,6 +43,9 @@ class CommonUtils {
         const val NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY="noPartIdRelatedToDieIdInList"
 
         const val VALIDATION_OPERATOR_SELECT_DIALOG = "validation_alert_select_dialog"
+
+        const val VALIDATION_ALERT_DIE_ID_SELECT_DIALOG_NOT_AVAILABLE = "validation_alert_Die_ID_select_dialog_not_available"
+        const val VALIDATION_ALERT_PART_ID_SELECT_DIALOG_NOT_AVAILABLE = "validation_alert_part_ID_select_dialog_not_available"
 
         const val MEMORY_DIALOG="memoryDialog"
 
@@ -60,6 +66,7 @@ class CommonUtils {
         const val DIE_DATA="die_data"
         const val DIE_DATA_SYNC_TIME="die_data_sync_time"
         const val DIE_DATA_SYNC_DAYS=2
+        const val OPERATORS_DATA="operators_data"
 
 
         const val SYNC_VIDEO_API_OPERATOR_ID="operator_id"
@@ -75,23 +82,29 @@ class CommonUtils {
         const val SAVE_DIE_ID="dieIdStr"
         const val SAVE_PART_ID="partIdStr"
         const val SAVE_IS_NEW_DIE="IsNewDie"
+        const val SAVE_IS_FIRST_DIE_TOP="isFirstDieTop"
         const val SAVE_DIE_TYPE="dieTypeStr"
         const val SAVE_IS_DIE_TOP="isDieTop"
         const val SAVE_IS_DIE_BOTTOM="isDieBottom"
+        const val SAVE_IS_DIE_TOP_DETAILS="isDieTopDetails"
+        const val SAVE_IS_DIE_BOTTOM_DETAILS="isDieBottomDetails"
 
         const val ADD_DIE_SELECT="Select"
         const val ADD_DIE_TOP="top"
         const val ADD_DIE_BOTTOM="bottom"
+
+        const val ADD_DIE_TOP_DETAILS="top_details"
+        const val ADD_DIE_BOTTOM_DETAILS="bottom_details"
 
 
         const val DIE_TYPE_SELECT="Select Die Type"
         const val DIE_TYPE_TOP="Top"
         const val DIE_TYPE_BOTTOM="Bottom"
 
-        const val OPERATOR_SELECTION_OPERATOR="Operator"
         const val OPERATOR_SELECTION_DIE_ID="DieID"
         const val OPERATOR_SELECTION_PART_ID="PartID"
 
+        const val OPERATOR_SELECTION_0="Select Operator"
         const val OPERATOR_SELECTION_1="Operator1"
         const val OPERATOR_SELECTION_2="Operator2"
         const val OPERATOR_SELECTION_3="Operator3"
@@ -124,22 +137,16 @@ class CommonUtils {
             val pathContents = path.split("[\\\\/]").toTypedArray()
             if (pathContents != null) {
                 val pathContentsLength = pathContents.size
-                //  System.out.println("Path Contents Length: " + pathContentsLength);
-//                for (i in pathContents.indices) {
-//                    //System.out.println("Path " + i + ": " + pathContents[i]);
-//                }
                 //lastPart: s659629384_752969_4472.jpg
                 val lastPart = pathContents[pathContentsLength - 1]
                 val lastPartContents = lastPart.split("\\.").toTypedArray()
                 if (lastPartContents != null && lastPartContents.size > 1) {
                     val lastPartContentLength = lastPartContents.size
-                    //  System.out.println("Last Part Length: " + lastPartContentLength);
                     //filenames can contain . , so we assume everything before
                     //the last . is the name, everything after the last . is the
                     //extension
                     var name = ""
                     for (i in 0 until lastPartContentLength) {
-                        //  System.out.println("Last Part " + i + ": "+ lastPartContents[i]);
                         if (i < lastPartContents.size - 1) {
                             name += lastPartContents[i]
                             if (i < lastPartContentLength - 2) {
@@ -149,39 +156,11 @@ class CommonUtils {
                     }
                     val extension = lastPartContents[lastPartContentLength - 1]
                     filename = "$name.$extension"
-                    //System.out.println("Name: " + name);
-                    //System.out.println("Extension: " + extension);
-                    //System.out.println("Filename: " + filename);
                 }
             }
             return filename
         }
 
-        fun getOptimalPreviewSize(sizes: List<Camera.Size>?, w: Int, h: Int): Camera.Size? {
-            val aspectTolerance = 0.1
-            val targetRatio = h.toDouble() / w
-            if (sizes == null) return null
-            var optimalSize: Camera.Size? = null
-            var minDiff = Double.MAX_VALUE
-            for (size in sizes) {
-                val ratio = size.width.toDouble() / size.height
-                if (abs(ratio - targetRatio) > aspectTolerance) continue
-                if (abs(size.height - h) < minDiff) {
-                    optimalSize = size
-                    minDiff = abs(size.height - h).toDouble()
-                }
-            }
-            if (optimalSize == null) {
-                minDiff = Double.MAX_VALUE
-                for (size in sizes) {
-                    if (abs(size.height - h) < minDiff) {
-                        optimalSize = size
-                        minDiff = abs(size.height - h).toDouble()
-                    }
-                }
-            }
-            return optimalSize
-        }
 
         /**
          * Alert dialog to navigate to app settings
@@ -317,28 +296,9 @@ class CommonUtils {
             //ADD THE ERROR MESSAGE
             e.printStackTrace()
         }
-//        val fdelete = File(filePath)
-//        if (fdelete.exists()) {
-//            if (fdelete.delete()) {
-//                System.out.println("file Deleted :$filePath")
-//            } else {
-//                System.out.println("file not Deleted :$filePath")
-//            }
-//        }
     }
 
-
-//        fun freeMemory() {
-//            System.gc()
-//            System.runFinalization()
-//            Runtime.getRuntime().gc()
-//        }
     fun appExit(activity: Activity){
-   /* if(Build.VERSION.SDK_INT>=16 && Build.VERSION.SDK_INT<21){
-        activity!!.finishAffinity()
-    } else if(Build.VERSION.SDK_INT>=21){
-        activity!!.finishAndRemoveTask();
-    }*/
     activity.finishAffinity();
     exitProcess(0)
 }

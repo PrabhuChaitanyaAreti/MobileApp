@@ -19,6 +19,8 @@ interface RetrofitApiInterface {
     </T> */
     @GET("/placeholder/api/predictions")
     fun getPunchData(): Call<PunchResponse?>?
+    @GET("/operatorlist")
+    fun getOperatorsList(): Call<OperatorList?>?
     @GET("/getDieId")
     fun doGetListDieDetails(): Call<DieIdDetailsModel?>?
     @GET("/discoverIp")

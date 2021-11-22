@@ -6,22 +6,15 @@ plugins {
 }
 
 android {
-    /*signingConfigs {
-        debug {
-            storeFile file('/Users/PrabhuChaitanyaAreti/Desktop/GoodmanKeyStore/GoodmanKeystore')
-            storePassword 'goodman123'
-            keyAlias 'goodmankey'
-            keyPassword 'goodman123'
-        }
-    }*/
-    compileSdkVersion 30
+
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.vsoft.goodmankotlin"
-        minSdkVersion 24
-        targetSdkVersion 30
-        versionCode 15
+        minSdkVersion 26
+        targetSdkVersion 31
+        versionCode 24
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -96,14 +89,17 @@ dependencies {
 
    // implementation 'io.reactivex.rxjava2:rxjava:3.0.0'
    // implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    //UAT changes
     //app center
     def appCenterSdkVersion = '4.1.0'
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
-    // BEGIN AWS DEPENDENCIES
-    def aws_version = "2.16.+"
-    implementation "com.amazonaws:aws-android-sdk-s3:$aws_version"
-    implementation ("com.amazonaws:aws-android-sdk-mobile-client:$aws_version") { transitive = true }
-    // END AWS DEPENDENCIES
+    //Cumulocity
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.2'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
 
 }

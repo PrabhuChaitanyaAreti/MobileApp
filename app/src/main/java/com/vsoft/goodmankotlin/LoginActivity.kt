@@ -154,7 +154,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                             editor.putString(CommonUtils.LOGIN_USER_ID, userId)
                             editor.apply()
                             navigateToDashBoard()
-                        } else if (statusCode == 401) {
+                        } else if (statusCode == 400||statusCode == 401) {
                             showCustomAlert(
                                 this@LoginActivity.resources.getString(R.string.login_alert_message),
                                 CommonUtils.WEB_SERVICE_RESPONSE_CODE_401,

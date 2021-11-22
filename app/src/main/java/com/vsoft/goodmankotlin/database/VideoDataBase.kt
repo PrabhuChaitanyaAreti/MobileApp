@@ -21,8 +21,6 @@ abstract class VideoDataBase : RoomDatabase() {
             if(instance == null)
                 instance = Room.databaseBuilder(ctx.applicationContext, VideoDataBase::class.java,
                     "video_database")
-                   // .fallbackToDestructiveMigration()
-                  //  .addCallback(roomCallback)
                     .addMigrations(MIGRATION_1_2)
                     .addMigrations(MIGRATION_2_3)
                     .allowMainThreadQueries()
@@ -40,7 +38,6 @@ abstract class VideoDataBase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try {
                     Log.e("MIGRATION_1_2", "start")
-                   // database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'status' INTEGER NOT NULL DEFAULT 0")
                     database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'die_top_bottom' TEXT NOT NULL DEFAULT 'Unknown'")
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -49,13 +46,12 @@ abstract class VideoDataBase : RoomDatabase() {
         }
 
         /*
-   * This is used for Room Database migration 1 to 2
+   * This is used for Room Database migration 2 to 3
    */
         private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try {
                     Log.e("MIGRATION_2_3", "start")
-                    // database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'status' INTEGER NOT NULL DEFAULT 0")
                     database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'user_id' TEXT NOT NULL DEFAULT 'Unknown'")
                     database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'operator_id' TEXT NOT NULL DEFAULT 'Unknown'")
                 } catch (e: Exception) {
@@ -66,6 +62,18 @@ abstract class VideoDataBase : RoomDatabase() {
 
     }
 
-
-
+    /*
+ * This is used for Room Database migration 3 to 4
+ */
+    private val MIGRATION_3_4: Migration = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            try {
+                Log.e("MIGRATION_3_4", "start")
+                database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'user_id' TEXT NOT NULL DEFAULT 'Unknown'")
+                database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'operator_id' TEXT NOT NULL DEFAULT 'Unknown'")
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }

@@ -14,12 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProviders
 import com.microsoft.appcenter.analytics.Analytics
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.vsoft.goodmankotlin.cumulocity.MqttService
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.database.subscribeOnBackground
@@ -27,6 +24,7 @@ import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.DieIdDetailsModel
 import com.vsoft.goodmankotlin.model.VideoUploadSaveResponse
+import com.vsoft.goodmankotlin.model.OperatorList
 import com.vsoft.goodmankotlin.utils.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -41,12 +39,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback {
-    private lateinit var addOperator: LinearLayout
     private lateinit var addDie: LinearLayout
     private lateinit var sync: LinearLayout
     private lateinit var skip: LinearLayout
+    private lateinit var download_latest_version: LinearLayout
     private lateinit var logout: LinearLayout
     private lateinit var syncDie:LinearLayout
+    private lateinit var syncVideosCount:TextView
     private lateinit var progressDialog: ProgressDialog
     private lateinit var vm: VideoViewModel
     private var sharedPreferences: SharedPreferences? = null
@@ -57,40 +56,51 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private lateinit var versionDetails:TextView
     private var totalVideoCount:Int = 0
     private var currentIndex:Int=0
-    // The TransferUtility is the primary class for managing transfer to S3
-    var transferUtility: TransferUtility? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
         initProgress()
         init()
         //initAws()
+        // Start the MQTT Service
+        MqttService.activityContext=this;
+        val i = Intent(this@DashBoardActivity, MqttService::class.java)
+        startService(i)
     }
 
-    private fun initAws() {
-        // Initializes TransferUtility, always do this before using it.
-        val util = AwsUtil()
-        transferUtility = util.getTransferUtility(this)
-    }
 
     private fun init() {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        addOperator = findViewById(R.id.addOperator)
         addDie = findViewById(R.id.addDie)
         sync = findViewById(R.id.sync)
         skip = findViewById(R.id.skip)
         logout = findViewById(R.id.logout)
+        download_latest_version = findViewById(R.id.download_latest_version)
         syncDie=findViewById(R.id.syncDie)
+        syncVideosCount=findViewById(R.id.syncVideosCount)
+        syncVideosCount.visibility=View.GONE
 
-        addOperator.setOnClickListener(this)
+
         addDie.setOnClickListener(this)
         sync.setOnClickListener(this)
         skip.setOnClickListener(this)
         logout.setOnClickListener(this)
+        download_latest_version.setOnClickListener(this)
         syncDie.setOnClickListener(this)
         versionDetails=findViewById(R.id.versionDetails)
-        versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
+        versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+ BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+
+//         isDownload = (MqttService.getDownloader() as Nothing?).toString();
+
+
+        var isDownload = MqttService.getDownloader()
+        if(isDownload.contains("fail")){
+            download_latest_version.visibility = View.GONE
+        }else{
+            download_latest_version.visibility = View.VISIBLE
+        }
 
        val str="select * from video_table where status="+"'"+false+"'"
         Log.d("TAG", "strstrstrstr: $str")
@@ -99,23 +109,14 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
         var videosList: List<VideoModel>?
         subscribeOnBackground {
+            removeEmptyVideos()
+            removeSyncVideos()
             videosList = vm.getVideos()
-                Log.d("TAG", "DashBoardActivity  videosList!!.size ${videosList!!.size}")
-            runOnUiThread({
-                totalVideoCount=videosList!!.size
-//                Toast.makeText(
-//                    applicationContext,
-//                    "llVideosList size " + videosList!!.size,
-//                    Toast.LENGTH_LONG
-//                ).show()
-            })
-//           if(videosList!!.size>0) {
-//                val iterator = videosList!!.listIterator()
-//                if (iterator.hasNext()) {
-//                    val item = iterator.next()
-//                    CommonUtils.deletePath(item.video_path)
-//                }
-//            }
+            Log.i("DashBoardActivity videosList.size::: ", videosList!!.size.toString())
+            runOnUiThread {
+                totalVideoCount = videosList!!.size
+               syncVideoCountDisplay(videosList!!.size)
+            }
         }
 
         sharedPreferences = this.getSharedPreferences(
@@ -168,19 +169,61 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
     }
 
+    override fun onResume() {
+        super.onResume()
+       var isDownload = MqttService.getDownloader()
+        if(isDownload.contains("fail")){
+            download_latest_version.visibility = View.GONE
+        }else{
+            download_latest_version.visibility = View.VISIBLE
+        }
+    }
+
+    private fun removeSyncVideos() {
+        try {
+            val videosList = vm.getSyncedVideos()
+            Log.i("removeSyncVideos videosList.size::: ", videosList.size.toString())
+            if(videosList.isNotEmpty()){
+                videosList.forEach {
+                    CommonUtils.deletePath(it.video_path)
+                    vm.delete(it)
+                }
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+    }
+
+    private fun removeEmptyVideos() {
+        try {
+            val videosList = vm.getVideos()
+            Log.i("removeEmptyVideos videosList.size::: ", videosList.size.toString())
+            videosList.forEach {
+                val fileSize: File = File(it.video_path)
+                Log.i("save path ", it.video_path)
+                val file_size_kb = fileSize.length() / 1024
+                val file_size_mb = (fileSize.length() / 1024)/1024
+                Log.i("video  fileSize.length() bytes  ", ""+ fileSize.length())
+                Log.i("video file_size_kb  ", ""+file_size_kb)
+                Log.i("video file_size_mb  ", ""+file_size_mb)
+                if (!(fileSize.length() > 0)) {
+                    it.status = true
+                    val status: Int = vm.update(it)
+                    Log.i("response update status ", "$status")
+                }
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+
+    }
+
     private fun initProgress() {
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
     }
 
     override fun onClick(v: View?) {
-        if (v?.id == addOperator.id) {
-            showCustomAlert(
-                this@DashBoardActivity.resources.getString(R.string.add_operator_alert_message),
-                CommonUtils.NO_OPERATOR_FUNCTIONALITY_IMPLEMENTED_DIALOG,
-                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
-            )
-        }
 
         if (v?.id == addDie.id) {
             if (CommonUtils.checkMemory()) {
@@ -239,9 +282,16 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok), this@DashBoardActivity.resources.getString(R.string.alert_cancel))
             )
         }
+
+        if (v?.id == download_latest_version.id) {
+
+
+
+            MqttService.showInstallAPK()
+        }
     }
 
-    private fun showCustomAlert(
+    public fun showCustomAlert(
         alertMessage: String,
         functionality: String,
         buttonList: List<String>
@@ -258,10 +308,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     private fun navigateToOperatorSelection() {
-        /*val mainIntent = Intent(this, OperatorSelectActivityWithWebservice::class.java)
-        startActivity(mainIntent)*/
 
-        val mainIntent = Intent(this, AddDieOperatorSelectActivity::class.java)
+        val mainIntent = Intent(this, OperatorSelectActivity::class.java)
         mainIntent.putExtra(CommonUtils.IS_NEW_DIE,false)
         startActivity(mainIntent)
     }
@@ -273,10 +321,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     }
 
     private fun navigateToAddDie() {
-      /*  val mainIntent = Intent(this@DashBoardActivity, AddDieActivityNew::class.java)
-        startActivity(mainIntent)*/
 
-        val mainIntent = Intent(this, AddDieOperatorSelectActivity::class.java)
+        val mainIntent = Intent(this, OperatorSelectActivity::class.java)
         mainIntent.putExtra(CommonUtils.IS_NEW_DIE,true)
         startActivity(mainIntent)
     }
@@ -284,43 +330,39 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private fun sync() {
         val batterLevel: Int = BatteryUtil.getBatteryPercentage(this)
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
-        if (batterLevel >= 15) {
+        if (batterLevel >= CommonUtils.BATTERY_LEVEL_PERCENTAGE) {
             var videosList: List<VideoModel>? = null
             subscribeOnBackground {
                 videosList = vm.getVideos()
+                 syncVideoCountDisplay(videosList!!.size)
                 if (videosList!!.isEmpty()) {
                     if (!isSyncing) {
-                        runOnUiThread({
+                        runOnUiThread {
                             showCustomAlert(
                                 this@DashBoardActivity.resources.getString(R.string.no_videos_available),
                                 CommonUtils.VIDEO_SYNC_DIALOG,
                                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                             )
-                        })
+                        }
                     } else {
                         isSyncing = false
                         currentIndex = 0
-                        runOnUiThread({
+                        runOnUiThread {
                             showCustomAlert(
                                 this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success),
                                 CommonUtils.VIDEO_SYNC_DIALOG,
                                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                             )
-                        })
+                        }
                     }
                 } else {
                     isSyncing = true
                     Log.i("Videos observed size", "${videosList?.size}")
                     //totalVideoCount=videosList!!.size
                     currentIndex = totalVideoCount - videosList!!.size
-                    runOnUiThread({
+                    runOnUiThread {
                         progressDialog.setMessage("Syncing ...${++currentIndex}/$totalVideoCount")
-//                    Toast.makeText(
-//                        applicationContext,
-//                        "syncvideos list size " + videosList!!.size,
-//                        Toast.LENGTH_LONG
-//                    ).show()
-                    })
+                    }
                     val iterator = videosList!!.listIterator()
                     if (iterator.hasNext()) {
                         val item = iterator.next()
@@ -328,19 +370,30 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                             save(this, item)
                         }
                     } else {
-                        runOnUiThread({
+                        runOnUiThread {
                             showCustomAlert(
                                 this@DashBoardActivity.resources.getString(R.string.sync_videos_alert_message_success),
                                 CommonUtils.VIDEO_SYNC_DIALOG,
                                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                             )
-                        })
+                        }
                     }
                 }
             }
         } else {
             showCustomAlert(this@DashBoardActivity.resources.getString(R.string.battery_alert_message),CommonUtils.BATTERY_DIALOG,
                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_exit)))
+        }
+    }
+
+    private fun syncVideoCountDisplay(size: Int) {
+        runOnUiThread {
+            if(size>0){
+                syncVideosCount.text = size.toString()
+                syncVideosCount.visibility=View.VISIBLE
+            }else{
+                syncVideosCount.visibility=View.GONE
+            }
         }
     }
 
@@ -355,7 +408,6 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID, item.die_id)
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID, item.part_id)
         jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM, item.die_top_bottom)
-            //jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID, item.operator_id)
 
             if(item.operator_id.equals("Unknown")){
                 jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID, "Operator 1")
@@ -378,32 +430,46 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         Log.i("save jsonString ", jsonString)
         Log.i("save path ", path)
         val fileSize: File = File(path)
-        val file_size = (fileSize.length() / 1024)/1024
-        Log.i("video file_size  ", ""+file_size)
-        val rootFolder: File? = context.getExternalFilesDir(null)
-        val jsonFile = File(rootFolder, "post.json")
-        val writer = FileWriter(jsonFile)
-        writer.write(jsonString)
-        writer.close()
-        val metaDataFilePart = MultipartBody.Part.createFormData(
-            CommonUtils.SYNC_VIDEO_API_META_DATA,
-            jsonFile.name,
-            RequestBody.create(MediaType.parse("*/*"), jsonFile)
-        )
 
-        val file = File(path) // initialize file here
-        val videoFilePart = MultipartBody.Part.createFormData(
-            CommonUtils.SYNC_VIDEO_API_FILE,
-            file.name,
-            RequestBody.create(MediaType.parse("video/*"), file)
-        )
-        //beginUpload(file,item)
-        saveVideoToServer(item, metaDataFilePart, videoFilePart)
-        }else{
-            showCustomAlert(
-                this@DashBoardActivity.resources.getString(R.string.network_alert_message),CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
-                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
-        }
+        val file_size_kb = fileSize.length() / 1024
+            val file_size_mb = (fileSize.length() / 1024)/1024
+            Log.i("video  fileSize.length() bytes  ", ""+ fileSize.length())
+        Log.i("video file_size_kb  ", ""+file_size_kb)
+            Log.i("video file_size_mb  ", ""+file_size_mb)
+            if (fileSize.length() > 0) {
+                val rootFolder: File? = context.getExternalFilesDir(null)
+                val jsonFile = File(rootFolder, "post.json")
+                val writer = FileWriter(jsonFile)
+                writer.write(jsonString)
+                writer.close()
+                val metaDataFilePart = MultipartBody.Part.createFormData(
+                    CommonUtils.SYNC_VIDEO_API_META_DATA,
+                    jsonFile.name,
+                    RequestBody.create(MediaType.parse("*/*"), jsonFile)
+                )
+
+                val file = File(path) // initialize file here
+                val videoFilePart = MultipartBody.Part.createFormData(
+                    CommonUtils.SYNC_VIDEO_API_FILE,
+                    file.name,
+                    RequestBody.create(MediaType.parse("video/*"), file)
+                )
+                saveVideoToServer(item, metaDataFilePart, videoFilePart)
+            }else{
+                item.status = true
+                val status: Int = vm.update(item)
+                Log.i("response update status ", "$status")
+                                CommonUtils.deletePath(item.video_path)
+                                vm.delete(item)
+                sync()
+            }
+            } else {
+                showCustomAlert(
+                    this@DashBoardActivity.resources.getString(R.string.network_alert_message),
+                    CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                    listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                )
+            }
     }
 
     private fun saveVideoToServer(
@@ -426,29 +492,26 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                         val statusCode = response.body()!!.statusCode
                         Log.i("statusCode  ", "$statusCode")
                         if (statusCode == 200) {
-                            runOnUiThread({
-                               // Toast.makeText(applicationContext, "video upload success 200", Toast.LENGTH_LONG).show()
-                                item.status = true
-                                val status: Int = vm.update(item)
-                                Log.i("response update status ", "$status")
-//                                CommonUtils.deletePath(item.video_path)
-//                                vm.delete(item)
+                            runOnUiThread {
+                                CommonUtils.deletePath(item.video_path)
+                                vm.delete(item)
                                 sync()
-                            })
+                            }
                         } else if (statusCode == 401) {
-                            runOnUiThread({
-                                //Toast.makeText(applicationContext, "video upload exists 200", Toast.LENGTH_LONG).show()
-                                item.status = true
-                                val status: Int = vm.update(item)
-                                Log.i("response update status ", "$status")
+                            runOnUiThread {
+                                CommonUtils.deletePath(item.video_path)
+                                vm.delete(item)
                                 sync()
-                            })
+                            }
                         } else {
                             --currentIndex
-                            runOnUiThread({
-                            //Toast.makeText(applicationContext, "video upload fail", Toast.LENGTH_LONG).show()
-                            showCustomAlert(this@DashBoardActivity.resources.getString(R.string.api_server_alert_message), CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
-                            })
+                            runOnUiThread {
+                                showCustomAlert(
+                                    this@DashBoardActivity.resources.getString(R.string.api_server_alert_message),
+                                    CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401,
+                                    listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                                )
+                            }
                         }
                         if(progressDialog!=null) {
                             if (progressDialog.isShowing) {
@@ -467,32 +530,40 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 }
 
                 override fun onFailure(call: Call<VideoUploadSaveResponse?>, t: Throwable) {
-                    Analytics.trackEvent("Sync Video: "+t.printStackTrace());
+                    val str=""+BuildConfig.VERSION_CODE+"("+BuildConfig.VERSION_NAME+")"+""+t.printStackTrace()+""+t.toString()+""+t.localizedMessage
+                    Log.i("onFailure  str :::: ", str)
+                    Analytics.trackEvent("Sync Video: $str");
+                   // Analytics.trackEvent("Sync Video: "+t.printStackTrace());
                     Log.i("onFailure  printStackTrace :::: ", "${t.printStackTrace()}")
                     Log.i("onFailure  toString :::: ", t.toString())
                     Log.i("onFailure  localizedMessage :::: ", t.localizedMessage)
                     t.message?.let { Log.i("onFailure  message :::: ", it) }
                     --currentIndex
-                    runOnUiThread({
-//                        Toast.makeText(applicationContext, "video upload failure", Toast.LENGTH_LONG).show()
-                        if(t.localizedMessage.equals("timeout",true)){
+                    runOnUiThread {
+                        if (t.localizedMessage.equals("timeout", true)) {
                             sync()
-                        }else if(t.localizedMessage.contains("Failed to connect to",true)||t.localizedMessage.contains("connection",true)){
+                        } else if (t.localizedMessage.contains(
+                                "Failed to connect to",
+                                true
+                            ) || t.localizedMessage.contains("connection", true)
+                        ) {
                             showCustomAlert(
                                 this@DashBoardActivity.resources.getString(R.string.network_alert_message),
                                 CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
                                 listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                             )
-                       } else {
-                            showCustomAlert(t.localizedMessage,CommonUtils.WEB_SERVICE_CALL_FAILED,
-                                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
+                        } else {
+                            showCustomAlert(
+                                t.localizedMessage, CommonUtils.WEB_SERVICE_CALL_FAILED,
+                                listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                            )
                         }
-                        if(progressDialog!=null) {
+                        if (progressDialog != null) {
                             if (progressDialog.isShowing) {
                                 progressDialog.dismiss()
                             }
                         }
-                    })
+                    }
 
                 }
 
@@ -500,13 +571,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
             })
         } else {
-            runOnUiThread({
+            runOnUiThread {
                 showCustomAlert(
                     this@DashBoardActivity.resources.getString(R.string.network_alert_message),
                     CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
                     listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
                 )
-            })
+            }
 
         }
     }
@@ -571,6 +642,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     editor.putString(CommonUtils.DIE_DATA, dieIdDetailsModelStr)
                     editor.putString(CommonUtils.DIE_DATA_SYNC_TIME, timeStamp)
                     editor.apply()
+
+                     getOperatorsListData()
                 }
 
                 override fun onFailure(call: Call<DieIdDetailsModel?>, t: Throwable) {
@@ -598,66 +671,57 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
     }
 
-    /*
-     * Begins to upload the file specified by the file path.
-     */
-    private fun beginUpload(file: File,item: VideoModel) {
-        val observer: TransferObserver =
-            transferUtility!!.upload(
-                file.name,
-                file
-            )
+     private fun getOperatorsListData() {
+            if (NetworkUtils.isNetworkAvailable(this)) {
+                progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_operators))
+                progressDialog.show()
+                val call = RetrofitClient().getMyApi()!!.getOperatorsList()
+                call!!.enqueue(object : Callback<OperatorList?> {
+                    override fun onResponse(
+                        call: Call<OperatorList?>,
+                        response: Response<OperatorList?>
+                    ) {
+                        println("getOperatorsListData response "+response)
+                        val resourceData = response.body()
+                        println("getOperatorsListData resourceData "+resourceData)
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
+                        }
+                        isDieDataAvailable=true
 
-        /*
-         * Note that usually we set the transfer listener after initializing the
-         * transfer. However it isn't required in this sample app. The flow is
-         * click upload button -> start an activity for image selection
-         * startActivityForResult -> onActivityResult -> beginUpload -> onResume
-         * -> set listeners to in progress transfers.
-         */
-        observer.setTransferListener(UploadListener(item))
-    }
+                        val gson = Gson()
+                        val dieIdDetailsModelStr = gson.toJson(resourceData)
+                        val timeStamp =
+                            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
+                        val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                        editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, true)
+                        editor.putString(CommonUtils.OPERATORS_DATA, dieIdDetailsModelStr)
+                        editor.putString(CommonUtils.DIE_DATA_SYNC_TIME, timeStamp)
+                        editor.apply()
+                    }
 
-    /*
-     * A TransferListener class that can listen to a upload task and be notified
-     * when the status changes.
-     */
-    internal class UploadListener(item1: VideoModel) : TransferListener {
-        // TAG for logging;
-        val TAG = "UploadActivity"
-        val item=item1
-        // Simply updates the UI list when notified.
-        override fun onError(id: Int, e: java.lang.Exception) {
-            Log.e(
-                TAG,
-                "Error during upload: $id", e
-            )
-        }
+                    override fun onFailure(call: Call<OperatorList?>, t: Throwable) {
+                        call.cancel()
+                        if (progressDialog.isShowing) {
+                            progressDialog.dismiss()
+                        }
+                        val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                        editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
+                        editor.apply()
 
-        override fun onProgressChanged(id: Int, bytesCurrent: Long, bytesTotal: Long) {
-            Log.d(
-                TAG, String.format(
-                    "onProgressChanged: %d, total: %d, current: %d",
-                    id, bytesTotal, bytesCurrent
-                )
-            )
-        }
+                    }
+                })
+            } else {
+                if (progressDialog.isShowing) {
+                    progressDialog.dismiss()
+                }
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.putBoolean(CommonUtils.IS_DIE_DATA_AVAILABLE, false)
+                editor.apply()
 
-        override fun onStateChanged(id: Int, newState: TransferState) {
-            Log.d(
-                TAG,
-                "onStateChanged: $id, $newState"
-            )
-            if(newState.equals("COMPLETED")){
-               // runOnUiThread({
-                    //Toast.makeText(applicationContext, "video upload exists 200", Toast.LENGTH_LONG).show()
-
-                   // item.status = true
-                  //  val status: Int = vm.update(item)
-                   // Log.i("response update status ", "$status")
-                    //sync()
-                //})
+                showCustomAlert(
+                    this@DashBoardActivity.resources.getString(R.string.network_alert_message),CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG,
+                    listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
             }
         }
-    }
 }
