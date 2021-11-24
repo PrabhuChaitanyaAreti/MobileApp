@@ -57,7 +57,7 @@ class CommonUtils {
         const val SHARED_PREF_FILE = "goodman_shared_preference"
         const val APP_CENTER_ANALYTICS_SECRET_KEY="41d26db7-77ac-4c92-bc27-5910ea601d14"
         const val LOGIN_STATUS="loginStatus"
-        const val SPLASH_DURATION=1*1000
+        const val SPLASH_DURATION=5*1000
 
         const val LOGIN_USER_ID="login_user_id"
 

@@ -37,7 +37,8 @@
         <activity
             android:name=".SplashScreen"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,23 +48,28 @@
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true"/>
         <activity
             android:name=".CameraActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true"/>
         <activity
             android:name=".VideoRecordActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true"/>
         <activity
             android:name=".VideoPreviewActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true"/>
         <activity
             android:name=".MaskingActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.GoodManKotlin" />
+            android:theme="@style/Theme.GoodManKotlin"
+            android:exported="true"/>
         <activity
             android:name=".DashBoardActivity"
             android:exported="true"

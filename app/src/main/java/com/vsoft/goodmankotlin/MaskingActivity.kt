@@ -92,9 +92,6 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
             partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
             dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
 
-            Log.d("TAG", "MaskingActivity  sharedPreferences  dieIdStr $dieIdStr")
-            Log.d("TAG", "MaskingActivity sharedPreferences  partIdStr $partIdStr")
-            Log.d("TAG", "MaskingActivity sharedPreferences  dieTypeStr $dieTypeStr")
 
             if (sharedPreferences!!.contains(CommonUtils.RESPONSE)) {
                 val gson = Gson()
@@ -395,7 +392,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
                 item.isVisible = false
                 rightSideMenu.adapter = null
                 rightSideMenu.visibility = View.GONE
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 println(e.printStackTrace())
             }
         }
@@ -407,7 +404,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         menuInflater.inflate(R.menu.right_menu, menu)
         try {
             loadRightSideMenu(incorrectShapes, missedShapes)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return true

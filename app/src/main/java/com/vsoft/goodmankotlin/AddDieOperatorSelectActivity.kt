@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -26,7 +25,6 @@ import kotlinx.android.synthetic.main.activity_add_die_operator_select.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
     private lateinit var btnContinue: Button
     private lateinit var mainLyt: LinearLayout
@@ -37,16 +35,13 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
     private lateinit var customAlertDialogSpinner: AlertDialog
     private lateinit var progressDialog: ProgressDialog
     private var responses: List<DieIdResponse> = java.util.ArrayList()
-    private var isDataSynced = false
-    private var isNewDie=false
-    private lateinit var selectedItem:Editable
-
+    private var isNewDie = false
+    private lateinit var selectedItem: Editable
     private var operatorStr = ""
-    private lateinit var dieTypeStr:String
-
-    private var dieTypeArray: Array<String> = arrayOf(CommonUtils.DIE_TYPE_SELECT,CommonUtils.DIE_TYPE_TOP,CommonUtils.DIE_TYPE_BOTTOM)
+    private lateinit var dieTypeStr: String
+    private var dieTypeArray: Array<String> =
+        arrayOf(CommonUtils.DIE_TYPE_SELECT, CommonUtils.DIE_TYPE_TOP, CommonUtils.DIE_TYPE_BOTTOM)
     private lateinit var sharedPreferences: SharedPreferences
-
     private var isDieDataAvailable = false
     private var dieData = ""
     private var dieDataSyncTime = ""
@@ -55,11 +50,12 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_die_operator_select)
 
-        isNewDie = intent.getBooleanExtra(CommonUtils.IS_NEW_DIE,false)
-        Log.e("isNewDie", ""+isNewDie)
+        isNewDie = intent.getBooleanExtra(CommonUtils.IS_NEW_DIE, false)
 
-        sharedPreferences = this.getSharedPreferences(CommonUtils.SHARED_PREF_FILE,
-            Context.MODE_PRIVATE)
+        sharedPreferences = this.getSharedPreferences(
+            CommonUtils.SHARED_PREF_FILE,
+            Context.MODE_PRIVATE
+        )
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         mainLyt = findViewById(R.id.main_lyt)
@@ -75,20 +71,15 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
         dieDataSyncTime = sharedPreferences.getString(CommonUtils.DIE_DATA_SYNC_TIME, "").toString()
         operatorStr = sharedPreferences.getString(CommonUtils.SAVE_OPERATOR_ID, "").toString()
 
-        Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  isDieDataAvailable $isDieDataAvailable")
-        Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  dieData $dieData")
-        Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  dieDataSyncTime $dieDataSyncTime")
-        Log.d("TAG", "AddDieOperatorSelectActivity  sharedPreferences  operatorStr $operatorStr")
-
-        if(isDieDataAvailable){
+        if (isDieDataAvailable) {
             val gson = Gson()
-            val dieIdDetailsModel: DieIdDetailsModel = gson.fromJson(dieData, DieIdDetailsModel::class.java)
+            val dieIdDetailsModel: DieIdDetailsModel =
+                gson.fromJson(dieData, DieIdDetailsModel::class.java)
             responses = dieIdDetailsModel.response
         }
 
-
-        if(isNewDie){
-            dieTypeSpinner.visibility=View.VISIBLE
+        if (isNewDie) {
+            dieTypeSpinner.visibility = View.VISIBLE
             val langAdapter1 = ArrayAdapter<CharSequence>(
                 this@AddDieOperatorSelectActivity,
                 R.layout.spinner_text,
@@ -97,59 +88,65 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
             dieTypeSpinner.adapter = langAdapter1
 
-        }else{
-            dieTypeSpinner.visibility=View.GONE
+        } else {
+            dieTypeSpinner.visibility = View.GONE
         }
 
-
         mainLyt.setOnClickListener(View.OnClickListener { hideSoftKeyboard(this@AddDieOperatorSelectActivity) })
-
 
         dieBT.setOnClickListener { showUnitOfMeasureSpinnerList(CommonUtils.OPERATOR_SELECTION_DIE_ID) }
 
         partBT.setOnClickListener {
-            if(dieBT.text.isNotEmpty()) {
+            if (dieBT.text.isNotEmpty()) {
                 showUnitOfMeasureSpinnerList(CommonUtils.OPERATOR_SELECTION_PART_ID)
-            } else{
+            } else {
                 if (!isFinishing) {
-                    showCustomAlert(this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
-                        this@AddDieOperatorSelectActivity.resources.getString(R.string.op_se_alert_message_die_id_part_id),CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
-                        listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok)))
+                    showCustomAlert(
+                        this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
+                        this@AddDieOperatorSelectActivity.resources.getString(R.string.op_se_alert_message_die_id_part_id),
+                        CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
+                        listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok))
+                    )
                 }
             }
         }
 
         btnContinue.setOnClickListener(View.OnClickListener {
-            val dieIdStr=dieBT!!.text.toString()
-            val partIdStr=partBT!!.text.toString()
-               if (dieBT?.text.toString().isEmpty()) {
+            val dieIdStr = dieBT!!.text.toString()
+            val partIdStr = partBT!!.text.toString()
+            if (dieBT?.text.toString().isEmpty()) {
                 runOnUiThread {
                     if (!isFinishing) {
-                        showCustomAlert(this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
-                            this@AddDieOperatorSelectActivity.resources.getString(R.string.op_se_alert_message_die_id),CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
-                            listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok)))
+                        showCustomAlert(
+                            this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
+                            this@AddDieOperatorSelectActivity.resources.getString(R.string.op_se_alert_message_die_id),
+                            CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
+                            listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok))
+                        )
                     }
                 }
             } else if (partBT?.text.toString().isEmpty()) {
                 runOnUiThread {
                     if (!isFinishing) {
-                        showCustomAlert(this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
-                            this@AddDieOperatorSelectActivity.resources.getString(R.string.op_se_alert_message_part_id),CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
-                            listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok)))
+                        showCustomAlert(
+                            this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
+                            this@AddDieOperatorSelectActivity.resources.getString(R.string.op_se_alert_message_part_id),
+                            CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
+                            listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok))
+                        )
                     }
                 }
-            }else if(isNewDie){
+            } else if (isNewDie) {
                 dieTypeStr = dieTypeSpinner.selectedItem.toString()
                 if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
-                    if(dieTypeStr.contains(CommonUtils.ADD_DIE_SELECT)){
-                        showCustomAlert(this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
-                            this@AddDieOperatorSelectActivity.resources.getString(R.string.add_die_alert_die_type_select),CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
-                            listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok)))
-                    }else{
-                        Log.d("TAG", "AddDieActivity   dieIdStr $dieIdStr")
-                        Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
-                        Log.d("TAG", "AddDieActivity   operatorStr $operatorStr")
-                        Log.d("TAG", "AddDieActivity   dieTypeStr $dieTypeStr")
+                    if (dieTypeStr.contains(CommonUtils.ADD_DIE_SELECT)) {
+                        showCustomAlert(
+                            this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
+                            this@AddDieOperatorSelectActivity.resources.getString(R.string.add_die_alert_die_type_select),
+                            CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
+                            listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok))
+                        )
+                    } else {
 
                         val editor: SharedPreferences.Editor = sharedPreferences.edit()
                         editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
@@ -160,12 +157,12 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                         editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, false)
                         editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, false)
 
-                        if(dieTypeStr.equals(CommonUtils.ADD_DIE_TOP,true)){
+                        if (dieTypeStr.equals(CommonUtils.ADD_DIE_TOP, true)) {
                             editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
                             editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
                             editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, false)
                             editor.putBoolean(CommonUtils.SAVE_IS_FIRST_DIE_TOP, true)
-                        }else{
+                        } else {
                             editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
                             editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, false)
                             editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
@@ -174,30 +171,33 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                         editor.apply()
 
                         val mainIntent =
-                            Intent(this@AddDieOperatorSelectActivity, VideoRecordActivity::class.java)
+                            Intent(
+                                this@AddDieOperatorSelectActivity,
+                                VideoRecordActivity::class.java
+                            )
                         startActivity(mainIntent)
                     }
-                }else{
-                    showCustomAlert(this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
-                        this@AddDieOperatorSelectActivity.resources.getString(R.string.add_die_alert_die_type_select),CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
-                        listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok)))
+                } else {
+                    showCustomAlert(
+                        this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
+                        this@AddDieOperatorSelectActivity.resources.getString(R.string.add_die_alert_die_type_select),
+                        CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
+                        listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok))
+                    )
                 }
-            }else{
-                Log.d("TAG", "AddDieActivity   dieIdStr $dieIdStr")
-                Log.d("TAG", "AddDieActivity   partIdStr $partIdStr")
-
-                val editor: SharedPreferences.Editor =  sharedPreferences!!.edit()
+            } else {
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
-                editor.putString(CommonUtils.SAVE_DIE_ID,dieIdStr)
-                editor.putString(CommonUtils.SAVE_PART_ID,partIdStr)
-                editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE,false)
+                editor.putString(CommonUtils.SAVE_DIE_ID, dieIdStr)
+                editor.putString(CommonUtils.SAVE_PART_ID, partIdStr)
+                editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE, false)
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, "")
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, false)
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, false)
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, false)
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, false)
                 editor.putBoolean(CommonUtils.SAVE_IS_FIRST_DIE_TOP, false)
-               editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, false)
+                editor.putBoolean(CommonUtils.IS_VIDEO_RECORD_SCREEN, false)
                 editor.apply()
                 val mainIntent =
                     Intent(this@AddDieOperatorSelectActivity, VideoRecordActivity::class.java)
@@ -206,6 +206,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             }
         })
     }
+
     private fun showUnitOfMeasureSpinnerList(dataFrom: String) {
         try {
             val spinnerList: ListView
@@ -217,22 +218,22 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             spinnerList = dialogLayout.findViewById(R.id.spinnerList)
             closeSpinnerPopup = dialogLayout.findViewById(R.id.close_uom_spinner_popup)
             val dataModels: ArrayList<ChoiceListOperator> = ArrayList()
-        if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_DIE_ID)) {
+            if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_DIE_ID)) {
                 val iterator = responses.listIterator()
-                while (iterator.hasNext()){
-                    val item=iterator.next()
+                while (iterator.hasNext()) {
+                    val item = iterator.next()
                     dataModels.add(ChoiceListOperator(item.dieId))
                 }
             } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_PART_ID)) {
-                if(dieBT.text.isNotEmpty()){
+                if (dieBT.text.isNotEmpty()) {
                     val iterator = responses.listIterator()
-                    while (iterator.hasNext()){
-                        val dieIdItem=iterator.next()
-                        if(dieIdItem.dieId.equals(dieBT.text.toString())){
-                            val partIdList=dieIdItem.partId
+                    while (iterator.hasNext()) {
+                        val dieIdItem = iterator.next()
+                        if (dieIdItem.dieId.equals(dieBT.text.toString())) {
+                            val partIdList = dieIdItem.partId
                             val partIdListIterator = partIdList!!.listIterator()
-                            while(partIdListIterator.hasNext()){
-                                val partIdItem=partIdListIterator.next()
+                            while (partIdListIterator.hasNext()) {
+                                val partIdItem = partIdListIterator.next()
                                 dataModels.add(ChoiceListOperator(partIdItem))
                             }
                             break
@@ -246,13 +247,13 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             )
             spinnerList.adapter = nameSpinnerAdapter
             searchET = dialogLayout.findViewById(R.id.search_et)
-            buttonSelect=dialogLayout.findViewById(R.id.buttonSelect)
+            buttonSelect = dialogLayout.findViewById(R.id.buttonSelect)
             buttonSelect.setOnClickListener {
-                 selectedItem=searchET.text
+                selectedItem = searchET.text
                 if (selectedItem.isNotEmpty()) {
                     if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_DIE_ID)) {
-                        if(isNewDie){
-                            if(!dataModels.contains(ChoiceListOperator(selectedItem.toString()))) {
+                        if (isNewDie) {
+                            if (!dataModels.contains(ChoiceListOperator(selectedItem.toString()))) {
                                 DialogUtils.showCustomAlert(
                                     this, CustomDialogModel(
                                         resources.getString(R.string.app_name),
@@ -264,25 +265,26 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                                         )
                                     ), this, CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY
                                 )
-                            }else {
+                            } else {
                                 dieBT.text = selectedItem
                                 partBT.text = ""
                             }
-                        }else{
-                            if(!dataModels.contains(ChoiceListOperator(selectedItem.toString()))) {
-                                showCustomAlert(this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
+                        } else {
+                            if (!dataModels.contains(ChoiceListOperator(selectedItem.toString()))) {
+                                showCustomAlert(
+                                    this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
                                     this@AddDieOperatorSelectActivity.resources.getString(R.string.op_se_alert_message_die_id_select),
                                     CommonUtils.VALIDATION_ALERT_DIE_ID_SELECT_DIALOG_NOT_AVAILABLE,
-                                    listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok)))
-                            }else{
+                                    listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok))
+                                )
+                            } else {
                                 dieBT.text = selectedItem
                                 partBT.text = ""
                             }
-
                         }
 
                     } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_PART_ID)) {
-                        if(isNewDie) {
+                        if (isNewDie) {
                             if (!dataModels.contains(ChoiceListOperator(selectedItem.toString()))) {
                                 DialogUtils.showCustomAlert(
                                     this,
@@ -301,13 +303,15 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                             } else {
                                 partBT.text = selectedItem
                             }
-                        }else{
+                        } else {
                             if (!dataModels.contains(ChoiceListOperator(selectedItem.toString()))) {
-                                showCustomAlert(this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
+                                showCustomAlert(
+                                    this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
                                     this@AddDieOperatorSelectActivity.resources.getString(R.string.op_se_alert_message_part_id_select),
                                     CommonUtils.VALIDATION_ALERT_PART_ID_SELECT_DIALOG_NOT_AVAILABLE,
-                                    listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok)))
-                            }else {
+                                    listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok))
+                                )
+                            } else {
                                 partBT.text = selectedItem
                             }
                         }
@@ -323,7 +327,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             searchET.addTextChangedListener(object : TextWatcher {
                 override fun onTextChanged(cs: CharSequence, arg1: Int, arg2: Int, arg3: Int) {
                     if (searchET?.text.toString() != "") { //if edittext include text
-                        buttonSelect.visibility=View.VISIBLE
+                        buttonSelect.visibility = View.VISIBLE
                     }
                     nameSpinnerAdapter.filter.filter(cs.toString())
                     nameSpinnerAdapter.notifyDataSetChanged()
@@ -344,8 +348,13 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             e.printStackTrace()
         }
     }
-    inner class NameListSpinnerAdapter(var context: Context, var spinnerData: List<ChoiceListOperator>, var dataFrom: String): BaseAdapter(), Filterable {
-        var spinnerDataFiltered:List<ChoiceListOperator> = spinnerData
+
+    inner class NameListSpinnerAdapter(
+        var context: Context,
+        var spinnerData: List<ChoiceListOperator>,
+        var dataFrom: String
+    ) : BaseAdapter(), Filterable {
+        var spinnerDataFiltered: List<ChoiceListOperator> = spinnerData
         override fun getCount(): Int {
             return spinnerDataFiltered.size
         }
@@ -360,29 +369,35 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
         }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view: TextView = convertView as TextView? ?: LayoutInflater.from(context).inflate(R.layout.spinner_row_item, parent, false) as TextView
+            val view: TextView = convertView as TextView? ?: LayoutInflater.from(context)
+                .inflate(R.layout.spinner_row_item, parent, false) as TextView
             view.text = spinnerDataFiltered[position].name
             view.setOnClickListener {
-                searchET.text=Editable.Factory.getInstance().newEditable(spinnerDataFiltered[position].name)
+                searchET.text =
+                    Editable.Factory.getInstance().newEditable(spinnerDataFiltered[position].name)
             }
             return view
         }
 
         override fun getFilter(): Filter {
             return object : Filter() {
-                override fun publishResults(charSequence: CharSequence?, filterResults: FilterResults) {
-                    spinnerDataFiltered = if((filterResults.values as List<ChoiceListOperator>).isEmpty()){
-                        listOf(ChoiceListOperator(charSequence.toString()))
-                    }else {
-                        filterResults.values as List<ChoiceListOperator>
-                    }
+                override fun publishResults(
+                    charSequence: CharSequence?,
+                    filterResults: FilterResults
+                ) {
+                    spinnerDataFiltered =
+                        if ((filterResults.values as List<ChoiceListOperator>).isEmpty()) {
+                            listOf(ChoiceListOperator(charSequence.toString()))
+                        } else {
+                            filterResults.values as List<ChoiceListOperator>
+                        }
                     notifyDataSetChanged()
                 }
 
                 override fun performFiltering(charSequence: CharSequence?): FilterResults {
                     val queryString = charSequence?.toString()?.lowercase(Locale.getDefault())
                     val filterResults = FilterResults()
-                    filterResults.values = if (queryString==null || queryString.isEmpty())
+                    filterResults.values = if (queryString == null || queryString.isEmpty())
                         spinnerData
                     else
                         spinnerData.filter {
@@ -407,49 +422,59 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             }
         }
     }
-    private fun showCustomAlert(alertTitle: String,alertMessage: String, functionality: String,buttonList:List<String>){
-        val customDialogModel= CustomDialogModel(alertTitle,alertMessage,null,
+
+    private fun showCustomAlert(
+        alertTitle: String,
+        alertMessage: String,
+        functionality: String,
+        buttonList: List<String>
+    ) {
+        val customDialogModel = CustomDialogModel(
+            alertTitle, alertMessage, null,
             buttonList
         )
-        DialogUtils.showCustomAlert(this,customDialogModel,this,functionality)
+        DialogUtils.showCustomAlert(this, customDialogModel, this, functionality)
     }
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
-        Log.d("", "onCustomDialogButtonClicked buttonName::: $buttonName:::: functionality:::: $functionality")
-        if (buttonName.equals(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok), true)) {
+        if (buttonName.equals(
+                this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok),
+                true
+            )
+        ) {
             if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
                 //No action required. Just exit dialog.
-            }else if (functionality.equals(CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG, true)) {
+            } else if (functionality.equals(CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG, true)) {
                 //No action required. Just exit dialog.
-            }else if(functionality.equals(CommonUtils.VALIDATION_ALERT_DIE_ID_SELECT_DIALOG_NOT_AVAILABLE)) {
-                 dieBT.text = ""
-                 partBT.text = ""
-            }else if(functionality.equals(CommonUtils.VALIDATION_ALERT_PART_ID_SELECT_DIALOG_NOT_AVAILABLE)) {
+            } else if (functionality.equals(CommonUtils.VALIDATION_ALERT_DIE_ID_SELECT_DIALOG_NOT_AVAILABLE)) {
+                dieBT.text = ""
+                partBT.text = ""
+            } else if (functionality.equals(CommonUtils.VALIDATION_ALERT_PART_ID_SELECT_DIALOG_NOT_AVAILABLE)) {
                 partBT.text = ""
             }
         }
-        if(buttonName.equals(resources.getString(R.string.WarningDialogAddDie),true)){
-            if(functionality == CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY){
+        if (buttonName.equals(resources.getString(R.string.WarningDialogAddDie), true)) {
+            if (functionality == CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY) {
                 dieBT.text = selectedItem
                 partBT.text = ""
             }
-            if(functionality == CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY){
+            if (functionality == CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY) {
                 //No functionality required
             }
         }
-        if(buttonName.equals(resources.getString(R.string.WarningDialogReCheck),true)){
-            if(functionality == CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY){
+        if (buttonName.equals(resources.getString(R.string.WarningDialogReCheck), true)) {
+            if (functionality == CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY) {
                 //No functionality required
             }
-            if(functionality == CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY){
+            if (functionality == CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY) {
                 //No functionality required
             }
         }
-        if(buttonName.equals(resources.getString(R.string.WarningDialogAddPart),true)){
-            if(functionality == CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY){
+        if (buttonName.equals(resources.getString(R.string.WarningDialogAddPart), true)) {
+            if (functionality == CommonUtils.NO_DIE_ID_IN_LIST_FUNCTIONALITY) {
                 //No functionality required
             }
-            if(functionality == CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY){
+            if (functionality == CommonUtils.NO_PART_ID_RELATED_TO_DIE_ID_IN_LIST_FUNCTIONALITY) {
                 partBT.text = selectedItem
             }
         }

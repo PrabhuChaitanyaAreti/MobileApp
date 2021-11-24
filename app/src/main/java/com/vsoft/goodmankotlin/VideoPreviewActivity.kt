@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
@@ -41,10 +40,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import okhttp3.*
 
-
 class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnClickListener {
 
-    private val tag = VideoPreviewActivity::class.java.simpleName
     private var path = ""
     private var videoFileName: String? = null
     private var isPlay = false
@@ -103,19 +100,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
         partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
 
-
-        Log.d("TAG", "VideoPreviewActivity  sharedPreferences  userId $userId")
-        Log.d("TAG", "VideoPreviewActivity  sharedPreferences  operatorStr $operatorStr")
-        Log.d("TAG", "VideoPreviewActivity  sharedPreferences  dieIdStr $dieIdStr")
-        Log.d("TAG", "VideoPreviewActivity sharedPreferences  partIdStr $partIdStr")
-        Log.d("TAG", "VideoPreviewActivity sharedPreferences  dieTypeStr $dieTypeStr")
-        Log.d("TAG", "VideoPreviewActivity sharedPreferences  IsNewDie $isNewDie")
-        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieTop $isDieTop")
-        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieBottom $isDieBottom")
-        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieTopDetails $isDieTopDetails")
-        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isDieBottomDetails $isDieBottomDetails")
-        Log.d("TAG", "VideoPreviewActivity sharedPreferences  isFirstDieTop $isFirstDieTop")
-
         vm = ViewModelProviders.of(this)[VideoViewModel::class.java]
 
         if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
@@ -129,27 +113,21 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
             }else{
                 typeStr=dieTypeStr
             }
-            Log.d("TAG", "VideoPreviewActivity modified typeStr $typeStr")
-            Log.d("TAG", "VideoPreviewActivity details_count  $details_count")
             val isDieType =   vm.isDieTypeExist(typeStr)
-            Log.d("TAG", "VideoPreviewActivity modified isDieType $isDieType")
 
             if(isDieType) {
                val isTopDie = typeStr.equals(CommonUtils.ADD_DIE_TOP)
-                Log.d("TAG", "VideoPreviewActivity modified isTopDie $isTopDie")
                 if(isTopDie){
                     dieTopBottomDetailsCount = vm.getDieCount(dieIdStr, partIdStr, "top_details")
                 }else{
                     dieTopBottomDetailsCount = vm.getDieCount(dieIdStr, partIdStr,"bottom_details")
                 }
 
-                Log.d("TAG", "VideoPreviewActivity db  before dieTopBottomDetailsCount $dieTopBottomDetailsCount")
                 if(details_count!=0){
                     dieTopBottomDetailsCount=details_count+1
                 }else{
                     dieTopBottomDetailsCount++
                 }
-                Log.d("TAG", "VideoPreviewActivity db after dieTopBottomDetailsCount $dieTopBottomDetailsCount")
 
             }else{
                 dieTopBottomDetailsCount++
@@ -169,14 +147,11 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
 
         val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@VideoPreviewActivity)
 
-        Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
 
         if (batterLevel >= CommonUtils.BATTERY_LEVEL_PERCENTAGE) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             path = intent.extras!!.getString(CommonUtils.VIDEO_SAVING_FILE_PATH).toString()
-            Log.d(tag, "VideoPreviewActivity onCreate $path")
             videoFileName = CommonUtils.getFileName(path)
-            println("VideoPreviewActivity videoFileName is $videoFileName")
 
             if (dieIdStr.isNotEmpty() && !TextUtils.isEmpty(dieIdStr) && dieIdStr != "null") {
                 dieIdTxt!!.text = "Die ID: $dieIdStr"
@@ -257,7 +232,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         absPlayerInternal!!.addListener(object : Player.EventListener {
             override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
                 val dur = absPlayerInternal!!.duration
-                Log.e("dur", "::::$dur:::")
                 if (dur > 0) {
                     totalDuration = absPlayerInternal!!.duration.toDouble().toLong()
                     setVideoProgress()
@@ -272,16 +246,13 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
 
             override fun onLoadingChanged(isLoading: Boolean) {}
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                Log.d("onPlayerStateChanged", "playbackState:::: $playbackState")
                 if (playbackState == Player.STATE_ENDED) {
                     isPlay = false
                     currentPos = 0;
                     absPlayerInternal!!.seekTo(currentPos)
-                    //  pvMain.onPause();
                     absPlayerInternal!!.playWhenReady = false
                     pause!!.setImageResource(R.drawable.video_record_play)
                     val dur = absPlayerInternal!!.duration
-                    Log.e("dur", "::::$dur:::")
                     if (dur > 0) {
                         totalDuration = absPlayerInternal!!.duration.toDouble().toLong()
                         setVideoProgress()
@@ -335,7 +306,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     }
 
     private fun saveVideo() {
-        Log.d("TAG", "saveVideo onClick video path::: $path")
         if (isDieTop && isDieBottom ) {
             val timeStamp =
                 SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
@@ -464,7 +434,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
         pause!!.setOnClickListener(null)
         seekBar!!.isEnabled = false
         seekBar!!.setOnSeekBarChangeListener(null)
-        Log.d("TAG", "btnSendEdge onClick imagePath::: $path")
         progressDialog = ProgressDialog(this@VideoPreviewActivity)
         progressDialog!!.setCancelable(false)
         progressDialog!!.setMessage(this@VideoPreviewActivity.resources.getString(R.string.progress_dialog_message_video_preview))
@@ -489,7 +458,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     val test = client.newCall(request).execute()
                     println(test.body()!!.string())
                 } catch (e: java.lang.Exception) {
-                    Log.e("PrintException", e.message!!)
+                    e.printStackTrace()
                 }
             }
             thread.start()
@@ -502,14 +471,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                         if (progressDialog!!.isShowing) {
                             progressDialog!!.dismiss()
                         }
-                        Log.d(
-                            "TAG",
-                            "submit onClick onResponse message ::: " + response.message()
-                        )
-                        Log.d(
-                            "TAG",
-                            "submit onClick onResponse code ::: " + response.code()
-                        )
+
                         if (response.code() == 200) {
                             if (response.body()?.gt != null) {
                                 // Storing data into SharedPreferences
@@ -693,10 +655,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     }
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
-        Log.d(
-            "",
-            "onCustomDialogButtonClicked buttonName::: $buttonName:::: functionality:::: $functionality"
-        )
         if (buttonName.equals(
                 this@VideoPreviewActivity.resources.getString(R.string.alert_exit),
                 true
@@ -776,7 +734,6 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 if (absPlayerInternal!!.isPlaying) {
                     absPlayerInternal!!.stop()
                 }
-                Log.d(tag, "VideoPreviewActivity onCreate $path")
                 CommonUtils.deletePath(path)
                 val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                 startActivity(intent)

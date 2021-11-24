@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.karumi.dexter.Dexter
@@ -28,7 +27,7 @@ import com.vsoft.goodmankotlin.utils.DialogUtils
 
 class SplashScreen : AppCompatActivity(), CustomDialogCallback {
 
-    private var sharedPreferences: SharedPreferences?=null
+    private var sharedPreferences: SharedPreferences? = null
     private var userId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,25 +41,24 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
 
         sharedPreferences = this.getSharedPreferences(
             CommonUtils.SHARED_PREF_FILE,
-            Context.MODE_PRIVATE)
+            Context.MODE_PRIVATE
+        )
 
         userId = sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
 
-        Log.d("TAG", "SplashScreen  sharedPreferences  userId $userId")
     }
 
     override fun onStart() {
         super.onStart()
         Handler(Looper.getMainLooper()).postDelayed({
-            // Your Code
             if (CameraUtils.checkPermissions(applicationContext)) {
-                if(sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS,false)){
+                if (sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS, false)) {
                     if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
                         navigateToDashBoard()
-                    }else {
+                    } else {
                         navigateToLogin()
                     }
-                }else {
+                } else {
                     navigateToLogin()
                 }
             } else {
@@ -68,18 +66,21 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
             }
         }, CommonUtils.SPLASH_DURATION.toLong())
     }
+
     private fun navigateToDashBoard() {
         val i = Intent(this, DashBoardActivity::class.java)
         startActivity(i)
         // close this activity
         finish()
     }
+
     private fun navigateToLogin() {
         val i = Intent(this, LoginActivity::class.java)
         startActivity(i)
         // close this activity
         finish()
     }
+
     /**
      * Requesting permissions using Dexter library
      */
@@ -94,13 +95,13 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
                 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
-                        if(sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS,false)){
+                        if (sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS, false)) {
                             if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
                                 navigateToDashBoard()
-                            }else {
+                            } else {
                                 navigateToLogin()
                             }
-                        }else {
+                        } else {
                             navigateToLogin()
                         }
                     } else if (report.isAnyPermissionPermanentlyDenied) {
@@ -122,8 +123,17 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
      * to enable necessary permissions
      */
     private fun showPermissionsAlert() {
-        DialogUtils.showCustomAlert(this, CustomDialogModel(this.resources.getString(R.string.app_name),this@SplashScreen.resources.getString(R.string.settings_message),null,
-            listOf(this@SplashScreen.resources.getString(R.string.settings_option),this@SplashScreen.resources.getString(R.string.alert_ok))),this,CommonUtils.PERMISSIONS_DIALOG)
+        DialogUtils.showCustomAlert(
+            this, CustomDialogModel(
+                this.resources.getString(R.string.app_name),
+                this@SplashScreen.resources.getString(R.string.settings_message),
+                null,
+                listOf(
+                    this@SplashScreen.resources.getString(R.string.settings_option),
+                    this@SplashScreen.resources.getString(R.string.alert_ok)
+                )
+            ), this, CommonUtils.PERMISSIONS_DIALOG
+        )
     }
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
@@ -133,7 +143,11 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
                 super.onBackPressed()
             }
         }
-        if (buttonName.equals(this@SplashScreen.resources.getString(R.string.settings_option), true)) {
+        if (buttonName.equals(
+                this@SplashScreen.resources.getString(R.string.settings_option),
+                true
+            )
+        ) {
             if (functionality.equals(CommonUtils.PERMISSIONS_DIALOG, true)) {
                 CameraUtils.openSettings(this@SplashScreen)
             }
