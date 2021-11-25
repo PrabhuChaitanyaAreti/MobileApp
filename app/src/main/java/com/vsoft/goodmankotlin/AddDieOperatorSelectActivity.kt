@@ -222,7 +222,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 val iterator = responses.listIterator()
                 while (iterator.hasNext()) {
                     val item = iterator.next()
-                    dataModels.add(ChoiceListOperator(item.dieId))
+                    dataModels.add(ChoiceListOperator(item.dieId!!))
                 }
             } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_PART_ID)) {
                 if (dieBT.text.isNotEmpty()) {
