@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.opengl.Visibility
 import android.os.*
 import android.util.Log
 import android.view.View
@@ -21,6 +22,7 @@ import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.database.subscribeOnBackground
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
+import com.vsoft.goodmankotlin.interfaces.MqttDownloadCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.DieIdDetailsModel
 import com.vsoft.goodmankotlin.model.VideoUploadSaveResponse
@@ -38,7 +40,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback {
+class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback,MqttDownloadCallback {
     private lateinit var addDie: LinearLayout
     private lateinit var sync: LinearLayout
     private lateinit var skip: LinearLayout
@@ -724,4 +726,20 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok)))
             }
         }
+
+    override fun onDownloadStarted() {
+        download_latest_version.visibility=View.VISIBLE
+    }
+
+    override fun onDownloadCompleted() {
+        download_latest_version.visibility=View.GONE
+    }
+
+    override fun onInstallStarted() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onInstallCompleted() {
+        TODO("Not yet implemented")
+    }
 }

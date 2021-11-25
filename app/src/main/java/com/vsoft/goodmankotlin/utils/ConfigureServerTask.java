@@ -44,7 +44,7 @@ public class ConfigureServerTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         if(ipAddressList!=null && ipAddressList.size()>0){
             for(String ipAddress : ipAddressList){
-                String myurl="http:/"+ipAddress+":12808/"+"getDieId";
+                String myurl="http:/"+ipAddress+":16808/"+"getDieId";
                 System.out.println(myurl);
                 String responseString = null;
                 try {
@@ -52,7 +52,7 @@ public class ConfigureServerTask extends AsyncTask<Void, Void, Void> {
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     if(conn.getResponseCode() == HttpsURLConnection.HTTP_OK){
                         // Do normal input or output stream reading
-                        ipAddress="http:/"+ipAddress+":12808";
+                        ipAddress="http:/"+ipAddress+":16808";
                         Context context=mContextRef.get();
                         var prefs = context.getSharedPreferences(context.getPackageName(), context.MODE_PRIVATE);
                         prefs.edit().putString("EdgeServerIp", ipAddress).apply();

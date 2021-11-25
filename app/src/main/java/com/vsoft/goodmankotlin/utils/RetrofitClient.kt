@@ -36,8 +36,8 @@ class RetrofitClient {
 
         @Synchronized
         fun getInstance(context: Context): RetrofitClient? {
-//            val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
-//            BASE_URL= prefs.getString("EdgeServerIp", "http://192.168.10.116:12808")!!
+            val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+            BASE_URL= prefs.getString("EdgeServerIp", "http://192.168.10.116:12808")!!
             if (instance == null) {
                 instance = RetrofitClient()
             }
