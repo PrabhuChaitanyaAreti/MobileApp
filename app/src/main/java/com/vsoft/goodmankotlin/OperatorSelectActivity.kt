@@ -1,3 +1,5 @@
+@file:Suppress("ControlFlowWithEmptyBody")
+
 package com.vsoft.goodmankotlin
 
 import android.app.Activity
@@ -48,7 +50,7 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
         val dataModels: ArrayList<String> = ArrayList()
         dataModels.add("Select Operator")
 
-       /* if (isDieDataAvailable) {
+        if (isDieDataAvailable) {
             val gson = Gson()
             val operatorList: OperatorList =
                 gson.fromJson(operatorsData, OperatorList::class.java)
@@ -59,7 +61,7 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
                 val item = iterator.next()
                 dataModels.add("Operator $item")
             }
-        }else{*/
+        }else{
             dataModels.add("Operator 1")
             dataModels.add("Operator 2")
             dataModels.add("Operator 3")
@@ -70,11 +72,11 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
             dataModels.add("Operator 8")
             dataModels.add("Operator 9")
             dataModels.add("Operator 10")
-       // }
+        }
 
         operatorListSpinner = findViewById(R.id.operatorListSpinner)
 
-        val langAdapter1 = ArrayAdapter<String>(
+        val langAdapter1 = ArrayAdapter(
             this@OperatorSelectActivity,
             R.layout.spinner_text,
             dataModels
@@ -82,7 +84,7 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
         langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
         operatorListSpinner.adapter = langAdapter1
 
-        btnContinue.setOnClickListener(View.OnClickListener {
+        btnContinue.setOnClickListener {
             operatorStr = operatorListSpinner.selectedItem.toString()
             if (operatorStr.isNotEmpty() && !TextUtils.isEmpty(operatorStr) && operatorStr != "null") {
                 if (operatorStr.contains(CommonUtils.ADD_DIE_SELECT)) {
@@ -114,7 +116,6 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
                 )
             }
         }
-        )
     }
 
     private fun showCustomAlert(

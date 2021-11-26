@@ -21,4 +21,8 @@
     <color name="daikin_fill">#009ACF</color>
     <color name="daikin_border">#000000</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="new_daikin_blue_color">#168bb6</color>
+
+
 </resources>

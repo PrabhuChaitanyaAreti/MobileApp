@@ -12,7 +12,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_scr"
+            android:background="@drawable/backgroung_img"
             android:orientation="vertical">
           <!--  <LinearLayout
                 android:layout_width="match_parent"
@@ -40,6 +40,7 @@
                         android:layout_height="30dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="10dp"
+                        android:contentDescription="@string/app_name"
                         android:background="@drawable/goodman"/>
                    <!-- <Button
                         android:id="@+id/operator_au_tv"
@@ -64,7 +65,7 @@
                         android:layout_marginTop="50dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Enter Die ID"
+                        android:hint="@string/enter_die_id"
                         android:background="@drawable/background"
                         android:gravity="center"
                         android:paddingEnd="5dp"
@@ -81,7 +82,7 @@
                         android:layout_marginTop="15dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Enter Part ID"
+                        android:hint="@string/enter_part_id"
                         android:background="@drawable/background"
                         android:gravity="center"
                         android:paddingEnd="5dp"

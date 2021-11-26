@@ -17,9 +17,10 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:onClick="dismissListener"
         android:padding="5dp"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/close" />
 
 </RelativeLayout>

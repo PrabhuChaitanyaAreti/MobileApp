@@ -1,5 +1,6 @@
 package com.vsoft.goodmankotlin.utils
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
@@ -28,7 +29,8 @@ class DialogUtils {
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
-        fun showCustomAlert(context: Context?,customDialogModel: CustomDialogModel,customDialogCallback: CustomDialogCallback,functionality:String){
+        @SuppressLint("UseCompatLoadingForDrawables")
+        fun showCustomAlert(context: Context?, customDialogModel: CustomDialogModel, customDialogCallback: CustomDialogCallback, functionality:String){
             val factory = LayoutInflater.from(context)
             val customDialogView: View = factory.inflate(R.layout.custom_dialog_layout, null)
             val customDialog = AlertDialog.Builder(context).create()

@@ -8,12 +8,14 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.SurfaceTexture
-import android.graphics.drawable.Drawable
 import android.hardware.Camera
+import android.media.AudioManager
 import android.media.CamcorderProfile
 import android.media.MediaRecorder
 import android.os.*
+import android.text.TextUtils
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.WindowManager
@@ -22,25 +24,18 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProviders
+import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
+import com.vsoft.goodmankotlin.touchimage.TouchImageView
 import com.vsoft.goodmankotlin.utils.BatteryUtil
+import com.vsoft.goodmankotlin.utils.CameraHelper
 import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils
 import java.io.File
 import java.io.IOException
 import java.util.*
-import android.media.AudioManager
-import android.text.TextUtils
-import android.view.LayoutInflater
-import androidx.annotation.Nullable
-import androidx.lifecycle.ViewModelProviders
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
-import com.vsoft.goodmankotlin.database.VideoViewModel
-import com.vsoft.goodmankotlin.touchimage.TouchImageView
-import com.vsoft.goodmankotlin.utils.CameraHelper
 
 class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListener,
     View.OnClickListener, CustomDialogCallback {
@@ -53,9 +48,9 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private var parameters: Camera.Parameters? = null
     private var profile: CamcorderProfile? = null
 
-    private var CAMERA_PERMISSION = Manifest.permission.CAMERA
+    private val CAMERAPERMISSIONOPTION = Manifest.permission.CAMERA
 
-    private var RC_PERMISSION = 101
+    private val CAMERAPERMISSIONCODE = 101
     private lateinit var progressDialog: ProgressDialog
 
     /**
@@ -77,7 +72,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
     private var infoIconImgRL:RelativeLayout?=null
     private var infoIconImg: ImageView? = null
-    private var surface_view: TextureView? = null
+    private var surfaceView: TextureView? = null
     private var settingsImgIcon: ImageView? = null
     private var videoOnlineImageButton: ImageButton? = null
     private var videoRecordPlayPause: ImageButton? = null
@@ -131,22 +126,20 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
                 if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
 
-                    if (dieTypeStr.contains("_")) {
+                    typeStr = if (dieTypeStr.contains("_")) {
                         val splitArray: List<String> = dieTypeStr.split("_")
-                        typeStr = splitArray[0]
+                        splitArray[0]
                     } else {
-                        typeStr = dieTypeStr
+                        dieTypeStr
                     }
                     val isDieType = vm.isDieTypeExist(typeStr)
 
                     if (isDieType) {
-                        isTopDie = typeStr.equals(CommonUtils.ADD_DIE_TOP)
-                        if (isTopDie) {
-                            dieTopBottomDetailsCount =
-                                vm.getDieCount(dieIdStr, partIdStr, "top_details")
+                        isTopDie = typeStr == CommonUtils.ADD_DIE_TOP
+                        dieTopBottomDetailsCount = if (isTopDie) {
+                            vm.getDieCount(dieIdStr, partIdStr, "top_details")
                         } else {
-                            dieTopBottomDetailsCount =
-                                vm.getDieCount(dieIdStr, partIdStr, "bottom_details")
+                            vm.getDieCount(dieIdStr, partIdStr, "bottom_details")
                         }
 
                     } else {
@@ -231,8 +224,9 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initCameraView1() {
-        surface_view = findViewById(R.id.surface_view)
+        surfaceView = findViewById(R.id.surface_view)
         settingsImgIcon = findViewById(R.id.settingsImgIcon)
         videoOnlineImageButton = findViewById(R.id.videoOnlineImageButton)
         videoRecordPlayPause = findViewById(R.id.videoRecordPlayPause)
@@ -260,7 +254,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         if (batterLevel >= CommonUtils.BATTERY_LEVEL_PERCENTAGE) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             if (checkPermissions()) {
-                surface_view!!.surfaceTextureListener = this
+                surfaceView!!.surfaceTextureListener = this
             } else {
                 requestPermissions()
             }
@@ -268,20 +262,20 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             settingsImgIcon!!.visibility = View.GONE
 
             if (dieIdStr.isNotEmpty() && !TextUtils.isEmpty(dieIdStr) && dieIdStr != "null") {
-                dieIdTxt!!.text = "Die ID: $dieIdStr"
+                dieIdTxt!!.text = this@VideoRecordActivity.resources.getString(R.string.die_id)+ dieIdStr
                 dieIdTxt!!.visibility = View.VISIBLE
             } else {
                 dieIdTxt!!.visibility = View.GONE
             }
             if (partIdStr.isNotEmpty() && !TextUtils.isEmpty(partIdStr) && partIdStr != "null") {
-                partIdTxt!!.text = "Part ID: $partIdStr"
+                partIdTxt!!.text = this@VideoRecordActivity.resources.getString(R.string.part_id)+partIdStr
                 partIdTxt!!.visibility = View.VISIBLE
             } else {
                 partIdTxt!!.visibility = View.GONE
             }
 
             if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
-                dieTypeTxt!!.text = "Die Type: " + dieTypeStr.uppercase(Locale.getDefault())
+                dieTypeTxt!!.text = this@VideoRecordActivity.resources.getString(R.string.die_type)+ dieTypeStr.uppercase(Locale.getDefault())
                 dieTypeTxt!!.visibility = View.VISIBLE
             } else {
                 dieTypeTxt!!.visibility = View.GONE
@@ -305,7 +299,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private fun initProgress() {
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
-        progressDialog!!.setMessage(this@VideoRecordActivity.resources.getString(R.string.progress_dialog_message_video_recording))
+        progressDialog.setMessage(this@VideoRecordActivity.resources.getString(R.string.progress_dialog_message_video_recording))
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -364,6 +358,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                         stopRecording()
                     }
 
+                    @SuppressLint("SetTextI18n")
                     override fun onTick(millisUntilFinished: Long) {
 
                         recordSecondsLeft =
@@ -421,7 +416,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         val imageSingle = customDialogView.findViewById<TouchImageView>(R.id.imageSingle)
         customDialog.setCancelable(false)
 
-        closeImg.setOnClickListener(View.OnClickListener {
+        closeImg.setOnClickListener {
             if (isRecording) {
                 if (isPauseResume) {
                     isPauseResume = false
@@ -456,8 +451,8 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
             }
             customDialog.dismiss()
-        })
-        imageSingle!!.setImageResource(R.drawable.dieimage)
+        }
+        imageSingle!!.setImageResource(R.drawable.dieimage1)
 
        /* Glide.with(this@VideoRecordActivity)
             .load("https://sample-videos.com/img/Sample-jpg-image-50kb.jpg")
@@ -519,19 +514,19 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(CAMERA_PERMISSION),
-            RC_PERMISSION
+            arrayOf(CAMERAPERMISSIONOPTION),
+            CAMERAPERMISSIONCODE
         )
     }
 
     private fun checkPermissions(): Boolean {
         return ((ActivityCompat.checkSelfPermission(
             this,
-            CAMERA_PERMISSION
+            CAMERAPERMISSIONOPTION
         )) == PackageManager.PERMISSION_GRANTED
                 && (ActivityCompat.checkSelfPermission(
             this,
-            CAMERA_PERMISSION
+            CAMERAPERMISSIONOPTION
         )) == PackageManager.PERMISSION_GRANTED)
     }
 
@@ -542,7 +537,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            RC_PERMISSION -> {
+            CAMERAPERMISSIONCODE -> {
                 var allPermissionsGranted = false
                 for (result in grantResults) {
                     if (result != PackageManager.PERMISSION_GRANTED) {
@@ -553,7 +548,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     }
                 }
                 if (allPermissionsGranted) {
-                    surface_view!!.surfaceTextureListener = this
+                    surfaceView!!.surfaceTextureListener = this
                 } else {
                     showCustomAlert(
                         this@VideoRecordActivity.resources.getString(R.string.permissions_alert_title),
@@ -666,6 +661,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
 
     }
 
+    @SuppressLint("StaticFieldLeak")
     inner class MediaPrepareTask : AsyncTask<Void, Void, Boolean>() {
         override fun onPreExecute() {
             super.onPreExecute()
@@ -743,7 +739,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             val mSupportedVideoSizes = parameters!!.supportedVideoSizes
             val optimalSize: Camera.Size? = CameraHelper.getOptimalVideoSize(
                 mSupportedVideoSizes,
-                mSupportedPreviewSizes, surface_view!!.width, surface_view!!.height
+                mSupportedPreviewSizes, surfaceView!!.width, surfaceView!!.height
             )
 
             profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
@@ -762,7 +758,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             mCamera!!.parameters = parameters
 
             mCamera!!.setPreviewTexture(p0)
-            surface_view!!.alpha = 1.0f
+            surfaceView!!.alpha = 1.0f
             mCamera!!.startPreview()
 
             val optimalSize1: Camera.Size? = mCamera!!.parameters.previewSize
@@ -957,6 +953,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         DialogUtils.showCustomAlert(this, customDialogModel, this, functionality)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
         if (buttonName.equals(
                 this@VideoRecordActivity.resources.getString(R.string.alert_exit),
@@ -1042,7 +1039,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, typeStr)
                 editor.apply()
 
-                dieTypeTxt!!.text = "Die Type: " + typeStr.uppercase(Locale.getDefault())
+                dieTypeTxt!!.text = this@VideoRecordActivity.resources.getString(R.string.die_type)+ typeStr.uppercase(Locale.getDefault())
                 videoOnlineImageButton!!.visibility = View.VISIBLE
             }
         } else if (buttonName.equals(
@@ -1058,7 +1055,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, typeStr)
                 editor.apply()
 
-                dieTypeTxt!!.text = "Die Type: " + typeStr.uppercase(Locale.getDefault())
+                dieTypeTxt!!.text =this@VideoRecordActivity.resources.getString(R.string.die_type) + typeStr.uppercase(Locale.getDefault())
                 videoOnlineImageButton!!.visibility = View.VISIBLE
 
             }
@@ -1074,7 +1071,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, typeStr)
                 editor.apply()
 
-                dieTypeTxt!!.text = "Die Type: " + typeStr.uppercase(Locale.getDefault())
+                dieTypeTxt!!.text = this@VideoRecordActivity.resources.getString(R.string.die_type)+ typeStr.uppercase(Locale.getDefault())
                 videoOnlineImageButton!!.visibility = View.VISIBLE
 
             }
@@ -1091,7 +1088,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 editor.putString(CommonUtils.SAVE_DIE_TYPE, typeStr)
                 editor.apply()
 
-                dieTypeTxt!!.text = "Die Type: " + typeStr.uppercase(Locale.getDefault())
+                dieTypeTxt!!.text = this@VideoRecordActivity.resources.getString(R.string.die_type)+ typeStr.uppercase(Locale.getDefault())
                 videoOnlineImageButton!!.visibility = View.VISIBLE
 
             }

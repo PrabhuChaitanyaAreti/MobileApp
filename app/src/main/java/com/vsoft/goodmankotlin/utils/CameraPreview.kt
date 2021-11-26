@@ -1,5 +1,6 @@
 package com.vsoft.goodmankotlin.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.hardware.Camera
 import android.util.Log
@@ -11,6 +12,7 @@ import java.io.IOException
 import kotlin.math.abs
 
 
+@SuppressLint("ViewConstructor")
 class CameraPreview(context: Context?, camera: Camera?) :
     SurfaceView(context), SurfaceHolder.Callback {
     private val mHolder: SurfaceHolder

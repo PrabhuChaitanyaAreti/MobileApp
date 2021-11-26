@@ -1,5 +1,8 @@
+@file:Suppress("ControlFlowWithEmptyBody")
+
 package com.vsoft.goodmankotlin
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -9,6 +12,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
@@ -38,7 +42,7 @@ import java.util.*
 
 class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback {
     private lateinit var addDie: LinearLayout
-    private lateinit var sync: LinearLayout
+    private lateinit var sync: RelativeLayout
     private lateinit var skip: LinearLayout
     private lateinit var logout: LinearLayout
     private lateinit var syncDie: LinearLayout
@@ -61,6 +65,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         init()
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun init() {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -158,10 +163,10 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         try {
             val videosList = vm.getVideos()
             videosList.forEach {
-                val fileSize: File = File(it.video_path)
-                if (!(fileSize.length() > 0)) {
-                    val file_size_kb = fileSize.length() / 1024
-                    val file_size_mb = (fileSize.length() / 1024) / 1024
+                val fileSize = File(it.video_path)
+                if (fileSize.length() <= 0) {
+                    val fileSizeKB = fileSize.length() / 1024
+                    val fileSizeMB = (fileSize.length() / 1024) / 1024
                     it.status = true
                     val status: Int = vm.update(it)
                 }
@@ -366,13 +371,13 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID, item.part_id)
             jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM, item.die_top_bottom)
 
-            if (item.operator_id.equals("Unknown")) {
+            if (item.operator_id == "Unknown") {
                 jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID, "Operator 1")
             } else {
                 jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID, item.operator_id)
             }
 
-            if (item.user_id.equals("Unknown")) {
+            if (item.user_id == "Unknown") {
                 jsonObject.addProperty(
                     CommonUtils.SYNC_VIDEO_API_USER_ID,
                     sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
@@ -387,10 +392,10 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
             val jsonString = gson.toJson(jsonObject)
 
-            val fileSize: File = File(path)
+            val fileSize = File(path)
             if (fileSize.length() > 0) {
-                val file_size_kb = fileSize.length() / 1024
-                val file_size_mb = (fileSize.length() / 1024) / 1024
+                val fileSizeKB = fileSize.length() / 1024
+                val fileSizeMB = (fileSize.length() / 1024) / 1024
                 val rootFolder: File? = context.getExternalFilesDir(null)
                 val jsonFile = File(rootFolder, "post.json")
                 val writer = FileWriter(jsonFile)
@@ -442,27 +447,30 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     response: Response<VideoUploadSaveResponse?>
                 ) {
                     try {
-                        val statusCode = response.body()!!.statusCode
-                        if (statusCode == 200) {
-                            runOnUiThread {
-                                CommonUtils.deletePath(item.video_path)
-                                vm.delete(item)
-                                sync()
+                        when (response.body()!!.statusCode) {
+                            200 -> {
+                                runOnUiThread {
+                                    CommonUtils.deletePath(item.video_path)
+                                    vm.delete(item)
+                                    sync()
+                                }
                             }
-                        } else if (statusCode == 401) {
-                            runOnUiThread {
-                                CommonUtils.deletePath(item.video_path)
-                                vm.delete(item)
-                                sync()
+                            401 -> {
+                                runOnUiThread {
+                                    CommonUtils.deletePath(item.video_path)
+                                    vm.delete(item)
+                                    sync()
+                                }
                             }
-                        } else {
-                            --currentIndex
-                            runOnUiThread {
-                                showCustomAlert(
-                                    this@DashBoardActivity.resources.getString(R.string.api_server_alert_message),
-                                    CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401,
-                                    listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
-                                )
+                            else -> {
+                                --currentIndex
+                                runOnUiThread {
+                                    showCustomAlert(
+                                        this@DashBoardActivity.resources.getString(R.string.api_server_alert_message),
+                                        CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401,
+                                        listOf(this@DashBoardActivity.resources.getString(R.string.alert_ok))
+                                    )
+                                }
                             }
                         }
                         if (progressDialog != null) {
@@ -484,7 +492,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 override fun onFailure(call: Call<VideoUploadSaveResponse?>, t: Throwable) {
                     val str =
                         "" + BuildConfig.VERSION_CODE + "(" + BuildConfig.VERSION_NAME + ")" + "" + t.printStackTrace() + "" + t.toString() + "" + t.localizedMessage
-                    Analytics.trackEvent("Sync Video: $str");
+                    Analytics.trackEvent("Sync Video: $str")
                     --currentIndex
                     runOnUiThread {
                         if (t.localizedMessage.equals("timeout", true)) {

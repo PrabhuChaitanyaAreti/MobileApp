@@ -1,6 +1,7 @@
 package com.vsoft.goodmankotlin
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -25,6 +26,7 @@ import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity(), CustomDialogCallback {
 
     private var sharedPreferences: SharedPreferences? = null

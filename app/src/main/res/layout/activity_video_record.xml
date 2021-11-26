@@ -40,6 +40,7 @@
                 android:id="@+id/videoOnlineImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
                 android:src="@drawable/video_record_start_new"
                 android:visibility="visible" />
 
@@ -47,6 +48,7 @@
                 android:id="@+id/videoRecordPlayPause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
                 android:src="@drawable/video_record_play"
                 android:visibility="visible" />
 
@@ -146,7 +148,7 @@
             android:layout_height="120dp"
             android:visibility="visible"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/dieimage"/>
+            android:src="@drawable/dieimage1"/>
 
     </RelativeLayout>
 

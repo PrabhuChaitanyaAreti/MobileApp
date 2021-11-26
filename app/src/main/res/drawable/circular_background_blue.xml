@@ -7,9 +7,9 @@
         android:height="30dp"
         android:width="30dp" />
 
-    <solid android:color="@color/daikin_fill"/>
+    <solid android:color="@color/new_daikin_blue_color"/>
 
     <stroke
         android:width="2dp"
-        android:color="@color/daikin_fill"/>
+        android:color="@color/new_daikin_blue_color"/>
 </shape>

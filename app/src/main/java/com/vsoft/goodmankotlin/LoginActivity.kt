@@ -1,6 +1,9 @@
+@file:Suppress("ControlFlowWithEmptyBody")
+
 package com.vsoft.goodmankotlin
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -68,6 +71,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         progressDialog.setMessage(this@LoginActivity.resources.getString(R.string.progress_dialog_message_login))
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
         empIdEditText.setOnTouchListener(this)
         pinEditText.setOnTouchListener(this)
@@ -81,6 +85,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         if (view === empIdEditText) {
             empIdEditText.isFocusable = true

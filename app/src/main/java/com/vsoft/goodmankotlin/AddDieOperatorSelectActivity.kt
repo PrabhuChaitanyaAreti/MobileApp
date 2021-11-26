@@ -1,3 +1,5 @@
+@file:Suppress("ControlFlowWithEmptyBody")
+
 package com.vsoft.goodmankotlin
 
 import android.app.Activity
@@ -92,7 +94,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             dieTypeSpinner.visibility = View.GONE
         }
 
-        mainLyt.setOnClickListener(View.OnClickListener { hideSoftKeyboard(this@AddDieOperatorSelectActivity) })
+        mainLyt.setOnClickListener { hideSoftKeyboard(this@AddDieOperatorSelectActivity) }
 
         dieBT.setOnClickListener { showUnitOfMeasureSpinnerList(CommonUtils.OPERATOR_SELECTION_DIE_ID) }
 
@@ -111,10 +113,10 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             }
         }
 
-        btnContinue.setOnClickListener(View.OnClickListener {
-            val dieIdStr = dieBT!!.text.toString()
-            val partIdStr = partBT!!.text.toString()
-            if (dieBT?.text.toString().isEmpty()) {
+        btnContinue.setOnClickListener {
+            val dieIdStr = dieBT.text.toString()
+            val partIdStr = partBT.text.toString()
+            if (dieBT.text.toString().isEmpty()) {
                 runOnUiThread {
                     if (!isFinishing) {
                         showCustomAlert(
@@ -125,7 +127,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                         )
                     }
                 }
-            } else if (partBT?.text.toString().isEmpty()) {
+            } else if (partBT.text.toString().isEmpty()) {
                 runOnUiThread {
                     if (!isFinishing) {
                         showCustomAlert(
@@ -186,7 +188,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                     )
                 }
             } else {
-                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                val editor: SharedPreferences.Editor = sharedPreferences.edit()
                 editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
                 editor.putString(CommonUtils.SAVE_DIE_ID, dieIdStr)
                 editor.putString(CommonUtils.SAVE_PART_ID, partIdStr)
@@ -204,7 +206,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 startActivity(mainIntent)
                 //finish();
             }
-        })
+        }
     }
 
     private fun showUnitOfMeasureSpinnerList(dataFrom: String) {
@@ -231,7 +233,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                         val dieIdItem = iterator.next()
                         if (dieIdItem.dieId.equals(dieBT.text.toString())) {
                             val partIdList = dieIdItem.partId
-                            val partIdListIterator = partIdList!!.listIterator()
+                            val partIdListIterator = partIdList.listIterator()
                             while (partIdListIterator.hasNext()) {
                                 val partIdItem = partIdListIterator.next()
                                 dataModels.add(ChoiceListOperator(partIdItem))
@@ -241,9 +243,9 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                     }
                 }
             }
-            val nameSpinnerAdapter: NameListSpinnerAdapter = NameListSpinnerAdapter(
+            val nameSpinnerAdapter = NameListSpinnerAdapter(
                 this,
-                dataModels, dataFrom
+                dataModels
             )
             spinnerList.adapter = nameSpinnerAdapter
             searchET = dialogLayout.findViewById(R.id.search_et)
@@ -326,7 +328,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             closeSpinnerPopup.setOnClickListener { customAlertDialogSpinner.dismiss() }
             searchET.addTextChangedListener(object : TextWatcher {
                 override fun onTextChanged(cs: CharSequence, arg1: Int, arg2: Int, arg3: Int) {
-                    if (searchET?.text.toString() != "") { //if edittext include text
+                    if (searchET.text.toString() != "") { //if edittext include text
                         buttonSelect.visibility = View.VISIBLE
                     }
                     nameSpinnerAdapter.filter.filter(cs.toString())
@@ -351,8 +353,7 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
 
     inner class NameListSpinnerAdapter(
         var context: Context,
-        var spinnerData: List<ChoiceListOperator>,
-        var dataFrom: String
+        var spinnerData: List<ChoiceListOperator>
     ) : BaseAdapter(), Filterable {
         var spinnerDataFiltered: List<ChoiceListOperator> = spinnerData
         override fun getCount(): Int {
@@ -446,10 +447,10 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 //No action required. Just exit dialog.
             } else if (functionality.equals(CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG, true)) {
                 //No action required. Just exit dialog.
-            } else if (functionality.equals(CommonUtils.VALIDATION_ALERT_DIE_ID_SELECT_DIALOG_NOT_AVAILABLE)) {
+            } else if (functionality == CommonUtils.VALIDATION_ALERT_DIE_ID_SELECT_DIALOG_NOT_AVAILABLE) {
                 dieBT.text = ""
                 partBT.text = ""
-            } else if (functionality.equals(CommonUtils.VALIDATION_ALERT_PART_ID_SELECT_DIALOG_NOT_AVAILABLE)) {
+            } else if (functionality == CommonUtils.VALIDATION_ALERT_PART_ID_SELECT_DIALOG_NOT_AVAILABLE) {
                 partBT.text = ""
             }
         }

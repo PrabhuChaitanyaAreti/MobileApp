@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -77,10 +76,10 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
-      /*  val displaymetrics = DisplayMetrics()
-        this@CameraActivity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics)
-        screenHeight = displaymetrics.heightPixels
-        screenWidth = displaymetrics.widthPixels
+      /*  val displayMetrics = DisplayMetrics()
+        this@CameraActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics)
+        screenHeight = displayMetrics.heightPixels
+        screenWidth = displayMetrics.widthPixels
 
         Log.d(
             "TAG",
@@ -351,7 +350,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
         builder.setTitle(this@CameraActivity.resources.getString(R.string.app_name))
             .setMessage("Are you sure to want to go ReCapture?")
-            .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
+            .setPositiveButton("Yes") { dialog, which ->
                 if (counter != null) {
                     counter!!.cancel()
                     counter = null
@@ -367,8 +366,8 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                 mPicture = getPictureCallback()
                 mPreview!!.refreshCamera(mCamera)
                 dialog.dismiss()
-            })
-            .setNegativeButton("No", DialogInterface.OnClickListener { dialog, which -> }).show()
+            }
+            .setNegativeButton("No") { dialog, which -> }.show()
     }
 
    /* fun showDialog() {
