@@ -1,3 +1,5 @@
+@file:Suppress("ControlFlowWithEmptyBody")
+
 package com.vsoft.goodmankotlin
 
 import android.app.Activity
@@ -6,7 +8,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.widget.*
 import com.google.gson.Gson
@@ -22,9 +23,7 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
     private lateinit var btnContinue: Button
     private var responses: List<String> = java.util.ArrayList()
     private var isNewDie = false
-
     private lateinit var sharedPreferences: SharedPreferences
-
     private var isDieDataAvailable = false
     private var operatorsData = ""
     private var dieDataSyncTime = ""
@@ -35,7 +34,6 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
         setContentView(R.layout.activity_operator_select)
 
         isNewDie = intent.getBooleanExtra(CommonUtils.IS_NEW_DIE, false)
-        Log.e("isNewDie", "" + isNewDie)
 
         sharedPreferences = this.getSharedPreferences(
             CommonUtils.SHARED_PREF_FILE,
@@ -49,16 +47,8 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
         operatorsData = sharedPreferences.getString(CommonUtils.OPERATORS_DATA, "").toString()
         dieDataSyncTime = sharedPreferences.getString(CommonUtils.DIE_DATA_SYNC_TIME, "").toString()
 
-        Log.d(
-            "TAG",
-            "OperatorSelectActivity  sharedPreferences  isDieDataAvailable $isDieDataAvailable"
-        )
-        Log.d("TAG", "OperatorSelectActivity  sharedPreferences  operatorsData $operatorsData")
-        Log.d(
-            "TAG",
-            "OperatorSelectActivity  sharedPreferences  dieDataSyncTime $dieDataSyncTime"
-        )
         val dataModels: ArrayList<String> = ArrayList()
+        dataModels.add("Select Operator")
 
         if (isDieDataAvailable) {
             val gson = Gson()
@@ -67,37 +57,34 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
             responses = operatorList.operatorlist
 
             val iterator = responses.listIterator()
-            while (iterator.hasNext()){
-                val item=iterator.next()
+            while (iterator.hasNext()) {
+                val item = iterator.next()
                 dataModels.add("Operator $item")
             }
-
+        }else{
+            dataModels.add("Operator 1")
+            dataModels.add("Operator 2")
+            dataModels.add("Operator 3")
+            dataModels.add("Operator 4")
+            dataModels.add("Operator 5")
+            dataModels.add("Operator 6")
+            dataModels.add("Operator 7")
+            dataModels.add("Operator 8")
+            dataModels.add("Operator 9")
+            dataModels.add("Operator 10")
+        }
 
         operatorListSpinner = findViewById(R.id.operatorListSpinner)
 
-    /*    val dataModels: ArrayList<String> = ArrayList()
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_0)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_1)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_2)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_3)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_4)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_5)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_6)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_7)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_8)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_9)
-        dataModels.add(CommonUtils.OPERATOR_SELECTION_10)*/
-
-        val langAdapter1 = ArrayAdapter<String>(
+        val langAdapter1 = ArrayAdapter(
             this@OperatorSelectActivity,
             R.layout.spinner_text,
             dataModels
         )
         langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
         operatorListSpinner.adapter = langAdapter1
-        }
 
-        btnContinue.setOnClickListener(View.OnClickListener {
+        btnContinue.setOnClickListener {
             operatorStr = operatorListSpinner.selectedItem.toString()
             if (operatorStr.isNotEmpty() && !TextUtils.isEmpty(operatorStr) && operatorStr != "null") {
                 if (operatorStr.contains(CommonUtils.ADD_DIE_SELECT)) {
@@ -108,7 +95,6 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
                         listOf(this@OperatorSelectActivity.resources.getString(R.string.alert_ok))
                     )
                 } else {
-                    Log.d("TAG", "AddDieActivity   operatorStr $operatorStr")
                     val editor: SharedPreferences.Editor = sharedPreferences.edit()
                     editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
                     editor.apply()
@@ -121,13 +107,15 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
                     mainIntent.putExtra(CommonUtils.IS_NEW_DIE, isNewDie)
                     startActivity(mainIntent)
                 }
-            }else{
-                showCustomAlert(this@OperatorSelectActivity.resources.getString(R.string.app_name),
-                    this@OperatorSelectActivity.resources.getString(R.string.op_se_alert_message_select_operator),CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
-                    listOf(this@OperatorSelectActivity.resources.getString(R.string.alert_ok)))
+            } else {
+                showCustomAlert(
+                    this@OperatorSelectActivity.resources.getString(R.string.app_name),
+                    this@OperatorSelectActivity.resources.getString(R.string.op_se_alert_message_select_operator),
+                    CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
+                    listOf(this@OperatorSelectActivity.resources.getString(R.string.alert_ok))
+                )
             }
         }
-            )
     }
 
     private fun showCustomAlert(
@@ -144,10 +132,6 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
     }
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
-        Log.d(
-            "",
-            "onCustomDialogButtonClicked buttonName::: $buttonName:::: functionality:::: $functionality"
-        )
         if (buttonName.equals(
                 this@OperatorSelectActivity.resources.getString(R.string.alert_ok),
                 true

@@ -1,6 +1,9 @@
+@file:Suppress("ControlFlowWithEmptyBody")
+
 package com.vsoft.goodmankotlin
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -32,6 +35,7 @@ import retrofit2.Response
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchListener,
     CustomDialogCallback {
+
     private lateinit var loginButton: Button
     private lateinit var empIdEditText: EditText
     private lateinit var pinEditText: EditText
@@ -65,10 +69,9 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         progressDialog = ProgressDialog(this)
         progressDialog.setCancelable(false)
         progressDialog.setMessage(this@LoginActivity.resources.getString(R.string.progress_dialog_message_login))
-
-
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
         empIdEditText.setOnTouchListener(this)
         pinEditText.setOnTouchListener(this)
@@ -82,6 +85,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         if (view === empIdEditText) {
             empIdEditText.isFocusable = true
@@ -102,14 +106,23 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                     if (pinStr!!.length == pinMaxDigits) {
                         screenNavigationWithPermissions()
                     } else {
-                        validationAlert(this.resources.getString(R.string.login_pin_validation_message), listOf(this.resources.getString(R.string.alert_ok)))
+                        validationAlert(
+                            this.resources.getString(R.string.login_pin_validation_message),
+                            listOf(this.resources.getString(R.string.alert_ok))
+                        )
                     }
                 } else {
-                    validationAlert(this.resources.getString(R.string.login_password_validation_message_empty), listOf(this.resources.getString(R.string.alert_ok)))
+                    validationAlert(
+                        this.resources.getString(R.string.login_password_validation_message_empty),
+                        listOf(this.resources.getString(R.string.alert_ok))
+                    )
                 }
             } else {
                 if (empIdStr.length < minEmpIdDigits) {
-                    validationAlert(this.resources.getString(R.string.login_username_validation_message_min), listOf(this.resources.getString(R.string.alert_ok)))
+                    validationAlert(
+                        this.resources.getString(R.string.login_username_validation_message_min),
+                        listOf(this.resources.getString(R.string.alert_ok))
+                    )
                 } else {
                     validationAlert(
                         this.resources.getString(R.string.login_username_validation_message_range),
@@ -154,14 +167,18 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                             editor.putString(CommonUtils.LOGIN_USER_ID, userId)
                             editor.apply()
                             navigateToDashBoard()
-                        } else if (statusCode == 400||statusCode == 401) {
+                        } else if (statusCode == 400 || statusCode == 401) {
                             showCustomAlert(
                                 this@LoginActivity.resources.getString(R.string.login_alert_message),
                                 CommonUtils.WEB_SERVICE_RESPONSE_CODE_401,
                                 listOf(this@LoginActivity.resources.getString(R.string.alert_ok))
                             )
                         } else {
-                            showCustomAlert(this@LoginActivity.resources.getString(R.string.api_server_alert_message), CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, listOf(this@LoginActivity.resources.getString(R.string.alert_ok)))
+                            showCustomAlert(
+                                this@LoginActivity.resources.getString(R.string.api_server_alert_message),
+                                CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401,
+                                listOf(this@LoginActivity.resources.getString(R.string.alert_ok))
+                            )
                         }
                         if (progressDialog.isShowing) {
                             progressDialog.dismiss()

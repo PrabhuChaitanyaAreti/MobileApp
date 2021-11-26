@@ -57,7 +57,7 @@ class CommonUtils {
         const val SHARED_PREF_FILE = "goodman_shared_preference"
         const val APP_CENTER_ANALYTICS_SECRET_KEY="41d26db7-77ac-4c92-bc27-5910ea601d14"
         const val LOGIN_STATUS="loginStatus"
-        const val SPLASH_DURATION=1*1000
+        const val SPLASH_DURATION=5*1000
 
         const val LOGIN_USER_ID="login_user_id"
 
@@ -103,18 +103,6 @@ class CommonUtils {
 
         const val OPERATOR_SELECTION_DIE_ID="DieID"
         const val OPERATOR_SELECTION_PART_ID="PartID"
-
-        const val OPERATOR_SELECTION_0="Select Operator"
-        const val OPERATOR_SELECTION_1="Operator1"
-        const val OPERATOR_SELECTION_2="Operator2"
-        const val OPERATOR_SELECTION_3="Operator3"
-        const val OPERATOR_SELECTION_4="Operator4"
-        const val OPERATOR_SELECTION_5="Operator5"
-        const val OPERATOR_SELECTION_6="Operator6"
-        const val OPERATOR_SELECTION_7="Operator7"
-        const val OPERATOR_SELECTION_8="Operator8"
-        const val OPERATOR_SELECTION_9="Operator9"
-        const val OPERATOR_SELECTION_10="Operator10"
 
         const val RESPONSE="response"
 
@@ -188,7 +176,7 @@ class CommonUtils {
         )
     }
 
-     private fun getAvailableInternalMemorySize(): String? {
+     private fun getAvailableInternalMemorySize(): String {
         val path: File = Environment.getDataDirectory()
         val stat = StatFs(path.path)
         val blockSize = stat.blockSizeLong
@@ -196,15 +184,8 @@ class CommonUtils {
         return formatSize(availableBlocks * blockSize)
     }
 
-    fun getTotalInternalMemorySize(): String? {
-        val path: File = Environment.getDataDirectory()
-        val stat = StatFs(path.path)
-        val blockSize = stat.blockSizeLong
-        val totalBlocks = stat.blockCountLong
-        return formatSize(totalBlocks * blockSize)
-    }
 
-     private fun getAvailableExternalMemorySize(): String? {
+     private fun getAvailableExternalMemorySize(): String {
         return if (externalMemoryAvailable()) {
             val path: File = Environment.getExternalStorageDirectory()
             val stat = StatFs(path.path)
@@ -216,17 +197,7 @@ class CommonUtils {
         }
     }
 
-    fun getTotalExternalMemorySize(): String? {
-        return if (externalMemoryAvailable()) {
-            val path: File = Environment.getExternalStorageDirectory()
-            val stat = StatFs(path.path)
-            val blockSize = stat.blockSizeLong
-            val totalBlocks = stat.blockCountLong
-            formatSize(totalBlocks * blockSize)
-        } else {
-            "10"
-        }
-    }
+
 
      private fun formatSize(size: Long): String {
         var size = size
@@ -251,13 +222,13 @@ class CommonUtils {
 
     fun checkMemory(): Boolean {
         var isMemory = false
-        val internalMemory: String? = getAvailableInternalMemorySize()
-        val externalMemory: String? = getAvailableExternalMemorySize()
+        val internalMemory: String = getAvailableInternalMemorySize()
+        val externalMemory: String = getAvailableExternalMemorySize()
         println(" checkMemory internalMemory *** $internalMemory")
         println("  checkMemory externalMemory *** $externalMemory")
-        if (!internalMemory!!.contains("KB") || !externalMemory!!.contains("KB")) {
+        if (!internalMemory.contains("KB") || !externalMemory.contains("KB")) {
             var internalMemory1 = internalMemory.replace("MB".toRegex(), "")
-            var externalMemory1 = externalMemory!!.replace("MB".toRegex(), "")
+            var externalMemory1 = externalMemory.replace("MB".toRegex(), "")
             if (internalMemory1.contains(",")) {
                 internalMemory1 = internalMemory1.replace(",".toRegex(), "")
             }
@@ -299,8 +270,8 @@ class CommonUtils {
     }
 
     fun appExit(activity: Activity){
-    activity.finishAffinity();
-    exitProcess(0)
+    activity.finishAffinity()
+        exitProcess(0)
 }
     }
 

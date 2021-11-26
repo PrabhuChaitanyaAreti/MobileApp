@@ -1,5 +1,8 @@
+@file:Suppress("ControlFlowWithEmptyBody")
+
 package com.vsoft.goodmankotlin
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -9,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.util.Base64
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -26,7 +28,6 @@ import com.vsoft.goodmankotlin.interfaces.RightMenuItemClickCallBack
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.model.LeftMenuDataModel
 import com.vsoft.goodmankotlin.model.RightMenuDataModel
-import com.vsoft.goodmankotlin.model.UniqueResults
 import com.vsoft.goodmankotlin.utils.CommonUtils
 import com.vsoft.goodmankotlin.utils.DialogUtils
 import com.vsoft.goodmankotlin.video_response.*
@@ -81,7 +82,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         leftSideMenu = findViewById(R.id.leftMenuRecycler)
         rightSideMenu = findViewById(R.id.rightMenuRecycler)
         context = this
-        loadLeftSidemenu()
+        loadLeftSideMenu()
         try {
             sharedPreferences = this.getSharedPreferences(
                 CommonUtils.SHARED_PREF_FILE,
@@ -92,9 +93,6 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
             partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
             dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
 
-            Log.d("TAG", "MaskingActivity  sharedPreferences  dieIdStr $dieIdStr")
-            Log.d("TAG", "MaskingActivity sharedPreferences  partIdStr $partIdStr")
-            Log.d("TAG", "MaskingActivity sharedPreferences  dieTypeStr $dieTypeStr")
 
             if (sharedPreferences!!.contains(CommonUtils.RESPONSE)) {
                 val gson = Gson()
@@ -116,6 +114,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         initMaskData(videoAnnotationResponse)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.FROYO)
     private fun populateImageView(base64Image: String, imageWidth: Int, imageHeight: Int) {
         val layoutParams = FrameLayout.LayoutParams(imageWidth, imageHeight)
@@ -139,7 +138,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         uniqueMissedShapes = arrayListOf()
         uniqueIncorrectShapes = arrayListOf()
         uniqueUndetectedShapes = arrayListOf()
-        shapes.addAll(videoAnnotationResponse.gt?.shapes!!)
+        shapes.addAll(videoAnnotationResponse.gt.shapes)
         uniqueShapes.addAll(videoAnnotationResponse.unique_results)
         if (shapes.size > 0) {
             if (shapes.size == uniqueResults.size) {
@@ -187,9 +186,9 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
 
     fun drawMask() {
         populateImageView(
-            response.gt?.gt_image!!,
-            response.gt?.gt_image_width!!,
-            response.gt?.gt_image_height!!
+            response.gt.gt_image,
+            response.gt.gt_image_width,
+            response.gt.gt_image_height
         )
         shapesToBeDisplayed = ArrayList()
         uniqueDiesDisplayed = ArrayList()
@@ -219,14 +218,19 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
                 val paintLine = Paint()
                 val paintLabel = Paint()
                 paintLine.strokeWidth = 8f
-                if (incorrectShapes.contains(shapesToBeDisplayed[i])) {
-                    paintLine.color = resources.getColor(R.color.in_correct_punch_color)
-                } else if (missedShapes.contains(shapesToBeDisplayed[i])) {
-                    paintLine.color = resources.getColor(R.color.missed_punch_color)
-                } else if (undetectedShapes.contains(shapesToBeDisplayed[i])) {
-                    paintLine.color = resources.getColor(R.color.un_detected_punch_color)
-                } else {
-                    paintLine.color = Color.GREEN
+                when {
+                    incorrectShapes.contains(shapesToBeDisplayed[i]) -> {
+                        paintLine.color = resources.getColor(R.color.in_correct_punch_color)
+                    }
+                    missedShapes.contains(shapesToBeDisplayed[i]) -> {
+                        paintLine.color = resources.getColor(R.color.missed_punch_color)
+                    }
+                    undetectedShapes.contains(shapesToBeDisplayed[i]) -> {
+                        paintLine.color = resources.getColor(R.color.un_detected_punch_color)
+                    }
+                    else -> {
+                        paintLine.color = Color.GREEN
+                    }
                 }
                 paintLine.style = Paint.Style.STROKE
                 paintLabel.strokeWidth = 8f
@@ -234,34 +238,38 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
                 paintLabel.color = Color.WHITE
                 paintLabel.isFakeBoldText = true
                 paintLabel.textAlign = Paint.Align.CENTER
-                val x = shapesToBeDisplayed[i].gt_points?.x
-                val y = shapesToBeDisplayed[i].gt_points?.y
-                if (x?.size == y?.size) {
-                    for (j in x!!.indices) {
-                        if (j == 0) {
-                            path.moveTo(x[0].toFloat(), y!![0].toFloat())
-                        } else if (j == x.size - 1) {
-                            path.lineTo(x[j].toFloat(), y!![j].toFloat())
-                            path.close()
-                            canvas.drawPath(path, paintLine)
-                            val rectF = RectF()
-                            path.computeBounds(rectF, false)
-                            val r = Region()
-                            r.setPath(
-                                path, Region(
-                                    rectF.left.toInt(),
-                                    rectF.top.toInt(), rectF.right.toInt(), rectF.bottom.toInt()
+                val x = shapesToBeDisplayed[i].gt_points.x
+                val y = shapesToBeDisplayed[i].gt_points.y
+                if (x.size == y.size) {
+                    for (j in x.indices) {
+                        when (j) {
+                            0 -> {
+                                path.moveTo(x[0].toFloat(), y[0].toFloat())
+                            }
+                            x.size - 1 -> {
+                                path.lineTo(x[j].toFloat(), y[j].toFloat())
+                                path.close()
+                                canvas.drawPath(path, paintLine)
+                                val rectF = RectF()
+                                path.computeBounds(rectF, false)
+                                val r = Region()
+                                r.setPath(
+                                    path, Region(
+                                        rectF.left.toInt(),
+                                        rectF.top.toInt(), rectF.right.toInt(), rectF.bottom.toInt()
+                                    )
                                 )
-                            )
-                            regionArrayList.add(r)
-                            canvas.drawText(
-                                shapesToBeDisplayed[i].label_id!!,
-                                rectF.centerX(),
-                                rectF.centerY(),
-                                paintLabel
-                            )
-                        } else {
-                            path.lineTo(x[j].toFloat(), y!![j].toFloat())
+                                regionArrayList.add(r)
+                                canvas.drawText(
+                                    shapesToBeDisplayed[i].label_id,
+                                    rectF.centerX(),
+                                    rectF.centerY(),
+                                    paintLabel
+                                )
+                            }
+                            else -> {
+                                path.lineTo(x[j].toFloat(), y[j].toFloat())
+                            }
                         }
                         groundTruthImage.invalidate()
                     }
@@ -282,8 +290,8 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         return json
     }
 
-    private fun loadLeftSidemenu() {
-        //adding a layoutmanager
+    private fun loadLeftSideMenu() {
+        //adding a layoutManager
         leftSideMenu.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         //incorrectPunchesRecyclerView.addItemDecoration(new DividerItemDecoration(incorrectPunchesRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
         leftSideMenu.addItemDecoration(
@@ -332,6 +340,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         leftSideMenu.adapter = adapter
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun updateCountInRecyclerView(
         allShapesCount: Int,
         missedShapesCount: Int,
@@ -372,7 +381,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
             if (incorrectShapes.isNotEmpty()) {
                 for (i in incorrectShapes) {
                     val rightMenuDataModel =
-                        RightMenuDataModel(CommonUtils.INCORRECT_PUNCH, i.label_id!!)
+                        RightMenuDataModel(CommonUtils.INCORRECT_PUNCH, i.label_id)
                     rightMenuItems.add(rightMenuDataModel)
                 }
                 uniqueRightMenuShapes.addAll(uniqueIncorrectShapes)
@@ -380,7 +389,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
             if (missedShapes.isNotEmpty()) {
                 for (i in missedShapes) {
                     val rightMenuDataModel =
-                        RightMenuDataModel(CommonUtils.MISSED_PUNCH, i.label_id!!)
+                        RightMenuDataModel(CommonUtils.MISSED_PUNCH, i.label_id)
                     rightMenuItems.add(rightMenuDataModel)
                 }
                 uniqueRightMenuShapes.addAll(uniqueMissedShapes)
@@ -395,7 +404,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
                 item.isVisible = false
                 rightSideMenu.adapter = null
                 rightSideMenu.visibility = View.GONE
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 println(e.printStackTrace())
             }
         }
@@ -407,7 +416,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         menuInflater.inflate(R.menu.right_menu, menu)
         try {
             loadRightSideMenu(incorrectShapes, missedShapes)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return true
@@ -435,6 +444,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View?, motionEvent: MotionEvent?): Boolean {
         when (motionEvent?.action) {
             MotionEvent.ACTION_UP -> {
@@ -455,6 +465,7 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
     }
 
 
+    @SuppressLint("InflateParams")
     private fun displayClickedDieDetails(uniqueDiesDisplayed: Unique_results) {
         val inflater = layoutInflater
         val dialogView: View = inflater.inflate(R.layout.die_detail_dialog, null, false)
@@ -488,11 +499,11 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
         if (originalBitmap != null) {
             ivOriginalDie.setImageBitmap(originalBitmap)
         }
-        if (uniqueDiesDisplayed.correct == "false" && uniqueDiesDisplayed.prediction!!.trim()
+        if (uniqueDiesDisplayed.correct == "false" && uniqueDiesDisplayed.prediction.trim()
                 .equals(
                     this@MaskingActivity.resources.getString(R.string.punch),
                     true
-                ) && uniqueDiesDisplayed.ground_truth!!.trim()
+                ) && uniqueDiesDisplayed.ground_truth.trim()
                 .equals(this@MaskingActivity.resources.getString(R.string.no_punch), true)
         ) {
             //Incorrect Punch
@@ -500,11 +511,11 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
             instructions.visibility = View.VISIBLE
             instructions.text =
                 Html.fromHtml(this@MaskingActivity.resources.getString(R.string.instructions))
-        } else if (uniqueDiesDisplayed.correct == "false" && uniqueDiesDisplayed.prediction!!.trim()
+        } else if (uniqueDiesDisplayed.correct == "false" && uniqueDiesDisplayed.prediction.trim()
                 .equals(
                     this@MaskingActivity.resources.getString(R.string.no_punch),
                     true
-                ) && uniqueDiesDisplayed.ground_truth!!
+                ) && uniqueDiesDisplayed.ground_truth
                 .trim().equals(this@MaskingActivity.resources.getString(R.string.punch), true)
         ) {
             //Missed Punch

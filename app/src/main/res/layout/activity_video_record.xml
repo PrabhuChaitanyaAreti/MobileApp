@@ -40,6 +40,7 @@
                 android:id="@+id/videoOnlineImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
                 android:src="@drawable/video_record_start_new"
                 android:visibility="visible" />
 
@@ -47,12 +48,18 @@
                 android:id="@+id/videoRecordPlayPause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
                 android:src="@drawable/video_record_play"
                 android:visibility="visible" />
 
         </LinearLayout>
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/topRL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -85,6 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:gravity="center_horizontal"
         android:orientation="horizontal">
 
         <TextView
@@ -118,16 +126,32 @@
             android:textColor="@color/red"
             android:visibility="visible" />
 
+
+
+
+    </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/infoIconImgRL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_below="@+id/topRL"
+        android:visibility="visible">
+
         <ImageView
             android:id="@+id/infoIconImg"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="10dp"
-            android:visibility="gone"
+            android:layout_width="200dp"
+            android:layout_height="120dp"
+            android:visibility="visible"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/info"/>
-    </LinearLayout>
+            android:src="@drawable/dieimage1"/>
+
+    </RelativeLayout>
+
 
 </RelativeLayout>
 

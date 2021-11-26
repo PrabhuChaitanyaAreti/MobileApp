@@ -5,23 +5,22 @@
     android:layout_height="match_parent">
 
 
-
-
     <com.vsoft.goodmankotlin.touchimage.TouchImageView
         android:id="@+id/imageSingle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        />
+        android:scaleType="fitXY"
+        android:layout_centerInParent="true" />
 
     <ImageView
         android:id="@+id/closeImg"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:onClick="dismissListener"
         android:padding="5dp"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/close" />
 
 </RelativeLayout>

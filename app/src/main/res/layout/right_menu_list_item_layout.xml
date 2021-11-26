@@ -18,7 +18,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:src="@drawable/splashscreen"
+        android:src="@drawable/backgroung_img"
         android:text="-"
         app:layout_constraintBottom_toBottomOf="@+id/punchId"
         app:layout_constraintStart_toEndOf="@+id/punchId"

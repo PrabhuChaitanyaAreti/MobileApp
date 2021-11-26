@@ -1,5 +1,6 @@
 package com.vsoft.goodmankotlin.utils
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
@@ -28,7 +29,8 @@ class DialogUtils {
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
-        fun showCustomAlert(context: Context?,customDialogModel: CustomDialogModel,customDialogCallback: CustomDialogCallback,functionality:String){
+        @SuppressLint("UseCompatLoadingForDrawables")
+        fun showCustomAlert(context: Context?, customDialogModel: CustomDialogModel, customDialogCallback: CustomDialogCallback, functionality:String){
             val factory = LayoutInflater.from(context)
             val customDialogView: View = factory.inflate(R.layout.custom_dialog_layout, null)
             val customDialog = AlertDialog.Builder(context).create()
@@ -43,10 +45,22 @@ class DialogUtils {
                 val buttonListIterator = buttonsList.iterator()
                 while (buttonListIterator.hasNext()) run {
                     val button = Button(context)
-                    button.text = buttonListIterator.next()
+                   val str= buttonListIterator.next()
+                    if (context != null) {
+                        if(str == context.resources.getString(R.string.alert_cancel) ||
+                                str == context.resources.getString(R.string.alert_no)  ||
+                                str == context.resources.getString(R.string.alert_exit) ){
+                            button.background=context?.resources?.getDrawable(R.drawable.button_bg_red)
+                        }else{
+                            button.background=context?.resources?.getDrawable(R.drawable.button_bg)
+                        }
+                    }else{
+                        button.background=context?.resources?.getDrawable(R.drawable.button_bg)
+                    }
+                    button.text = str
                     button.setPadding(20,0,20,0)
                     button.setTextAppearance(context, R.style.TextAppearance_AppCompat_Medium)
-                    button.background=context?.resources?.getDrawable(R.drawable.button_bg)
+
                     button.setTextColor(Color.parseColor("#FFFFFF"))
                     button.isAllCaps=false
                     button.setOnClickListener {

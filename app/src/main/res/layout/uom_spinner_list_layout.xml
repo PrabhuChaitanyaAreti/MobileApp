@@ -7,8 +7,9 @@
 		android:id="@+id/close_uom_spinner_popup"
 		android:layout_width="20dp"
 		android:layout_height="20dp"
-		android:layout_gravity="right"
+		android:layout_gravity="end"
 		android:layout_margin="10dp"
+		android:contentDescription="@string/app_name"
 		android:background="@drawable/ic_clear_black_24dp" />
 	<LinearLayout
 		android:layout_width="match_parent"
