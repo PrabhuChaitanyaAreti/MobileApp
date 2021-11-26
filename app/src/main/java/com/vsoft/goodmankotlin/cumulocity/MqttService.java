@@ -13,10 +13,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.cumulocitydemo.DownloadController;
+import com.vsoft.goodmankotlin.BuildConfig;
 import com.vsoft.goodmankotlin.DashBoardActivity;
 import com.vsoft.goodmankotlin.R;
 import com.vsoft.goodmankotlin.utils.CommonUtils;
 import com.vsoft.goodmankotlin.utils.DialogUtils;
+import com.vsoft.goodmankotlin.utils.SharedPref;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
@@ -35,8 +37,8 @@ public class MqttService extends Service {
     String clientId;//
     String device_name;
     final String tenant      = "vsoftconsultingai";
-    final String username    = "rpittala@vsoftconsulting.com";
-    final String password    = "Ram@12345";
+    final String username    = "kvemulavada@vsoftconsulting.com";
+    final String password    = "Krishna@9";
     String appName="",appVersion="",appUrl="";
     static DownloadController downloadController=null;
     TextView tv_message;
@@ -54,6 +56,8 @@ public class MqttService extends Service {
 
         if(downloadController != null){
             downloadController.showInstallAPK();
+        }else {
+            Toast.makeText(activityContext, "New Version Not Available", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -171,32 +175,53 @@ public class MqttService extends Service {
                                   appName = appDetails[2];
                                   appVersion = appDetails[3];
                                   appUrl = appDetails[4];
+                                  int apkversion = Integer.parseInt(appVersion);
+                                  int versionCode = BuildConfig.VERSION_CODE;
 
-                                  //TODO --> check the current device app version and this version
+//                                  if(apkversion > versionCode) {
 
-                                  Log.i("INSTALL-MQTT","-----> "+appName+" : "+appVersion+" : "+appUrl);
 
-                                  downloadController=new DownloadController(activityContext,appUrl,appName+".apk",appVersion);
-                                  downloadController.enqueueDownload(new ApkDownloaderCallBack() {
-                                      @Override
-                                      public void onDownloadCompleted() {
-                                          try {
 
-                                              client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
-                                              client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
-                                              getDownloader();
-                                          } catch (MqttException e) {
-                                              e.printStackTrace();
+
+
+                                      //TODO --> check the current device app version and this version
+
+                                      Log.i("INSTALL-MQTT", "-----> " + appName + " : " + appVersion + " : " + appUrl);
+
+                                      downloadController = new DownloadController(activityContext, appUrl, appName + ".apk", appVersion);
+                                      downloadController.enqueueDownload(new ApkDownloaderCallBack() {
+                                          @Override
+                                          public void onDownloadCompleted() {
+                                              try {
+
+                                                  SharedPref.init(getApplicationContext());
+                                                  SharedPref.write(SharedPref.URI, appVersion.toString());
+//                                                  Toast.makeText(activityContext, "Success", Toast.LENGTH_SHORT).show();
+
+                                                  client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
+                                                  client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
+
+                                              } catch (MqttException e) {
+                                                  e.printStackTrace();
+                                              }
                                           }
-                                      }
 
-                                      @Override
-                                      public void onDownloadFailed() {
-                                          System.out.println("Download failed.");
-                                          //  client.publish("s/us", "502,c8y_SoftwareList,networkissue".getBytes(), QOS, false);
+                                          @Override
+                                          public void onDownloadFailed() {
+                                              System.out.println("Download failed.");
+                                              //  client.publish("s/us", "502,c8y_SoftwareList,networkissue".getBytes(), QOS, false);
 
-                                      }
-                                  });
+                                          }
+                                      });
+
+
+//                                  }else {
+//
+//                                      client.publish("s/us", "503,c8y_SoftwareList,Current app version is less then current version".getBytes(), QOS, false);
+//
+//                                  }
+
+
                               }else{
                                   client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
                               }

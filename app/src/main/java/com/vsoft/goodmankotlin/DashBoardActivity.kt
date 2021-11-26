@@ -38,6 +38,10 @@ import java.io.FileWriter
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import com.vsoft.goodmankotlin.utils.SharedPref
+
+
+
 
 class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback {
     private lateinit var addDie: LinearLayout
@@ -93,15 +97,14 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+ BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
 
 
-//         isDownload = (MqttService.getDownloader() as Nothing?).toString();
 
 
-        var isDownload = MqttService.getDownloader()
-        if(isDownload.contains("fail")){
-            download_latest_version.visibility = View.GONE
-        }else{
-            download_latest_version.visibility = View.VISIBLE
-        }
+//        var isDownload = MqttService.getDownloader()
+//        if(isDownload.contains("fail")){
+//            download_latest_version.visibility = View.GONE
+//        }else{
+//            download_latest_version.visibility = View.VISIBLE
+//        }
 
        val str="select * from video_table where status="+"'"+false+"'"
         Log.d("TAG", "strstrstrstr: $str")
@@ -172,13 +175,32 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
     override fun onResume() {
         super.onResume()
-       var isDownload = MqttService.getDownloader()
-        if(isDownload.contains("fail")){
-            download_latest_version.visibility = View.GONE
-        }else{
-            download_latest_version.visibility = View.VISIBLE
+
+        try {
+
+            SharedPref.init(getApplicationContext());
+
+            val isApkDonwloaded = SharedPref.read(SharedPref.IS_DOWNLOADED, false)
+            val apkVersion = SharedPref.read(SharedPref.APP_VERSION, null)
+            val versionCode = BuildConfig.VERSION_CODE
+//            val showInstallorNot = apkVersion.toInt() > versionCode
+
+//       var isDownload = MqttService.getDownloader()
+            if (isApkDonwloaded) {
+
+                download_latest_version.visibility = View.VISIBLE
+            } else {
+                download_latest_version.visibility = View.GONE
+            }
+        } catch (e: Exception) {
+
+            e.printStackTrace()
         }
+
     }
+
+
+
 
     private fun removeSyncVideos() {
         try {
@@ -285,6 +307,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
 
         if (v?.id == download_latest_version.id) {
+
+//            var isDownload = MqttService.getDownloader()
+
 
 
 
