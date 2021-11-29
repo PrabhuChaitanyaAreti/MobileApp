@@ -23,6 +23,8 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="new_daikin_blue_color">#168bb6</color>
+    <color name="new_daikin_blue_color_dark">#0E3442</color>
+    <color name="new_dashboard_daikin_blue_color">#e7f7fd</color>
 
 
 </resources>

@@ -9,6 +9,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.google.gson.Gson
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
@@ -19,6 +20,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class OperatorSelectActivity : Activity(), CustomDialogCallback {
+    private lateinit var mainLyt: LinearLayout
     private lateinit var operatorListSpinner: Spinner
     private lateinit var btnContinue: Button
     private var responses: List<String> = java.util.ArrayList()
@@ -84,6 +86,9 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
         langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
         operatorListSpinner.adapter = langAdapter1
 
+        mainLyt = findViewById(R.id.main_lyt)
+        mainLyt.setOnClickListener { AddDieOperatorSelectActivity.hideSoftKeyboard(this@OperatorSelectActivity) }
+
         btnContinue.setOnClickListener {
             operatorStr = operatorListSpinner.selectedItem.toString()
             if (operatorStr.isNotEmpty() && !TextUtils.isEmpty(operatorStr) && operatorStr != "null") {
@@ -141,6 +146,21 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
                 //No action required. Just exit dialog.
             } else if (functionality.equals(CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG, true)) {
                 //No action required. Just exit dialog.
+            }
+        }
+    }
+
+
+    companion object {
+        fun hideSoftKeyboard(activity: Activity) {
+            val inputMethodManager = activity.getSystemService(
+                INPUT_METHOD_SERVICE
+            ) as InputMethodManager
+            if (inputMethodManager.isAcceptingText) {
+                inputMethodManager.hideSoftInputFromWindow(
+                    activity.currentFocus!!.windowToken,
+                    0
+                )
             }
         }
     }

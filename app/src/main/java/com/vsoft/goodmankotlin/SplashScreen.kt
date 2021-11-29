@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
+import android.util.DisplayMetrics
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.karumi.dexter.Dexter
@@ -29,12 +31,25 @@ import com.vsoft.goodmankotlin.utils.DialogUtils
 @SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity(), CustomDialogCallback {
 
+    var screenWidth:Int = 0
+    var screenHeight:Int = 0
+
     private var sharedPreferences: SharedPreferences? = null
     private var userId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+
+        val displayMetrics = DisplayMetrics()
+        this@SplashScreen.windowManager.getDefaultDisplay().getMetrics(displayMetrics)
+        screenHeight = displayMetrics.heightPixels
+        screenWidth = displayMetrics.widthPixels
+
+        Log.d(
+            "TAG",
+            "SplashScreen device width and height " + screenWidth + "x" + screenHeight
+        )
 
         AppCenter.start(
             application, CommonUtils.APP_CENTER_ANALYTICS_SECRET_KEY,

@@ -28,17 +28,18 @@
                 <LinearLayout
                     android:id="@+id/skip"
                     android:layout_width="@dimen/dashboard_icon_radius"
-                    android:background="@drawable/new_verifydie"
+                    android:background="@drawable/new_circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
-                    <!--<ImageView
+                    android:layout_height="@dimen/dashboard_icon_radius"
+                    android:orientation="vertical">
+                   <ImageView
                         app:tint="@color/daikin_fill"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                        android:contentDescription="@string/app_name"
-                        android:src="@drawable/assign"/>
+                        android:src="@drawable/new_dashboard_verifydie"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -47,8 +48,8 @@
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
-                        android:textColor="@color/daikin_fill"
-                        android:gravity="center" />-->
+                        android:textColor="@color/black"
+                        android:gravity="center" />
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -61,17 +62,18 @@
                 <LinearLayout
                     android:id="@+id/addDie"
                     android:layout_width="@dimen/dashboard_icon_radius"
-                    android:background="@drawable/new_add_die"
+                    android:background="@drawable/new_circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
-                  <!--  <ImageView
+                    android:layout_height="@dimen/dashboard_icon_radius"
+                    android:orientation="vertical">
+                   <ImageView
                         app:tint="@color/daikin_fill"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/add"/>
+                        android:src="@drawable/new_dashboard_adddie"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -80,8 +82,8 @@
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
-                        android:textColor="@color/daikin_fill"
-                        android:gravity="center" />-->
+                        android:textColor="@color/black"
+                        android:gravity="center" />
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -94,27 +96,11 @@
                 <RelativeLayout
                     android:id="@+id/sync"
                     android:layout_width="@dimen/dashboard_icon_radius"
-                    android:background="@drawable/new_syncvideos"
+                    android:background="@drawable/new_circular_background"
+                    android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="@dimen/dashboard_icon_radius"
-                    android:orientation="vertical">
-                  <!--  <ImageView
-                        app:tint="@color/daikin_fill"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:contentDescription="@string/app_name"
-                        android:src="@drawable/sync"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/sync"
-                        android:textAllCaps="true"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textStyle="bold"
-                        android:textColor="@color/daikin_fill"
-                        android:gravity="center"/>-->
+                    android:layout_gravity="center"
+                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                     <TextView
                         android:id="@+id/syncVideosCount"
                         android:layout_width="wrap_content"
@@ -130,7 +116,73 @@
                         android:text="1"
                         android:textColor="@color/white"
                         android:gravity="center"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_centerInParent="true"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_height="match_parent">
+                        <ImageView
+                            app:tint="@color/daikin_fill"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="10dp"
+                            android:contentDescription="@string/app_name"
+                            android:src="@drawable/new_dashboard_syncvideos"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:text="@string/sync"
+                            android:textAllCaps="true"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+
                 </RelativeLayout>
+                 <!-- <LinearLayout
+                    android:id="@+id/sync"
+                    android:layout_width="@dimen/dashboard_icon_radius"
+                    android:background="@drawable/new_circular_background"
+                    android:gravity="center"
+                    android:padding="25dp"
+                    android:layout_height="@dimen/dashboard_icon_radius"
+                    android:orientation="vertical">
+                  <ImageView
+                        app:tint="@color/daikin_fill"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/new_dashboard_syncvideos"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/sync"
+                        android:textAllCaps="true"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:gravity="center"/>
+                    <TextView
+                        android:id="@+id/syncVideosCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:textAllCaps="true"
+                        android:background="@drawable/rounded_textview"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textStyle="bold"
+                        android:text="1"
+                        android:textColor="@color/white"
+                        android:gravity="center"/>
+                  </LinearLayout>-->
             </LinearLayout>
             <LinearLayout
                 android:layout_width="0dp"
@@ -142,17 +194,17 @@
                 <LinearLayout
                     android:id="@+id/syncDie"
                     android:layout_width="@dimen/dashboard_icon_radius"
-                    android:background="@drawable/new_sync_die"
+                    android:background="@drawable/new_circular_background"
                     android:gravity="center"
                     android:padding="25dp"
                     android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
-                  <!--  <ImageView
+                    <ImageView
                         app:tint="@color/daikin_fill"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/sync"/>
+                        android:src="@drawable/new_dashboard_syncdie"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -161,8 +213,8 @@
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
-                        android:textColor="@color/daikin_fill"
-                        android:gravity="center" />-->
+                        android:textColor="@color/black"
+                        android:gravity="center" />
                 </LinearLayout>
             </LinearLayout>
            <!-- <LinearLayout
@@ -208,17 +260,18 @@
                 <LinearLayout
                     android:id="@+id/logout"
                     android:layout_width="@dimen/dashboard_icon_radius"
-                    android:background="@drawable/new_logout"
+                    android:background="@drawable/new_circular_background"
                     android:gravity="center"
                     android:padding="25dp"
-                    android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
-                    <!--<ImageView
+                    android:layout_height="@dimen/dashboard_icon_radius"
+                    android:orientation="vertical">
+                   <ImageView
                         app:tint="@color/daikin_fill"
                         android:padding="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:contentDescription="@string/app_name"
-                        android:src="@drawable/logout"/>
+                        android:src="@drawable/new_dashboard_logout"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -227,8 +280,8 @@
                         android:textAllCaps="true"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
-                        android:textColor="@color/daikin_fill"
-                        android:gravity="center" />-->
+                        android:textColor="@color/black"
+                        android:gravity="center" />
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -241,7 +294,7 @@
                 <LinearLayout
                     android:id="@+id/download_latest_version"
                     android:layout_width="@dimen/dashboard_icon_radius"
-                    android:background="@drawable/circular_background"
+                    android:background="@drawable/new_circular_background"
                     android:gravity="center"
                     android:padding="25dp"
                     android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
@@ -250,16 +303,17 @@
                         android:padding="0dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_baseline_arrow"/>
+                        android:contentDescription="@string/app_name"
+                        android:src="@drawable/new_dashboard_download"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/latest_version"
-                        android:layout_marginTop="0dp"
+                        android:layout_marginTop="5dp"
                         android:textAllCaps="true"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textStyle="bold"
-                        android:textColor="@color/daikin_fill"
+                        android:textColor="@color/black"
                         android:gravity="center" />
                 </LinearLayout>
             </LinearLayout>

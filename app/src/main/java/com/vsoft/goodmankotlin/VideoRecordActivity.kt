@@ -338,7 +338,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         } else if (v == videoRecordPlayPause) {
             if (isPauseResume) {
                 isPauseResume = false
-                videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
+                videoRecordPlayPause!!.setImageResource(R.drawable.new_video_record_pause)
 
                 if (mMediaRecorder != null) {
                     mMediaRecorder!!.resume()
@@ -368,7 +368,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 }.start()
             } else {
                 isPauseResume = true
-                videoRecordPlayPause!!.setImageResource(R.drawable.video_record_play)
+                videoRecordPlayPause!!.setImageResource(R.drawable.new_video_record_play)
                 videoMaxTimeInMillis = (recordSecondsLeft.toInt() * 1000).toLong()
                 isPauseResume = true
                 if (mMediaRecorder != null) {
@@ -387,7 +387,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             }
         } else if (v == infoIconImgRL) {
             if (isRecording) {
-                videoRecordPlayPause!!.setImageResource(R.drawable.video_record_play)
+                videoRecordPlayPause!!.setImageResource(R.drawable.new_video_record_play)
                 videoMaxTimeInMillis = (recordSecondsLeft.toInt() * 1000).toLong()
                 isPauseResume = true
                 if (mMediaRecorder != null) {
@@ -420,7 +420,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             if (isRecording) {
                 if (isPauseResume) {
                     isPauseResume = false
-                    videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
+                    videoRecordPlayPause!!.setImageResource(R.drawable.new_video_record_pause)
 
                     if (mMediaRecorder != null) {
                         mMediaRecorder!!.resume()
@@ -682,7 +682,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                     Handler(Looper.getMainLooper()).postDelayed({
                         // enable stop button
                         runOnUiThread {
-                            videoRecordPlayPause!!.setImageResource(R.drawable.video_record_pause)
+                            videoRecordPlayPause!!.setImageResource(R.drawable.new_video_record_pause)
                             settingsImgIcon!!.visibility = View.GONE
                             videoRecordPlayPause!!.visibility = View.VISIBLE
                             videoOnlineImageButton!!.setImageResource(R.drawable.video_record_stop_new)

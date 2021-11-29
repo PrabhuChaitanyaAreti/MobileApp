@@ -1,124 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/main_lyt"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@drawable/backgroung_img"
     android:orientation="vertical">
-    <ScrollView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:fillViewport="true"
-        android:orientation="vertical" >
+        android:layout_gravity="center"
+        android:layout_marginStart="115dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="115dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/border_operator"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp">
+
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/app_logo"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitXY" />
+        <!-- <Button
+             android:id="@+id/operator_au_tv"
+             android:padding="10dp"
+             android:layout_marginTop="25dp"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:hint="Enter Operator"
+             android:background="@drawable/background"
+             android:gravity="center"
+             android:paddingEnd="5dp"
+             android:paddingStart="5dp"
+             android:layout_gravity="center"
+             android:singleLine="true"
+             android:textColor="@color/black"
+             android:textColorHint="@color/black"
+             android:textAppearance="@style/TextAppearance.AppCompat.Small">
+         </Button>-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/backgroung_img"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="200dp"
+            android:gravity="center"
             android:orientation="vertical">
-          <!--  <LinearLayout
+
+            <Button
+                android:id="@+id/die_au_tv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="20dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/background"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:weightSum="1" >-->
-                <LinearLayout
-                    android:id="@+id/main_lyt"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginBottom="30dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:paddingLeft="50dp"
-                    android:paddingRight="50dp"
-                    android:layout_marginLeft="120dp"
-                    android:layout_marginRight="120dp"
-                    android:background="@drawable/border_operator">
-                    <ImageView
-                        android:layout_width="120dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="10dp"
-                        android:contentDescription="@string/app_name"
-                        android:background="@drawable/goodman"/>
-                   <!-- <Button
-                        android:id="@+id/operator_au_tv"
-                        android:padding="10dp"
-                        android:layout_marginTop="25dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Enter Operator"
-                        android:background="@drawable/background"
-                        android:gravity="center"
-                        android:paddingEnd="5dp"
-                        android:paddingStart="5dp"
-                        android:layout_gravity="center"
-                        android:singleLine="true"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/black"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small">
-                    </Button>-->
-                    <Button
-                        android:id="@+id/die_au_tv"
-                        android:padding="10dp"
-                        android:layout_marginTop="50dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/enter_die_id"
-                        android:background="@drawable/background"
-                        android:gravity="center"
-                        android:paddingEnd="5dp"
-                        android:paddingStart="5dp"
-                        android:layout_gravity="center"
-                        android:singleLine="true"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/black"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small">
-                    </Button>
-                    <Button
-                        android:id="@+id/part_au_tv"
-                        android:padding="10dp"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/enter_part_id"
-                        android:background="@drawable/background"
-                        android:gravity="center"
-                        android:paddingEnd="5dp"
-                        android:paddingStart="5dp"
-                        android:layout_gravity="center"
-                        android:singleLine="true"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/black"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small">
-                    </Button>
-                    <Spinner
-                        android:id="@+id/dieTypeSpinner"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="visible"
-                        android:padding="10dp"
-                        android:background="@drawable/background"
-                        android:prompt="@string/app_name"  />
-                    <Button
-                        android:id="@+id/btnContinue"
-                        android:textAllCaps="false"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginBottom="10dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:paddingLeft="100dp"
-                        android:paddingRight="100dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/button_bg"
-                        android:text="Continue"
-                        android:textColor="@color/white" />
-                </LinearLayout>
-           <!-- </LinearLayout>-->
+                android:hint="@string/enter_die_id"
+                android:padding="15dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"/>
+
+            <Button
+                android:id="@+id/part_au_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/background"
+                android:gravity="center"
+                android:hint="@string/enter_part_id"
+                android:padding="15dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"></Button>
+
+            <Spinner
+                android:id="@+id/dieTypeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/background"
+                android:padding="15dp"
+                android:prompt="@string/app_name"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/btnContinue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/button_bg"
+                android:paddingTop="15dp"
+                android:paddingBottom="10dp"
+                android:text="Continue"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
         </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 </LinearLayout>

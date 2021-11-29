@@ -76,15 +76,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
 
-      /*  val displayMetrics = DisplayMetrics()
-        this@CameraActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics)
-        screenHeight = displayMetrics.heightPixels
-        screenWidth = displayMetrics.widthPixels
 
-        Log.d(
-            "TAG",
-            "CameraActivity device width and height " + screenWidth + "x" + screenHeight
-        )*/
         val batterLevel: Int = BatteryUtil.getBatteryPercentage(this@CameraActivity)
 
         Log.d("TAG", "getBatteryPercentage  batterLevel $batterLevel")
