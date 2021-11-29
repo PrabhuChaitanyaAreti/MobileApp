@@ -1,24 +1,24 @@
 package com.vsoft.goodmankotlin.cumulocity;
 
-import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.cumulocitydemo.DownloadController;
 import com.vsoft.goodmankotlin.DashBoardActivity;
 import com.vsoft.goodmankotlin.R;
-import com.vsoft.goodmankotlin.utils.CommonUtils;
-import com.vsoft.goodmankotlin.utils.DialogUtils;
 
-import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -47,8 +47,11 @@ public class MqttService extends Service {
     public static MqttClient client;
     public static final int QOS=0;
     public static Context activityContext;
-
-
+    public static final String CHANNEL_ID = "MqttService";
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
 
     public static void showInstallAPK() {
 
@@ -72,15 +75,36 @@ public class MqttService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        createNotificationChannel();
+        Intent notificationIntent = new Intent(this, DashBoardActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, 0);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Goodman service running")
+                .setContentText("Tap for details")
+                .setSmallIcon(R.drawable.camera_retake_icon)
+                .setContentIntent(pendingIntent)
+                .build();
+        startForeground(1, notification);
         try {
             init();
             getLocation();
         } catch (MqttException e) {
             e.printStackTrace();
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
-
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Foreground Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
+    }
     public void getLocation(){
        /* gpsTracker = new GpsTracker(getApplicationContext());
         if(gpsTracker.canGetLocation()){

@@ -68,8 +68,12 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
         // Start the MQTT Service
         MqttService.activityContext=this;
-        val i = Intent(this@DashBoardActivity, MqttService::class.java)
-        startService(i)
+        val intent = Intent(this@DashBoardActivity, MqttService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        } else {
+           startService(intent);
+        }
     }
 
     @SuppressLint("SimpleDateFormat")
