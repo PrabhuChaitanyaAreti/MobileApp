@@ -72,7 +72,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent);
         } else {
-           startService(intent);
+           startService(intent)
         }
     }
 
