@@ -595,6 +595,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 editor.apply()
                 navigateToLogin()
             }
+            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
+                super.onBackPressed()
+            }
 
         }else if (buttonName.equals(
             this@DashBoardActivity.resources.getString(R.string.alert_no),
@@ -613,9 +616,6 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 )
             ) {
                 //No action required.
-            }
-            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
-                super.onBackPressed()
             }
             if (functionality.equals(CommonUtils.LOGOUT_DIALOG, true)) {
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
