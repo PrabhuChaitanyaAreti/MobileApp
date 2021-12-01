@@ -1,4 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="dashboard_icon_radius">100dp</dimen>
+    <dimen name="dashboard_icon_radius">130dp</dimen>
+
+    <!-- Login Screen dimensions -->
+    <dimen name="white_border_margin_top">45dp</dimen>
+    <dimen name="white_border_margin_bottom">45dp</dimen>
+    <dimen name="white_border_margin_start">50dp</dimen>
+    <dimen name="white_border_margin_end">50dp</dimen>
+    <dimen name="white_border_padding_start">50dp</dimen>
+    <dimen name="white_border_padding_end">50dp</dimen>
+
+    <dimen name="app_logo_width">145dp</dimen>
+    <dimen name="app_logo_height">35dp</dimen>
+    <dimen name="app_logo_margin_top">10dp</dimen>
+
+    <dimen name="options_layout_margin_start">50dp</dimen>
+    <dimen name="options_layout_margin_end">50dp</dimen>
+    <dimen name="options_layout_margin_top">35dp</dimen>
+    <dimen name="options_layout_margin_bottom">0dp</dimen>
+
+    <dimen name="edit_padding">10dp</dimen>
+    <dimen name="edit_padding_start">5dp</dimen>
+    <dimen name="edit_padding_end">5dp</dimen>
+    <dimen name="edit_margin_top">25dp</dimen>
+
+    <dimen name="login_margin_top">35dp</dimen>
+    <dimen name="login_padding_top">10dp</dimen>
+    <dimen name="login_padding_bottom">10dp</dimen>
+
+
+    <!--Dashboard  dimensions -->
+    <dimen name="grid_option_padding">20dp</dimen>
+    <dimen name="grid_option_icon_padding">5dp</dimen>
+    <dimen name="grid_option_text_margin_top">5dp</dimen>
+    <dimen name="grid_option_text_margin_top_6">2dp</dimen>
+    <dimen name="grid_option_text_size">15sp</dimen>
+    <dimen name="grid_option_text_size_6">10sp</dimen>
+
+    <dimen name="sync_video_count_text_width">20dp</dimen>
+    <dimen name="sync_video_count_text_height">20dp</dimen>
+
+    <dimen name="sync_video_count_text_margin_top">2dp</dimen>
+    <dimen name="sync_video_count_text_margin_end">2dp</dimen>
+
+
+
+    <!--AddDieIDPartID screen dimensions -->
+    <dimen name="option_margin_top">15dp</dimen>
+
+
+
+
+
+
+
 </resources>

@@ -280,8 +280,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 this@DashBoardActivity.resources.getString(R.string.logout_alert_message),
                 CommonUtils.LOGOUT_DIALOG,
                 listOf(
-                    this@DashBoardActivity.resources.getString(R.string.alert_ok),
-                    this@DashBoardActivity.resources.getString(R.string.alert_cancel)
+                    this@DashBoardActivity.resources.getString(R.string.alert_yes),
+                    this@DashBoardActivity.resources.getString(R.string.alert_no)
                 )
             )
         }
@@ -311,8 +311,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             this@DashBoardActivity.resources.getString(R.string.exit_app_alert_message),
             CommonUtils.BACK_PRESSED_DIALOG,
             listOf(
-                this@DashBoardActivity.resources.getString(R.string.alert_ok),
-                this@DashBoardActivity.resources.getString(R.string.alert_cancel)
+                this@DashBoardActivity.resources.getString(R.string.alert_yes),
+                this@DashBoardActivity.resources.getString(R.string.alert_no)
             )
         )
     }
@@ -584,6 +584,25 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
         if (buttonName.equals(
+                this@DashBoardActivity.resources.getString(R.string.alert_yes),
+                true
+            )
+        ) {
+            if (functionality.equals(CommonUtils.LOGOUT_DIALOG, true)) {
+                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                editor.remove(CommonUtils.LOGIN_STATUS)
+                //editor.clear()
+                editor.apply()
+                navigateToLogin()
+            }
+
+        }else if (buttonName.equals(
+            this@DashBoardActivity.resources.getString(R.string.alert_no),
+            true
+        )
+                ) {
+            //No action required. Just exit dialog.
+        } else if (buttonName.equals(
                 this@DashBoardActivity.resources.getString(R.string.alert_ok),
                 true
             )
@@ -621,7 +640,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 //No action required
             }
         }
-        if (buttonName.equals(
+      else  if (buttonName.equals(
                 this@DashBoardActivity.resources.getString(R.string.alert_cancel),
                 true
             )

@@ -16,7 +16,10 @@
         android:layout_weight="95"
         android:background="@drawable/border_operator"
         android:columnCount="3"
-        android:layout_margin="30dp"
+        android:layout_marginStart="@dimen/white_border_margin_start"
+        android:layout_marginTop="@dimen/white_border_margin_top"
+        android:layout_marginEnd="@dimen/white_border_margin_end"
+        android:layout_marginBottom="@dimen/white_border_margin_top"
         android:rowCount="2">
         <LinearLayout
             android:layout_width="0dp"
@@ -30,25 +33,25 @@
                 android:layout_width="@dimen/dashboard_icon_radius"
                 android:background="@drawable/new_circular_background"
                 android:gravity="center"
-                android:padding="25dp"
+                android:padding="@dimen/grid_option_padding"
                 android:layout_height="@dimen/dashboard_icon_radius"
                 android:orientation="vertical">
               <ImageView
                     app:tint="@color/daikin_fill"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
+                  android:padding="@dimen/grid_option_icon_padding"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/new_dashboard_verifydie"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="@dimen/grid_option_text_margin_top"
                     android:text="@string/verify_die"
                     android:textAllCaps="true"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textSize="@dimen/grid_option_text_size"
                     android:textStyle="bold"
-                    android:textColor="@color/daikin_fill"
+                    android:textColor="@color/black"
                     android:gravity="center" />
             </LinearLayout>
         </LinearLayout>
@@ -64,24 +67,24 @@
             android:layout_width="@dimen/dashboard_icon_radius"
             android:background="@drawable/new_circular_background"
             android:gravity="center"
-            android:padding="25dp"
+            android:padding="@dimen/grid_option_padding"
             android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
             <ImageView
                 app:tint="@color/daikin_fill"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="@dimen/grid_option_icon_padding"
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/new_dashboard_adddie"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/die"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/grid_option_text_margin_top"
                 android:textAllCaps="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textSize="@dimen/grid_option_text_size"
                 android:textStyle="bold"
-                android:textColor="@color/daikin_fill"
+                android:textColor="@color/black"
                 android:gravity="center" />
         </LinearLayout>
         </LinearLayout>
@@ -97,7 +100,7 @@
                 android:layout_width="@dimen/dashboard_icon_radius"
                 android:background="@drawable/new_circular_background"
                 android:gravity="center"
-                android:padding="25dp"
+                android:padding="@dimen/grid_option_padding"
                 android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -109,34 +112,34 @@
                     app:tint="@color/daikin_fill"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
+                  android:padding="@dimen/grid_option_icon_padding"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/new_dashboard_syncvideos"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="@dimen/grid_option_text_margin_top"
                         android:gravity="center"
                         android:text="@string/sync"
                         android:textAllCaps="true"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/daikin_fill"
+                        android:textSize="@dimen/grid_option_text_size"
+                        android:textColor="@color/black"
                         android:textStyle="bold" />
                 </LinearLayout>
                 <TextView
                     android:id="@+id/syncVideosCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="@dimen/sync_video_count_text_margin_top"
+                    android:layout_marginEnd="@dimen/sync_video_count_text_margin_end"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
                     android:textAllCaps="true"
                     android:background="@drawable/rounded_textview"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/grid_option_text_size_6"
                     android:textStyle="bold"
-                    android:text="1"
+                    android:text=""
                     android:textColor="@color/white"
                     android:gravity="center"/>
             </RelativeLayout>
@@ -153,59 +156,28 @@
                 android:layout_width="@dimen/dashboard_icon_radius"
                 android:background="@drawable/new_circular_background"
                 android:gravity="center"
-                android:padding="25dp"
+                android:padding="@dimen/grid_option_padding"
                 android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
                <ImageView
                     app:tint="@color/daikin_fill"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
+                   android:padding="@dimen/grid_option_icon_padding"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/new_dashboard_syncdie"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/sync_die"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="@dimen/grid_option_text_margin_top"
                     android:textAllCaps="true"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textSize="@dimen/grid_option_text_size"
                     android:textStyle="bold"
-                    android:textColor="@color/daikin_fill"
+                    android:textColor="@color/black"
                     android:gravity="center" />
             </LinearLayout>
         </LinearLayout>
-       <!-- <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1">
-            <LinearLayout
-                android:id="@+id/addOperator"
-                android:layout_width="@dimen/dashboard_icon_radius"
-                android:background="@drawable/circular_background"
-                android:gravity="center"
-                android:padding="25dp"
-                android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
-                <ImageView
-                    app:tint="@color/daikin_fill"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:src="@drawable/add"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/operator"
-                    android:layout_marginTop="5dp"
-                    android:textAllCaps="true"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textStyle="bold"
-                    android:textColor="@color/daikin_fill"
-                    android:gravity="center"/>
-            </LinearLayout>
-        </LinearLayout>-->
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -218,24 +190,24 @@
             android:layout_width="@dimen/dashboard_icon_radius"
             android:background="@drawable/new_circular_background"
             android:gravity="center"
-            android:padding="25dp"
+            android:padding="@dimen/grid_option_padding"
             android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
             <ImageView
                 app:tint="@color/daikin_fill"
-                android:padding="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/grid_option_icon_padding"
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/new_dashboard_logout"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/logout"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/grid_option_text_margin_top"
                 android:textAllCaps="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textSize="@dimen/grid_option_text_size"
                 android:textStyle="bold"
-                android:textColor="@color/daikin_fill"
+                android:textColor="@color/black"
                 android:gravity="center" />
         </LinearLayout>
         </LinearLayout>
@@ -251,11 +223,12 @@
                 android:layout_width="@dimen/dashboard_icon_radius"
                 android:background="@drawable/new_circular_background"
                 android:gravity="center"
-                android:padding="25dp"
-                android:layout_height="@dimen/dashboard_icon_radius" android:orientation="vertical">
+                android:padding="@dimen/grid_option_padding"
+                android:layout_height="@dimen/dashboard_icon_radius"
+                android:orientation="vertical">
                 <ImageView
                     app:tint="@color/daikin_fill"
-                    android:padding="0dp"
+                    android:padding="@dimen/grid_option_icon_padding"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/app_name"
@@ -264,9 +237,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/latest_version"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="@dimen/grid_option_text_margin_top_6"
                     android:textAllCaps="true"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textSize="@dimen/grid_option_text_size_6"
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:gravity="center" />

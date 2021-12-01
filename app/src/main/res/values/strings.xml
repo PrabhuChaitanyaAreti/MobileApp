@@ -14,7 +14,7 @@
     <string name="die_type">Die Type:</string>
 
     <string name="verify_die">Verify Die</string>
-    <string name="die">Die</string>
+    <string name="die">Add Die</string>
     <string name="sync">Sync Videos</string>
     <string name="sync_die">Sync die</string>
     <string name="operator">Operator</string>
