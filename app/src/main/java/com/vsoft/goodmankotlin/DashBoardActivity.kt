@@ -294,7 +294,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         }
     }
 
-    public fun showCustomAlert(
+     fun showCustomAlert(
         alertMessage: String,
         functionality: String,
         buttonList: List<String>
