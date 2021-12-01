@@ -42,11 +42,11 @@ public class ConfigureServerTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+        String responseString = null;
         if(ipAddressList!=null && ipAddressList.size()>0){
             for(String ipAddress : ipAddressList){
-                String myurl="http:/"+ipAddress+":16808/"+"getDieId";
+                String myurl="http:/"+ipAddress+":16808/"+"discoverIp";
                 System.out.println(myurl);
-                String responseString = null;
                 try {
                     URL url = new URL(myurl);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -57,16 +57,25 @@ public class ConfigureServerTask extends AsyncTask<Void, Void, Void> {
                         var prefs = context.getSharedPreferences(context.getPackageName(), context.MODE_PRIVATE);
                         prefs.edit().putString("EdgeServerIp", ipAddress).apply();
                         System.out.println("ServerAddress:"+ipAddress);
+                        responseString="success";
                         configureServerTaskCallback.configureServerResponse("success");
                         break;
                     }
                     else {
-                        responseString = "FAILED"; // See documentation for more info on response handling
+                        responseString = "failure"; // See documentation for more info on response handling
                     }
                 }  catch (IOException e) {
                     //TODO Handle problems..
                 }
             }
+        }
+        if(responseString==null || !responseString.equalsIgnoreCase("success")){
+            String ipAddress="http://111.93.3.148:16808";
+            Context context=mContextRef.get();
+            var prefs = context.getSharedPreferences(context.getPackageName(), context.MODE_PRIVATE);
+            prefs.edit().putString("EdgeServerIp", ipAddress).apply();
+            System.out.println("ServerAddress:"+ipAddress);
+            configureServerTaskCallback.configureServerResponse("failure");
         }
         return null;
     }

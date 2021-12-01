@@ -150,7 +150,6 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
         }
     }
     override fun configureServerResponse(response: String?) {
-        if(response!!.equals("success",true)){
             Handler(Looper.getMainLooper()).post {
                 // Your Code
                 if (CameraUtils.checkPermissions(applicationContext)) {
@@ -167,8 +166,5 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
                     requestCameraPermission()
                 }
             }
-        }else{
-
-        }
     }
 }

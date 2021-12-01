@@ -33,7 +33,7 @@ public class NetworkSniffTask extends AsyncTask<Void, Void, Void> {
     protected void onPreExecute() {
         super.onPreExecute();
         pd = new ProgressDialog(mContextRef.get());
-        pd.setMessage("Getting Server Details...");
+        pd.setMessage("Checking server availability...");
         pd.setCancelable(false);
         pd.show();
     }
@@ -48,7 +48,7 @@ public class NetworkSniffTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Log.d(TAG, "Let's sniff the network");
+        System.out.println("Let's sniff the network");
         DhcpInfo d;
         WifiManager wifii;
         Context context = mContextRef.get();
