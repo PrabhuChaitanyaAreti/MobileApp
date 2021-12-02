@@ -243,8 +243,8 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             infoIconImg!!.visibility = View.GONE
             infoIconImgRL!!.visibility = View.GONE
         } else {
-            infoIconImg!!.visibility = View.VISIBLE
-            infoIconImgRL!!.visibility = View.VISIBLE
+            infoIconImg!!.visibility = View.GONE
+            infoIconImgRL!!.visibility = View.GONE
         }
 
         initProgress()
@@ -932,8 +932,8 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             this@VideoRecordActivity.resources.getString(R.string.dashboard_navigation_alert_message),
             CommonUtils.BACK_PRESSED_DIALOG,
             listOf(
-                this@VideoRecordActivity.resources.getString(R.string.alert_ok),
-                this@VideoRecordActivity.resources.getString(R.string.alert_cancel)
+                this@VideoRecordActivity.resources.getString(R.string.alert_yes),
+                this@VideoRecordActivity.resources.getString(R.string.alert_no)
             )
         )
 
@@ -1001,6 +1001,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                 true
             )
         ) {
+            //No action required. Just exit dialog.
+        }else if (buttonName.equals(
+                this@VideoRecordActivity.resources.getString(R.string.alert_yes),
+                true
+            )
+        ) {
             if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
                 try {
                     if (mOutputFile.toString()
@@ -1023,6 +1029,12 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             }
         } else if (buttonName.equals(
                 this@VideoRecordActivity.resources.getString(R.string.alert_cancel),
+                true
+            )
+        ) {
+            //No action required. Just exit dialog.
+        }else if (buttonName.equals(
+                this@VideoRecordActivity.resources.getString(R.string.alert_no),
                 true
             )
         ) {

@@ -639,8 +639,9 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
             this@VideoPreviewActivity.resources.getString(R.string.video_preview_alert_message),
             CommonUtils.BACK_PRESSED_DIALOG,
             listOf(
-                this@VideoPreviewActivity.resources.getString(R.string.alert_ok),
-                this@VideoPreviewActivity.resources.getString(R.string.alert_cancel)
+                this@VideoPreviewActivity.resources.getString(R.string.alert_yes
+                ),
+                this@VideoPreviewActivity.resources.getString(R.string.alert_no)
             )
         )
     }
@@ -659,11 +660,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
     }
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
-        if (buttonName.equals(
-                this@VideoPreviewActivity.resources.getString(R.string.alert_exit),
-                true
-            )
-        ) {
+        if (buttonName.equals(this@VideoPreviewActivity.resources.getString(R.string.alert_exit), true)) {
             if (functionality.equals(CommonUtils.BATTERY_DIALOG, true)) {
                 try {
                     CommonUtils.appExit(this@VideoPreviewActivity)
@@ -671,32 +668,20 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     e.printStackTrace()
                 }
             }
-        }
-        if (buttonName.equals(
-                this@VideoPreviewActivity.resources.getString(R.string.alert_ok),
-                true
-            )
-        ) {
+        } else if (buttonName.equals(this@VideoPreviewActivity.resources.getString(R.string.alert_ok), true)) {
             if (functionality.equals(CommonUtils.DIE_BOTH_DIALOG, true)) {
                 val intent = Intent(this@VideoPreviewActivity, DashBoardActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-            }
-            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
-                val intent = Intent(this, DashBoardActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             } else if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
                 //No action required. Just exit dialog.
             }
-        }
-        if (buttonName.equals(
-                this@VideoPreviewActivity.resources.getString(R.string.alert_yes),
-                true
-            )
-        ) {
-            when {
-                functionality.equals(CommonUtils.DIE_TOP_DETAIL_DIALOG, true) -> {
+        } else if (buttonName.equals(this@VideoPreviewActivity.resources.getString(R.string.alert_yes), true)) {
+            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
+                val intent = Intent(this, DashBoardActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }else if (functionality.equals(CommonUtils.DIE_TOP_DETAIL_DIALOG, true) ) {
                     val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                     editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
                     editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, true)
@@ -706,8 +691,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                     startActivity(intent)
                     finish()
-                }
-                functionality.equals(CommonUtils.DIE_BOTTOM_DETAIL_DIALOG, true) -> {
+                }else if (functionality.equals(CommonUtils.DIE_BOTTOM_DETAIL_DIALOG, true)){
                     val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                     editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
                     editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM_DETAILS, true)
@@ -717,8 +701,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                     startActivity(intent)
                     finish()
-                }
-                functionality.equals(CommonUtils.DIE_TOP_DIALOG, true) -> {
+                } else if( functionality.equals(CommonUtils.DIE_TOP_DIALOG, true)){
                     val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                     editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, true)
                     editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_BOTTOM)
@@ -727,8 +710,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                     startActivity(intent)
                     finish()
-                }
-                functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true) -> {
+                }else if(functionality.equals(CommonUtils.DIE_BOTTOM_DIALOG, true)) {
                     val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                     editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, true)
                     editor.putString(CommonUtils.SAVE_DIE_TYPE, CommonUtils.ADD_DIE_TOP)
@@ -737,8 +719,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     val intent = Intent(this@VideoPreviewActivity, VideoRecordActivity::class.java)
                     startActivity(intent)
                     finish()
-                }
-                functionality.equals(CommonUtils.RETAKE_DIALOG, true) -> {
+                }else if(functionality.equals(CommonUtils.RETAKE_DIALOG, true) ){
                     absPlayerInternal!!.release()
                     if (absPlayerInternal!!.isPlaying) {
                         absPlayerInternal!!.stop()
@@ -748,15 +729,11 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     startActivity(intent)
                     finish()
                 }
-            }
 
-        }
-        if (buttonName.equals(
-                this@VideoPreviewActivity.resources.getString(R.string.alert_no),
-                true
-            )
-        ) {
-            if (functionality.equals(CommonUtils.DIE_TOP_DETAIL_DIALOG, true)) {
+        }else if (buttonName.equals(this@VideoPreviewActivity.resources.getString(R.string.alert_no), true)) {
+            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
+                //No action required. Just exit dialog.
+            }else if (functionality.equals(CommonUtils.DIE_TOP_DETAIL_DIALOG, true)) {
               if(isDieBottom&&isDieBottomDetails){
                   showCustomAlert(
                       this@VideoPreviewActivity.resources.getString(R.string.app_name),

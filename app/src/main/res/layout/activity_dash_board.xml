@@ -224,6 +224,7 @@
                 android:background="@drawable/new_circular_background"
                 android:gravity="center"
                 android:padding="@dimen/grid_option_padding"
+                android:visibility="gone"
                 android:layout_height="@dimen/dashboard_icon_radius"
                 android:orientation="vertical">
                 <ImageView

@@ -11,41 +11,45 @@
         android:id="@+id/topll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
         android:orientation="horizontal">
-
 
 
         <TextView
             android:id="@+id/dieIdTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginStart="10dp"
+            android:padding="10dp"
             android:text="DieID: hgfhfhg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/red"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             android:visibility="visible" />
+
         <TextView
             android:id="@+id/partIdTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginStart="10dp"
+            android:padding="10dp"
             android:text="PartID: hgfhfhg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/red"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             android:visibility="visible" />
+
         <TextView
             android:id="@+id/dieTypeTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginStart="10dp"
+            android:padding="10dp"
             android:text="DieType: hgfhfhg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/red"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             android:visibility="visible" />
     </LinearLayout>
 

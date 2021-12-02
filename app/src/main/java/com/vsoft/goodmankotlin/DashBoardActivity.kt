@@ -67,9 +67,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         init()
 
         // Start the MQTT Service
-        MqttService.activityContext=this;
-        val i = Intent(this@DashBoardActivity, MqttService::class.java)
-        startService(i)
+       // MqttService.activityContext=this;
+        //val i = Intent(this@DashBoardActivity, MqttService::class.java)
+        //startService(i)
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -102,12 +102,14 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 //         isDownload = (MqttService.getDownloader() as Nothing?).toString();
 
 
+/*
         var isDownload = MqttService.getDownloader()
         if(isDownload.contains("fail")){
             download_latest_version.visibility = View.GONE
         }else{
             download_latest_version.visibility = View.VISIBLE
         }
+*/
 
        val str="select * from video_table where status="+"'"+false+"'"
         Log.d("TAG", "strstrstrstr: $str")
@@ -176,12 +178,12 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
     override fun onResume() {
         super.onResume()
-       var isDownload = MqttService.getDownloader()
+  /*     var isDownload = MqttService.getDownloader()
         if(isDownload.contains("fail")){
             download_latest_version.visibility = View.GONE
         }else{
             download_latest_version.visibility = View.VISIBLE
-        }
+        }*/
     }
 
     private fun removeSyncVideos() {
@@ -290,7 +292,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
 
 
-            MqttService.showInstallAPK()
+           // MqttService.showInstallAPK()
         }
     }
 
@@ -594,8 +596,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 //editor.clear()
                 editor.apply()
                 navigateToLogin()
-            }
-            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
+            } else if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
                 super.onBackPressed()
             }
 
@@ -616,37 +617,25 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 )
             ) {
                 //No action required.
-            }
-            if (functionality.equals(CommonUtils.LOGOUT_DIALOG, true)) {
+            } else if (functionality.equals(CommonUtils.LOGOUT_DIALOG, true)) {
                 val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
                 editor.remove(CommonUtils.LOGIN_STATUS)
                 //editor.clear()
                 editor.apply()
                 navigateToLogin()
-            }
-            if (functionality.equals(CommonUtils.VIDEO_SYNC_DIALOG, true)) {
+            } else if (functionality.equals(CommonUtils.VIDEO_SYNC_DIALOG, true)) {
                 //No action required on sync
-            }
-            if (functionality.equals(CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, true)) {
+            } else if (functionality.equals(CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, true)) {
                 //No action required on sync
-            }
-            if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
+            } else  if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
                 //No action required on internet connection error
-            }
-            if (functionality.equals(CommonUtils.WEB_SERVICE_CALL_FAILED, true)) {
+            } else if (functionality.equals(CommonUtils.WEB_SERVICE_CALL_FAILED, true)) {
                 //No action required
-            }
-            if (functionality.equals(CommonUtils.NO_DIE_DATA_DIALOG, true)) {
+            } else  if (functionality.equals(CommonUtils.NO_DIE_DATA_DIALOG, true)) {
                 //No action required
             }
         }
-      else  if (buttonName.equals(
-                this@DashBoardActivity.resources.getString(R.string.alert_cancel),
-                true
-            )
-        ) {
-            //No action required. Just exit dialog.
-        }
+
     }
 
     private fun getDieAndPartData() {

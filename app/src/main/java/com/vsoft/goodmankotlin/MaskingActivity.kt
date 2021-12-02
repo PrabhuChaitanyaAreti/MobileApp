@@ -567,20 +567,19 @@ class MaskingActivity : AppCompatActivity(), View.OnTouchListener, RightMenuItem
                 this.resources.getString(R.string.dashboard_navigation_alert_message),
                 null,
                 listOf(
-                    this.resources.getString(R.string.alert_ok),
-                    this.resources.getString(R.string.alert_cancel)
+                    this.resources.getString(R.string.alert_yes),
+                    this.resources.getString(R.string.alert_no)
                 )
             ), this, CommonUtils.BACK_PRESSED_DIALOG
         )
     }
 
     override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
-        if (buttonName.equals(this.resources.getString(R.string.alert_ok), true)) {
+        if (buttonName.equals(this.resources.getString(R.string.alert_yes), true)) {
             if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
                 navigateToDashBoard()
             }
-        }
-        if (buttonName.equals(this.resources.getString(R.string.alert_cancel), true)) {
+        } else if (buttonName.equals(this.resources.getString(R.string.alert_no), true)) {
             //No action required. Just exit dialog.
         }
     }

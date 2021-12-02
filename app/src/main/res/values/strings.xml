@@ -45,12 +45,12 @@
     <string name="api_server_alert_message">Unable to process request.Contact admin.</string>
     <string name="network_alert_message">Please check your internet connection and try again.</string>
     <string name="alert_title">Alert!!</string>
-    <string name="alert_cancel">Cancel</string>
+    <string name="alert_cancel">@android:string/cancel</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">YES</string>
     <string name="alert_no">NO</string>
-    <string name="alert_exit">Exit</string>
-    <string name="continue_str">Continue</string>
+    <string name="alert_exit">EXIT</string>
+    <string name="continue_str">CONTINUE</string>
     <string name="settings_str">Settings</string>
     <string name="dashboard_navigation_alert_message">Do you want to navigate to Dashboard?</string>
 

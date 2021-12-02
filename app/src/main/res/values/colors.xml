@@ -14,7 +14,7 @@
     <color name="un_detected_punch_color">@android:color/darker_gray</color>
     <color name="transparent">#B70287D4</color>
     <color name="transparent1">#00ffffff</color>
-    <color name="gray">#808080</color>
+    <color name="gray">#595151</color>
     <color name="icons">#FFFFFF</color>
     <color name="goodman_red">#E03A3E</color>
     <color name="green_border">#008315</color>
