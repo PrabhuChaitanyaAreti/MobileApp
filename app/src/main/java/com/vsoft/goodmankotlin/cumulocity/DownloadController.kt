@@ -42,8 +42,8 @@ class DownloadController(
 
         val file = File(destination)
         if (file.exists()) file.delete()
-        val username = "kvemulavada@vsoftconsulting.com"
-        val password = "Krishna@9"
+        val username = "rpittala@vsoftconsulting.com"
+        val password = "Ram@12345"
         val credentials = "$username:$password"
         val base64EncodedCredentials =
             Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
@@ -78,7 +78,7 @@ class DownloadController(
                 context: Context,
                 intent: Intent
             ) {
-                apkDownloaderCallBack.onDownloadCompleted()
+//                apkDownloaderCallBack.onDownloadCompleted()
                 SharedPref.init(context);
                 SharedPref.write(SharedPref.URI, uri.toString());
                 SharedPref.write(SharedPref.DESTINATION, destination);
@@ -143,7 +143,7 @@ class DownloadController(
 //                    context.unregisterReceiver(this)
 ////                    // finish()
 //                }
-//                apkDownloaderCallBack.onDownloadCompleted()
+                apkDownloaderCallBack.onDownloadCompleted()
 
             }
         }

@@ -9,7 +9,7 @@ class RetrofitClient {
     companion object {
     private var instance: RetrofitClient? = null
     private var myApi: RetrofitApiInterface? = null
-        private var BASE_URL:String="http://3.218.249.156:12808"
+        private var BASE_URL:String="http://111.93.3.148:16808"
         //private var timeOut:Long= Long.MAX_VALUE
         private var timeOut:Long= 24
 

@@ -13,13 +13,13 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.cumulocitydemo.DownloadController;
-import com.vsoft.goodmankotlin.BuildConfig;
 import com.vsoft.goodmankotlin.DashBoardActivity;
 import com.vsoft.goodmankotlin.R;
 import com.vsoft.goodmankotlin.utils.CommonUtils;
 import com.vsoft.goodmankotlin.utils.DialogUtils;
 import com.vsoft.goodmankotlin.utils.SharedPref;
 
+import org.eclipse.paho.android.service.BuildConfig;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -169,14 +169,19 @@ public class MqttService extends Service {
                         public void run() {
                             try {
 
+//                                client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
+//                                client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
+
 //                              client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
                                 String[] appDetails=payload.split(",");
                                 if(appDetails !=null && appDetails.length>3) {
                                     appName = appDetails[2];
                                     appVersion = appDetails[3];
                                     appUrl = appDetails[4];
-                                    int apkversion = Integer.parseInt(appVersion);
-                                    int versionCode = BuildConfig.VERSION_CODE;
+//                                    int apkversion = Integer.parseInt(appVersion);
+//                                    int versionCode = BuildConfig.VERSION_CODE;
+
+
 
 //                                  if(apkversion > versionCode) {
 
