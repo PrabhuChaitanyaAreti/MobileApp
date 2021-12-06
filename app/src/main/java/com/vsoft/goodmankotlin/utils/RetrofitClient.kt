@@ -1,5 +1,6 @@
 package com.vsoft.goodmankotlin.utils
 
+import android.content.Context
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -29,7 +30,9 @@ class RetrofitClient {
     }
 
         @Synchronized
-        fun getInstance(): RetrofitClient? {
+        fun getInstance(context: Context): RetrofitClient? {
+            val prefs = context.getSharedPreferences(context.packageName, Context.MODE_PRIVATE)
+            BASE_URL= prefs.getString("BaseUrl", "http://111.93.3.148:16808")!!
             if (instance == null) {
                 instance = RetrofitClient()
             }

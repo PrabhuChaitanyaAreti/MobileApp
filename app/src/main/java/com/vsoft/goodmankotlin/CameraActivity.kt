@@ -275,7 +275,7 @@ class CameraActivity : AppCompatActivity() ,View.OnClickListener{
                     RequestBody.create(MediaType.parse("image/*"), file)
                 )
                 val call: Call<PunchResponse?>? =
-                    RetrofitClient.getInstance()!!.getMyApi()!!.uploadDyeImage(filePart)
+                    RetrofitClient.getInstance(this)!!.getMyApi()!!.uploadDyeImage(filePart)
                 call!!.enqueue(object : Callback<PunchResponse?> {
                     override fun onResponse(
                         call: Call<PunchResponse?>?,

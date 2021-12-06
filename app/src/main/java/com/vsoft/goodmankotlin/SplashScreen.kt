@@ -19,17 +19,19 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.vsoft.goodmankotlin.utils.CameraUtils
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
-import com.vsoft.goodmankotlin.utils.CommonUtils
-import com.vsoft.goodmankotlin.utils.DialogUtils
+import android.content.DialogInterface
+import androidx.appcompat.app.AlertDialog
+import com.vsoft.goodmankotlin.utils.*
+import java.util.ArrayList
+
 
 @SuppressLint("CustomSplashScreen")
-class SplashScreen : AppCompatActivity(), CustomDialogCallback {
+class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallBack,ConfigureServerTaskCallback {
 
     var screenWidth:Int = 0
     var screenHeight:Int = 0
@@ -62,28 +64,41 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
         )
 
         userId = sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
+        val instances = arrayOf("Local", "Remote")
+
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle("Select an instance")
+        builder.setCancelable(false)
+        builder.setItems(instances, DialogInterface.OnClickListener { dialog, which ->
+            // the user clicked on colors[which]
+            if(instances[which].equals("Local",true)){
+                NetworkSniffTask(this,this).execute()
+            }
+            if(instances[which].equals("Remote",true)){
+                sharedPreferences!!.edit().putString("BaseUrl","http://111.93.3.148:16808")
+                handleNavigation()
+            }
+        })
+        builder.show()
 
     }
-
-    override fun onStart() {
-        super.onStart()
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (CameraUtils.checkPermissions(applicationContext)) {
-                if (sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS, false)) {
-                    if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
-                        navigateToDashBoard()
-                    } else {
-                        navigateToLogin()
-                    }
+private fun handleNavigation(){
+    Handler(Looper.getMainLooper()).postDelayed({
+        if (CameraUtils.checkPermissions(applicationContext)) {
+            if (sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS, false)) {
+                if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
+                    navigateToDashBoard()
                 } else {
                     navigateToLogin()
                 }
             } else {
-                requestCameraPermission()
+                navigateToLogin()
             }
-        }, CommonUtils.SPLASH_DURATION.toLong())
-    }
-
+        } else {
+            requestCameraPermission()
+        }
+    }, CommonUtils.SPLASH_DURATION.toLong())
+}
     private fun navigateToDashBoard() {
         val i = Intent(this, DashBoardActivity::class.java)
         startActivity(i)
@@ -170,6 +185,17 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
             }
         }
     }
+    override fun networkSniffResponse(response: String?,ipAddressList:ArrayList<String>?) {
+        if(response!!.equals("success",true)){
+            Handler(Looper.getMainLooper()).post {
+                ConfigureServerTask(this,this,ipAddressList).execute()
+            }
+        }else{
 
+        }
+    }
+    override fun configureServerResponse(response: String?) {
+        handleNavigation()
+    }
 
 }

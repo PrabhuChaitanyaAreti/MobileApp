@@ -185,7 +185,6 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             download_latest_version.visibility = View.VISIBLE
         }*/
     }
-
     private fun removeSyncVideos() {
         try {
             val videosList = vm.getSyncedVideos()
@@ -488,7 +487,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 progressDialog.show()
             }
             val call: Call<VideoUploadSaveResponse?>? =
-                RetrofitClient.getInstance()!!.getMyApi()!!.saveVideo(metaData, videoFile)
+                RetrofitClient.getInstance(this)!!.getMyApi()!!.saveVideo(metaData, videoFile)
             call!!.enqueue(object : Callback<VideoUploadSaveResponse?> {
                 override fun onResponse(
                     call: Call<VideoUploadSaveResponse?>,
@@ -642,7 +641,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         if (NetworkUtils.isNetworkAvailable(this)) {
             progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_dies_parts))
             progressDialog.show()
-            val call = RetrofitClient().getMyApi()!!.doGetListDieDetails()
+            val call = RetrofitClient!!.getInstance(this)!!.getMyApi()!!.doGetListDieDetails()
             call!!.enqueue(object : Callback<DieIdDetailsModel?> {
                 override fun onResponse(
                     call: Call<DieIdDetailsModel?>,
@@ -699,7 +698,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         if (NetworkUtils.isNetworkAvailable(this)) {
             progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_operators))
             progressDialog.show()
-            val call = RetrofitClient().getMyApi()!!.getOperatorsList()
+            val call = RetrofitClient!!.getInstance(this)!!.getMyApi()!!.getOperatorsList()
             call!!.enqueue(object : Callback<OperatorList?> {
                 override fun onResponse(
                         call: Call<OperatorList?>,

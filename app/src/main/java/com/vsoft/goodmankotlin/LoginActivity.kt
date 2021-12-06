@@ -152,7 +152,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchLis
                 progressDialog.show()
             }
             val call: Call<UserAuthResponse?>? =
-                RetrofitClient.getInstance()!!.getMyApi()!!
+                RetrofitClient.getInstance(this)!!.getMyApi()!!
                     .authenticate(UserAuthRequest(userId, password))
             call!!.enqueue(object : Callback<UserAuthResponse?> {
                 override fun onResponse(

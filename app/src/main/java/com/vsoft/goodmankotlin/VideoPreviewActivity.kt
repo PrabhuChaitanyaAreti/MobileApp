@@ -452,7 +452,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 RequestBody.create(MediaType.parse("video/*"), file)
             )
             val call: Call<VideoAnnotationResponse?>? =
-                RetrofitClient.getInstance()!!.getMyApi()!!.uploadDyeVideo(filePart)
+                RetrofitClient.getInstance(this)!!.getMyApi()!!.uploadDyeVideo(filePart)
 
             val thread = Thread {
                 try {
