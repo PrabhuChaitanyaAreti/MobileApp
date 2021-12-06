@@ -37,8 +37,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import com.vsoft.goodmankotlin.utils.SharedPref
-
-
+import org.eclipse.paho.android.service.BuildConfig
 
 
 class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialogCallback {
@@ -97,12 +96,35 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
 
 
-//        var isDownload = MqttService.getDownloader()
-//        if(isDownload.contains("fail")){
-//            download_latest_version.visibility = View.GONE
-//        }else{
-//            download_latest_version.visibility = View.VISIBLE
-//        }
+        try {
+
+            //    runOnUiThread {
+//                var isDownload = MqttService.getDownloader()
+//                if(isDownload.contains("fail")){
+//                    download_latest_version.visibility = View.GONE
+//                }else{
+//                    download_latest_version.visibility = View.VISIBLE
+//                }
+            //  }
+
+            SharedPref.init(getApplicationContext());
+            val isApkDonwloaded = SharedPref.read(SharedPref.IS_DOWNLOADED, false)
+            val apkVersion = SharedPref.read(SharedPref.APP_VERSION, null)
+            val versionCode = BuildConfig.VERSION_CODE
+//            val showInstallorNot = apkVersion.toInt() > versionCode
+
+//       var isDownload = MqttService.getDownloader()
+            if (isApkDonwloaded) {
+
+                download_latest_version.visibility = View.VISIBLE
+            } else {
+                download_latest_version.visibility = View.GONE
+            }
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+        }
+
 
        val str="select * from video_table where status="+"'"+false+"'"
         Log.d("TAG", "strstrstrstr: $str")
@@ -176,8 +198,16 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
         try {
 
-            SharedPref.init(getApplicationContext());
+        //    runOnUiThread {
+//                var isDownload = MqttService.getDownloader()
+//                if(isDownload.contains("fail")){
+//                    download_latest_version.visibility = View.GONE
+//                }else{
+//                    download_latest_version.visibility = View.VISIBLE
+//                }
+          //  }
 
+            SharedPref.init(getApplicationContext());
             val isApkDonwloaded = SharedPref.read(SharedPref.IS_DOWNLOADED, false)
             val apkVersion = SharedPref.read(SharedPref.APP_VERSION, null)
             val versionCode = BuildConfig.VERSION_CODE

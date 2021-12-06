@@ -37,8 +37,8 @@ public class MqttService extends Service {
     String clientId;//
     String device_name;
     final String tenant      = "vsoftconsultingai";
-    final String username    = "kvemulavada@vsoftconsulting.com";
-    final String password    = "Krishna@9";
+    final String username    = "rpittala@vsoftconsulting.com";
+    final String password    = "Ram@12345";
     String appName="",appVersion="",appUrl="";
     static DownloadController downloadController=null;
     TextView tv_message;
@@ -64,7 +64,7 @@ public class MqttService extends Service {
     public static String getDownloader(){
         var download= "";
         if(downloadController != null){
-          download = "success";
+            download = "success";
         }else {
             download = "fail";
 
@@ -155,28 +155,28 @@ public class MqttService extends Service {
         return null;
     }
 
-      IMqttMessageListener mqttMessageListener = new IMqttMessageListener() {
-          @Override
-          public void messageArrived(String topic, MqttMessage message) throws Exception {
+    IMqttMessageListener mqttMessageListener = new IMqttMessageListener() {
+        @Override
+        public void messageArrived(String topic, MqttMessage message) throws Exception {
 
 
-              String payload = new String(message.getPayload());
+            String payload = new String(message.getPayload());
 
-              if(payload.contains(clientId)){ // Checking device id in callback
+            if(payload.contains(clientId)){ // Checking device id in callback
 
-              if (payload.startsWith("516")) {// software install
-                  Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
-                      public void run() {
-                          try {
+                if (payload.startsWith("516")) {// software install
+                    Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+                        public void run() {
+                            try {
 
 //                              client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
-                              String[] appDetails=payload.split(",");
-                              if(appDetails !=null && appDetails.length>3) {
-                                  appName = appDetails[2];
-                                  appVersion = appDetails[3];
-                                  appUrl = appDetails[4];
-                                  int apkversion = Integer.parseInt(appVersion);
-                                  int versionCode = BuildConfig.VERSION_CODE;
+                                String[] appDetails=payload.split(",");
+                                if(appDetails !=null && appDetails.length>3) {
+                                    appName = appDetails[2];
+                                    appVersion = appDetails[3];
+                                    appUrl = appDetails[4];
+                                    int apkversion = Integer.parseInt(appVersion);
+                                    int versionCode = BuildConfig.VERSION_CODE;
 
 //                                  if(apkversion > versionCode) {
 
@@ -184,35 +184,35 @@ public class MqttService extends Service {
 
 
 
-                                      //TODO --> check the current device app version and this version
+                                    //TODO --> check the current device app version and this version
 
-                                      Log.i("INSTALL-MQTT", "-----> " + appName + " : " + appVersion + " : " + appUrl);
+                                    Log.i("INSTALL-MQTT", "-----> " + appName + " : " + appVersion + " : " + appUrl);
 
-                                      downloadController = new DownloadController(activityContext, appUrl, appName + ".apk", appVersion);
-                                      downloadController.enqueueDownload(new ApkDownloaderCallBack() {
-                                          @Override
-                                          public void onDownloadCompleted() {
-                                              try {
+                                    downloadController = new DownloadController(activityContext, appUrl, appName + ".apk", appVersion);
+                                    downloadController.enqueueDownload(new ApkDownloaderCallBack() {
+                                        @Override
+                                        public void onDownloadCompleted() {
+                                            try {
 
-                                                  SharedPref.init(getApplicationContext());
-                                                  SharedPref.write(SharedPref.URI, appVersion.toString());
+                                                SharedPref.init(getApplicationContext());
+                                                SharedPref.write(SharedPref.URI, appVersion.toString());
 //                                                  Toast.makeText(activityContext, "Success", Toast.LENGTH_SHORT).show();
 
-                                                  client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
-                                                  client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
+                                                client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
+                                                client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
 
-                                              } catch (MqttException e) {
-                                                  e.printStackTrace();
-                                              }
-                                          }
+                                            } catch (MqttException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
 
-                                          @Override
-                                          public void onDownloadFailed() {
-                                              System.out.println("Download failed.");
-                                              //  client.publish("s/us", "502,c8y_SoftwareList,networkissue".getBytes(), QOS, false);
+                                        @Override
+                                        public void onDownloadFailed() {
+                                            System.out.println("Download failed.");
+                                            //  client.publish("s/us", "502,c8y_SoftwareList,networkissue".getBytes(), QOS, false);
 
-                                          }
-                                      });
+                                        }
+                                    });
 
 
 //                                  }else {
@@ -222,24 +222,24 @@ public class MqttService extends Service {
 //                                  }
 
 
-                              }else{
-                                  client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
-                              }
+                                }else{
+                                    client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
+                                }
 
 
-                          } catch (MqttException e) {
-                              e.printStackTrace();
-                          }
-                      }
-                  });
-              }
+                            } catch (MqttException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
 
-              }
+            }
 
 
 
-          }
-      };
+        }
+    };
 
 
     private void publishDeviceMemory(MqttClient client){
