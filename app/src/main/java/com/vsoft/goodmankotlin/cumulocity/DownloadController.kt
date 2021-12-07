@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.vsoft.goodmankotlin.BuildConfig
 import com.vsoft.goodmankotlin.cumulocity.ApkDownloaderCallBack
+import com.vsoft.goodmankotlin.utils.SharedPref
 
 import java.io.File
 
@@ -20,11 +21,11 @@ class DownloadController(
     private var FILE_NAME: String,
     private val apkDesc: String,
 
-) {
+    ) {
     private lateinit var destination: String
     private lateinit var uri:Uri
     companion object {
-       // private const val FILE_NAME = this.appName
+        // private const val FILE_NAME = this.appName
         private const val FILE_BASE_PATH = "file://"
         private const val MIME_TYPE = "application/vnd.android.package-archive"
         private const val PROVIDER_PATH = ".provider"
@@ -77,44 +78,50 @@ class DownloadController(
                 context: Context,
                 intent: Intent
             ) {
-               // apkDownloaderCallBack.onDownloadCompleted()
-                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Log.d("DownloadController","-----> installing apk1")
-                    val contentUri = FileProvider.getUriForFile(
-                        context,
-                        BuildConfig.APPLICATION_ID + PROVIDER_PATH,
-                        File(destination)
-                    )
-                    Log.d("DownloadController","----->URI: "+contentUri)
-                    val install = Intent(Intent.ACTION_VIEW)
-                    install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                  //  install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    install.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
-                    install.data = contentUri
-                    context.startActivity(install)
-                    context.unregisterReceiver(this)
-                    // finish()
-                } else {
-                    Log.d("DownloadController","-----> installing apk1")
-                    val install = Intent(Intent.ACTION_VIEW)
-                    install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    install.setDataAndType(
-                        uri,
-                        APP_INSTALL_PATH
-                    )
-                    context.startActivity(install)
-                    context.unregisterReceiver(this)
-                    // finish()
-                }*/
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Log.d("DownloadController","-----> installing apk1")
-                    val contentUri = FileProvider.getUriForFile(
-                        context,
-                        BuildConfig.APPLICATION_ID + PROVIDER_PATH,
-                        File(destination)
-                    )
+//                apkDownloaderCallBack.onDownloadCompleted()
+                SharedPref.init(context);
+                SharedPref.write(SharedPref.URI, uri.toString());
+                SharedPref.write(SharedPref.DESTINATION, destination);
+                SharedPref.write(SharedPref.IS_DOWNLOADED, true);
+
+
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    Log.d("DownloadController","-----> installing apk1")
+//                    val contentUri = FileProvider.getUriForFile(
+//                        context,
+//                        BuildConfig.APPLICATION_ID + PROVIDER_PATH,
+//                        File(destination)
+//                    )
 //                    Log.d("DownloadController","----->URI: "+contentUri)
+//                    val install = Intent(Intent.ACTION_VIEW)
+//                    install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//                    //  install.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    install.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+//                    install.data = contentUri
+//                    context.startActivity(install)
+//                    context.unregisterReceiver(this)
+//                    // finish()
+//                } else {
+//                    Log.d("DownloadController","-----> installing apk1")
+//                    val install = Intent(Intent.ACTION_VIEW)
+//                    install.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+//                    install.setDataAndType(
+//                        uri,
+//                        APP_INSTALL_PATH
+//                    )
+//                    context.startActivity(install)
+//                    context.unregisterReceiver(this)
+//                    // finish()
+//                }
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    Log.d("DownloadController","-----> installing apk1")
+//                    val contentUri = FileProvider.getUriForFile(
+//                        context,
+//                        BuildConfig.APPLICATION_ID + PROVIDER_PATH,
+//                        File(destination)
+//                    )
+////                    Log.d("DownloadController","----->URI: "+contentUri)
 //                    val install = Intent(Intent.ACTION_VIEW)
 //                    install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 //                    install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -122,10 +129,10 @@ class DownloadController(
 //                    install.data = contentUri
 //                    context.startActivity(install)
 //                    context.unregisterReceiver(this)
-//                    // finish()
-                }
-                else {
-//                    Log.d("DownloadController","-----> installing apk1")
+////                    // finish()
+//                }
+//                else {
+////                    Log.d("DownloadController","-----> installing apk1")
 //                    val install = Intent(Intent.ACTION_VIEW)
 //                    install.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 //                    install.setDataAndType(
@@ -133,10 +140,10 @@ class DownloadController(
 //                        APP_INSTALL_PATH
 //                    )
 //                    context.startActivity(install)
-                    context.unregisterReceiver(this)
-//                    // finish()
-                }
-                 apkDownloaderCallBack.onDownloadCompleted()
+//                    context.unregisterReceiver(this)
+////                    // finish()
+//                }
+                apkDownloaderCallBack.onDownloadCompleted()
 
             }
         }

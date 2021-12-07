@@ -17,7 +17,9 @@ import com.vsoft.goodmankotlin.DashBoardActivity;
 import com.vsoft.goodmankotlin.R;
 import com.vsoft.goodmankotlin.utils.CommonUtils;
 import com.vsoft.goodmankotlin.utils.DialogUtils;
+import com.vsoft.goodmankotlin.utils.SharedPref;
 
+import org.eclipse.paho.android.service.BuildConfig;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -54,13 +56,15 @@ public class MqttService extends Service {
 
         if(downloadController != null){
             downloadController.showInstallAPK();
+        }else {
+            Toast.makeText(activityContext, "New Version Not Available", Toast.LENGTH_SHORT).show();
         }
     }
 
     public static String getDownloader(){
         var download= "";
         if(downloadController != null){
-          download = "success";
+            download = "success";
         }else {
             download = "fail";
 
@@ -151,70 +155,96 @@ public class MqttService extends Service {
         return null;
     }
 
-      IMqttMessageListener mqttMessageListener = new IMqttMessageListener() {
-          @Override
-          public void messageArrived(String topic, MqttMessage message) throws Exception {
+    IMqttMessageListener mqttMessageListener = new IMqttMessageListener() {
+        @Override
+        public void messageArrived(String topic, MqttMessage message) throws Exception {
 
 
-              String payload = new String(message.getPayload());
+            String payload = new String(message.getPayload());
 
-              if(payload.contains(clientId)){ // Checking device id in callback
+            if(payload.contains(clientId)){ // Checking device id in callback
 
-              if (payload.startsWith("516")) {// software install
-                  Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
-                      public void run() {
-                          try {
+                if (payload.startsWith("516")) {// software install
+                    Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+                        public void run() {
+                            try {
+
+//                                client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
+//                                client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
 
 //                              client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
-                              String[] appDetails=payload.split(",");
-                              if(appDetails !=null && appDetails.length>3) {
-                                  appName = appDetails[2];
-                                  appVersion = appDetails[3];
-                                  appUrl = appDetails[4];
-
-                                  //TODO --> check the current device app version and this version
-
-                                  Log.i("INSTALL-MQTT","-----> "+appName+" : "+appVersion+" : "+appUrl);
-
-                                  downloadController=new DownloadController(activityContext,appUrl,appName+".apk",appVersion);
-                                  downloadController.enqueueDownload(new ApkDownloaderCallBack() {
-                                      @Override
-                                      public void onDownloadCompleted() {
-                                          try {
-
-                                              client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
-                                              client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
-                                              getDownloader();
-                                          } catch (MqttException e) {
-                                              e.printStackTrace();
-                                          }
-                                      }
-
-                                      @Override
-                                      public void onDownloadFailed() {
-                                          System.out.println("Download failed.");
-                                          //  client.publish("s/us", "502,c8y_SoftwareList,networkissue".getBytes(), QOS, false);
-
-                                      }
-                                  });
-                              }else{
-                                  client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
-                              }
-
-
-                          } catch (MqttException e) {
-                              e.printStackTrace();
-                          }
-                      }
-                  });
-              }
-
-              }
+                                String[] appDetails=payload.split(",");
+                                if(appDetails !=null && appDetails.length>3) {
+                                    appName = appDetails[2];
+                                    appVersion = appDetails[3];
+                                    appUrl = appDetails[4];
+//                                    int apkversion = Integer.parseInt(appVersion);
+//                                    int versionCode = BuildConfig.VERSION_CODE;
 
 
 
-          }
-      };
+//                                  if(apkversion > versionCode) {
+
+
+
+
+
+                                    //TODO --> check the current device app version and this version
+
+                                    Log.i("INSTALL-MQTT", "-----> " + appName + " : " + appVersion + " : " + appUrl);
+
+                                    downloadController = new DownloadController(activityContext, appUrl, appName + ".apk", appVersion);
+                                    downloadController.enqueueDownload(new ApkDownloaderCallBack() {
+                                        @Override
+                                        public void onDownloadCompleted() {
+                                            try {
+
+                                                SharedPref.init(getApplicationContext());
+                                                SharedPref.write(SharedPref.URI, appVersion.toString());
+//                                                  Toast.makeText(activityContext, "Success", Toast.LENGTH_SHORT).show();
+
+                                                client.publish("s/us", "501,c8y_SoftwareList".getBytes(), QOS, false);//status - Executing..
+                                                client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
+
+                                            } catch (MqttException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onDownloadFailed() {
+                                            System.out.println("Download failed.");
+                                            //  client.publish("s/us", "502,c8y_SoftwareList,networkissue".getBytes(), QOS, false);
+
+                                        }
+                                    });
+
+
+//                                  }else {
+//
+//                                      client.publish("s/us", "503,c8y_SoftwareList,Current app version is less then current version".getBytes(), QOS, false);
+//
+//                                  }
+
+
+                                }else{
+                                    client.publish("s/us", "503,c8y_SoftwareList".getBytes(), QOS, false);
+                                }
+
+
+                            } catch (MqttException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+
+            }
+
+
+
+        }
+    };
 
 
     private void publishDeviceMemory(MqttClient client){
