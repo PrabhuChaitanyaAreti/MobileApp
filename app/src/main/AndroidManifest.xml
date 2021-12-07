@@ -58,17 +58,17 @@
         <activity
             android:name=".CameraActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar1"
             android:exported="true"/>
         <activity
             android:name=".VideoRecordActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar1"
             android:exported="true"/>
         <activity
             android:name=".VideoPreviewActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar1"
             android:exported="true"/>
         <activity
             android:name=".MaskingActivity"
@@ -78,9 +78,8 @@
         <activity
             android:name=".DashBoardActivity"
             android:launchMode="singleTask"
-            android:turnScreenOn="true"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar1"
             android:exported="true"/>
         <activity
             android:name=".OperatorSelectActivity"
@@ -106,7 +105,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service android:name=".cumulocity.MqttService"/>
     </application>
 
 </manifest>

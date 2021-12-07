@@ -50,9 +50,9 @@ class DialogUtils {
                         if(str == context.resources.getString(R.string.alert_cancel) ||
                                 str == context.resources.getString(R.string.alert_no)  ||
                                 str == context.resources.getString(R.string.alert_exit) ){
-                            button.background=context?.resources?.getDrawable(R.drawable.button_bg_red)
+                            button.background= context.resources?.getDrawable(R.drawable.button_bg_red)
                         }else{
-                            button.background=context?.resources?.getDrawable(R.drawable.button_bg)
+                            button.background= context.resources?.getDrawable(R.drawable.button_bg)
                         }
                     }else{
                         button.background=context?.resources?.getDrawable(R.drawable.button_bg)
@@ -77,20 +77,5 @@ class DialogUtils {
             customDialog.show()
         }
 
-        @JvmStatic
-        fun showNormalAlert1(activityContext: Context, s: String, s1: String) {
-            val alertDialogBuilder = AlertDialog.Builder(activityContext)
-            alertDialogBuilder.setTitle("Fail")
-            alertDialogBuilder.setMessage("P")
-            alertDialogBuilder.setPositiveButton(
-                "Ok"
-            ) { arg0, arg1 -> }
-            alertDialogBuilder.setNegativeButton(
-                "Cancel"
-            ) { dialog, which -> }
-            val alertDialog = alertDialogBuilder.create()
-            alertDialog.show()
-
-        }
     }
 }

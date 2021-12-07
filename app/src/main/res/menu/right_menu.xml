@@ -3,6 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <item  android:id="@+id/rightMenu"
-            android:title="rightMenu" android:icon="@drawable/hamburg_menu_icon" app:showAsAction="always" />
+            android:title="@string/rightMenu" android:icon="@drawable/hamburg_menu_icon" app:showAsAction="always" />
 
 </menu>

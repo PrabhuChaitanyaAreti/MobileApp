@@ -1,4 +1,4 @@
-@file:Suppress("ControlFlowWithEmptyBody")
+@file:Suppress("ControlFlowWithEmptyBody", "PrivatePropertyName")
 
 package com.vsoft.goodmankotlin
 
@@ -20,7 +20,6 @@ import androidx.lifecycle.ViewModelProviders
 import com.microsoft.appcenter.analytics.Analytics
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.vsoft.goodmankotlin.cumulocity.MqttService
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.database.subscribeOnBackground
@@ -45,7 +44,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
     private lateinit var addDie: LinearLayout
     private lateinit var sync: RelativeLayout
     private lateinit var skip: LinearLayout
-    private lateinit var download_latest_version: LinearLayout
+    private lateinit var downloadLatestVersion: LinearLayout
     private lateinit var logout: LinearLayout
     private lateinit var syncDie: LinearLayout
     private lateinit var syncVideosCount: TextView
@@ -66,10 +65,6 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         initProgress()
         init()
 
-        // Start the MQTT Service
-       // MqttService.activityContext=this;
-        //val i = Intent(this@DashBoardActivity, MqttService::class.java)
-        //startService(i)
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -80,7 +75,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         sync = findViewById(R.id.sync)
         skip = findViewById(R.id.skip)
         logout = findViewById(R.id.logout)
-        download_latest_version = findViewById(R.id.download_latest_version)
+        downloadLatestVersion = findViewById(R.id.download_latest_version)
+        downloadLatestVersion.visibility=View.GONE
         syncDie=findViewById(R.id.syncDie)
         syncVideosCount=findViewById(R.id.syncVideosCount)
         syncVideosCount.visibility=View.GONE
@@ -93,26 +89,15 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         sync.setOnClickListener(this)
         skip.setOnClickListener(this)
         logout.setOnClickListener(this)
-        download_latest_version.setOnClickListener(this)
+        downloadLatestVersion.setOnClickListener(this)
         syncDie.setOnClickListener(this)
         versionDetails=findViewById(R.id.versionDetails)
         versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+ BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
 
 
-//         isDownload = (MqttService.getDownloader() as Nothing?).toString();
-
-
-/*
-        var isDownload = MqttService.getDownloader()
-        if(isDownload.contains("fail")){
-            download_latest_version.visibility = View.GONE
-        }else{
-            download_latest_version.visibility = View.VISIBLE
-        }
-*/
 
        val str="select * from video_table where status="+"'"+false+"'"
-        Log.d("TAG", "strstrstrstr: $str")
+        Log.d("TAG", "str: $str")
         versionDetails = findViewById(R.id.versionDetails)
         versionDetails.text = HtmlCompat.fromHtml(
             "<B>Version:</B>" + BuildConfig.VERSION_CODE + "(" + BuildConfig.VERSION_NAME + ")",
@@ -176,15 +161,6 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
     }
 
-    override fun onResume() {
-        super.onResume()
-  /*     var isDownload = MqttService.getDownloader()
-        if(isDownload.contains("fail")){
-            download_latest_version.visibility = View.GONE
-        }else{
-            download_latest_version.visibility = View.VISIBLE
-        }*/
-    }
     private fun removeSyncVideos() {
         try {
             val videosList = vm.getSyncedVideos()
@@ -287,7 +263,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             )
         }
 
-        if (v?.id == download_latest_version.id) {
+        if (v?.id == downloadLatestVersion.id) {
 
 
 
@@ -464,8 +440,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             } else {
                 item.status = true
                 val status: Int = vm.update(item)
-                CommonUtils.deletePath(item.video_path)
-                vm.delete(item)
+              //  CommonUtils.deletePath(item.video_path)
+               // vm.delete(item)
                 sync()
             }
         } else {
@@ -497,15 +473,19 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                         when (response.body()!!.statusCode) {
                             200 -> {
                                 runOnUiThread {
-                                    CommonUtils.deletePath(item.video_path)
-                                    vm.delete(item)
+                                    //CommonUtils.deletePath(item.video_path)
+                                   // vm.delete(item)
+                                    item.status = true
+                                    val status: Int = vm.update(item)
                                     sync()
                                 }
                             }
                             401 -> {
                                 runOnUiThread {
-                                    CommonUtils.deletePath(item.video_path)
-                                    vm.delete(item)
+                                   // CommonUtils.deletePath(item.video_path)
+                                    //vm.delete(item)
+                                    item.status = true
+                                    val status: Int = vm.update(item)
                                     sync()
                                 }
                             }
@@ -610,28 +590,35 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                 true
             )
         ) {
-            if (functionality.equals(
+            when {
+                functionality.equals(
                     CommonUtils.NO_OPERATOR_FUNCTIONALITY_IMPLEMENTED_DIALOG,
                     true
-                )
-            ) {
-                //No action required.
-            } else if (functionality.equals(CommonUtils.LOGOUT_DIALOG, true)) {
-                val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
-                editor.remove(CommonUtils.LOGIN_STATUS)
-                //editor.clear()
-                editor.apply()
-                navigateToLogin()
-            } else if (functionality.equals(CommonUtils.VIDEO_SYNC_DIALOG, true)) {
-                //No action required on sync
-            } else if (functionality.equals(CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, true)) {
-                //No action required on sync
-            } else  if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
-                //No action required on internet connection error
-            } else if (functionality.equals(CommonUtils.WEB_SERVICE_CALL_FAILED, true)) {
-                //No action required
-            } else  if (functionality.equals(CommonUtils.NO_DIE_DATA_DIALOG, true)) {
-                //No action required
+                ) -> {
+                    //No action required.
+                }
+                functionality.equals(CommonUtils.LOGOUT_DIALOG, true) -> {
+                    val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+                    editor.remove(CommonUtils.LOGIN_STATUS)
+                    //editor.clear()
+                    editor.apply()
+                    navigateToLogin()
+                }
+                functionality.equals(CommonUtils.VIDEO_SYNC_DIALOG, true) -> {
+                    //No action required on sync
+                }
+                functionality.equals(CommonUtils.WEB_SERVICE_RESPONSE_CODE_NON_401, true) -> {
+                    //No action required on sync
+                }
+                functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true) -> {
+                    //No action required on internet connection error
+                }
+                functionality.equals(CommonUtils.WEB_SERVICE_CALL_FAILED, true) -> {
+                    //No action required
+                }
+                functionality.equals(CommonUtils.NO_DIE_DATA_DIALOG, true) -> {
+                    //No action required
+                }
             }
         }
 
