@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:orientation="horizontal"
     android:layout_height="match_parent"
-    android:id="@+id/parentView"
     tools:context=".MaskingActivity">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/leftMenuRecycler"
@@ -16,17 +15,18 @@
         android:id="@+id/imageScroll"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:src="@drawable/splashscreen"
+        android:src="@drawable/background_img"
        android:layout_weight="0.55" >
         <ScrollView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent">
         <ImageView
             android:id="@+id/punchTypeImage"
             android:layout_width="match_parent"
             android:scaleType="fitXY"
-            android:layout_height="match_parent"
-            android:src="@drawable/splashscreen" />
+            android:contentDescription="@string/app_name"
+            android:layout_height="wrap_content"
+            android:src="@drawable/background_img" />
         </ScrollView>
     </HorizontalScrollView>
     <androidx.recyclerview.widget.RecyclerView

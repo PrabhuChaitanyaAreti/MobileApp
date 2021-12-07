@@ -1,123 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/main_lyt"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     android:orientation="vertical">
-    <ScrollView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:fillViewport="true"
-        android:orientation="vertical" >
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/white_border_margin_start"
+        android:layout_marginTop="@dimen/white_border_margin_top"
+        android:layout_marginEnd="@dimen/white_border_margin_end"
+        android:layout_marginBottom="@dimen/white_border_margin_top"
+        android:background="@drawable/border_operator"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/white_border_padding_start"
+        android:paddingEnd="@dimen/white_border_padding_end">
+
+        <ImageView
+            android:layout_width="@dimen/app_logo_width"
+            android:layout_height="@dimen/app_logo_height"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/app_logo_margin_top"
+            android:background="@drawable/app_logo"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitXY" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_scr"
+            android:layout_marginStart="@dimen/options_layout_margin_start"
+            android:layout_marginTop="@dimen/options_layout_margin_top"
+            android:layout_marginEnd="@dimen/options_layout_margin_end"
+            android:gravity="center"
             android:orientation="vertical">
-          <!--  <LinearLayout
+
+            <Button
+                android:id="@+id/die_au_tv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="20dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/background"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:weightSum="1" >-->
-                <LinearLayout
-                    android:id="@+id/main_lyt"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginBottom="30dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:paddingLeft="50dp"
-                    android:paddingRight="50dp"
-                    android:layout_marginLeft="120dp"
-                    android:layout_marginRight="120dp"
-                    android:background="@drawable/border_operator">
-                    <ImageView
-                        android:layout_width="120dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/goodman"/>
-                   <!-- <Button
-                        android:id="@+id/operator_au_tv"
-                        android:padding="10dp"
-                        android:layout_marginTop="25dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Enter Operator"
-                        android:background="@drawable/background"
-                        android:gravity="center"
-                        android:paddingEnd="5dp"
-                        android:paddingStart="5dp"
-                        android:layout_gravity="center"
-                        android:singleLine="true"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/black"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small">
-                    </Button>-->
-                    <Button
-                        android:id="@+id/die_au_tv"
-                        android:padding="10dp"
-                        android:layout_marginTop="50dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Enter Die ID"
-                        android:background="@drawable/background"
-                        android:gravity="center"
-                        android:paddingEnd="5dp"
-                        android:paddingStart="5dp"
-                        android:layout_gravity="center"
-                        android:singleLine="true"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/black"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small">
-                    </Button>
-                    <Button
-                        android:id="@+id/part_au_tv"
-                        android:padding="10dp"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Enter Part ID"
-                        android:background="@drawable/background"
-                        android:gravity="center"
-                        android:paddingEnd="5dp"
-                        android:paddingStart="5dp"
-                        android:layout_gravity="center"
-                        android:singleLine="true"
-                        android:textColor="@color/black"
-                        android:textColorHint="@color/black"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small">
-                    </Button>
-                    <Spinner
-                        android:id="@+id/dieTypeSpinner"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="visible"
-                        android:padding="10dp"
-                        android:background="@drawable/background"
-                        android:prompt="@string/app_name"  />
-                    <Button
-                        android:id="@+id/btnContinue"
-                        android:textAllCaps="false"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginBottom="10dp"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:paddingLeft="100dp"
-                        android:paddingRight="100dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/button_bg"
-                        android:text="Continue"
-                        android:textColor="@color/white" />
-                </LinearLayout>
-           <!-- </LinearLayout>-->
+                android:hint="@string/enter_die_id"
+                android:padding="@dimen/edit_padding"
+                android:paddingStart="@dimen/edit_padding_start"
+                android:paddingEnd="@dimen/edit_padding_end"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"/>
+
+            <Button
+                android:id="@+id/part_au_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/option_margin_top"
+                android:background="@drawable/background"
+                android:gravity="center"
+                android:hint="@string/enter_part_id"
+                android:padding="@dimen/edit_padding"
+                android:paddingStart="@dimen/edit_padding_start"
+                android:paddingEnd="@dimen/edit_padding_end"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"/>
+
+            <Spinner
+                android:id="@+id/dieTypeSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/option_margin_top"
+                android:background="@drawable/background"
+                android:padding="@dimen/edit_padding"
+                android:paddingStart="@dimen/edit_padding_start"
+                android:paddingEnd="@dimen/edit_padding_end"
+                android:prompt="@string/app_name"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/btnContinue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/login_margin_top"
+                android:background="@drawable/button_bg"
+                android:paddingTop="@dimen/login_padding_top"
+                android:paddingBottom="@dimen/login_padding_top"
+                android:text="@string/continue_str_small"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
         </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 </LinearLayout>

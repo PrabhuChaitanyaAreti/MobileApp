@@ -1,9 +1,7 @@
 package com.vsoft.goodmankotlin.cumulocity;
 
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -12,15 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.cumulocitydemo.DownloadController;
-import com.vsoft.goodmankotlin.DashBoardActivity;
-import com.vsoft.goodmankotlin.R;
-import com.vsoft.goodmankotlin.utils.CommonUtils;
-import com.vsoft.goodmankotlin.utils.DialogUtils;
 import com.vsoft.goodmankotlin.utils.SharedPref;
 
-import org.eclipse.paho.android.service.BuildConfig;
-import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;

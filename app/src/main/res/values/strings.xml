@@ -1,35 +1,24 @@
 <resources>
     <string name="app_name">Goodman</string>
-    <string name="btn_take_picture">Take Picture</string>
-    <string name="btn_retake_picture">Retake Picture</string>
     <string name="retake">Retake</string>
     <string name="btn_submit">Submit</string>
     <string name="save">Save</string>
-    <string name="file_provider_authority">com.vsoft.goodmankotlin</string>
     <string name="btn_send_to_edge">Submit</string>
     <string name="capture">Capture</string>
 
+    <string name="die_id">Die ID:</string>
+    <string name="part_id">Part ID:</string>
+    <string name="die_type">Die Type:</string>
+
     <string name="verify_die">Verify Die</string>
-    <string name="die">Die</string>
+    <string name="die">Add Die</string>
     <string name="sync">Sync Videos</string>
     <string name="sync_die">Sync die</string>
-    <string name="operator">Operator</string>
     <string name="logout">Logout</string>
     <string name="latest_version">Install \n Latest Version</string>
 
     <string name="enter_die_id">Enter Die ID</string>
     <string name="enter_part_id">Enter Part ID</string>
-
-    <string name="operator_colon">Operator :</string>
-    <string name="enter_operator">Enter Operator</string>
-
-    <string name="die_id_colon">Die ID :</string>
-    <string name="enter_die_id_1">Enter Die ID</string>
-
-    <string name="part_id_colon">Part ID :</string>
-    <string name="enter_part_id_1">Enter Part ID</string>
-
-    <string name="die_type_colon">Die Type :</string>
 
     <string name="enter_user_name">Enter Username</string>
     <string name="enter_pin">Enter Pin</string>
@@ -40,13 +29,13 @@
     <string name="api_failure_alert_title">Unable to communicate with server.</string>
     <string name="api_server_alert_message">Unable to process request.Contact admin.</string>
     <string name="network_alert_message">Please check your internet connection and try again.</string>
-    <string name="alert_title">Alert!!</string>
-    <string name="alert_cancel">Cancel</string>
+    <string name="alert_cancel">@android:string/cancel</string>
     <string name="alert_ok">OK</string>
     <string name="alert_yes">YES</string>
     <string name="alert_no">NO</string>
-    <string name="alert_exit">Exit</string>
-    <string name="continue_str">Continue</string>
+    <string name="alert_exit">EXIT</string>
+    <string name="continue_str">CONTINUE</string>
+    <string name="continue_str_small">Continue</string>
     <string name="settings_str">Settings</string>
     <string name="dashboard_navigation_alert_message">Do you want to navigate to Dashboard?</string>
 
@@ -61,7 +50,6 @@
 
 
     <!--Splash Screen-->
-    <string name="settings_title">Permissions required!</string>
     <string name="settings_message">Camera needs few permissions to work properly. Grant them in settings.</string>
     <string name="settings_option">GOTO SETTINGS</string>
 
@@ -76,8 +64,6 @@
     <string name="login_alert_message">Invalid Credentials.</string>
 
     <!--Dashboard Screen-->
-    <string name="progress_dialog_message_sync_videos">Please wait .. Syncing video will take time..</string>
-    <string name="add_operator_alert_message">Functionality will be updated soon..</string>
     <string name="logout_alert_message">Would you like to Logout?</string>
     <string name="exit_app_alert_message">Do you want to exit app?</string>
     <string name="sync_videos_alert_message_success">All available dies are synced successfully.</string>
@@ -91,12 +77,7 @@
 
 
     <!--ADD DIE Screen-->
-    <string name="add_die_die_type_select">Select Die Type</string>
-    <string name="add_die_die_type_top">Top</string>
-    <string name="add_die_die_type_bottom">Bottom</string>
     <string name="add_die_alert_die_type_select">Please select Die Type</string>
-    <string name="add_die_alert_enter_part_id">Please enter Part ID</string>
-    <string name="add_die_alert_enter_die_id">Please enter Die ID</string>
     <string name="dieIdNotAvailableWarningMessage">Die ID not available in the list, Do you want to add it ?</string>
     <string name="partIdNotAvailableWarningMessage">Part ID not related to Die ID, Do you want to add it ?</string>
 
@@ -107,11 +88,9 @@
 
     <!--Operator Select Screen-->
     <string name="progress_dialog_message_dies_parts">Please wait .. Fetching die and part data..</string>
-    <string name="op_se_alert_title_error">Error</string>
+    <string name="progress_dialog_message_operators">Please wait .. Fetching Operators data..</string>
     <string name="op_se_alert_message_die_id_part_id">Please enter Die ID before select Part ID</string>
     <string name="op_se_alert_message_select_operator">Please Select Operator</string>
-    <string name="op_se_alert_message_operator">Please enter Operator</string>
-    <string name="op_se_alert_message_operator_select11">The Operator you have selected is not available in the list.</string>
     <string name="op_se_alert_message_die_id_select">The Die ID you have selected is not available in the list.</string>
     <string name="op_se_alert_message_part_id_select">The Part ID you have selected is not available in the list.</string>
     <string name="op_se_alert_message_part_id">Please enter Part ID</string>
@@ -130,7 +109,7 @@
     <string name="video_preview_bottom_die_details_message">Do you want to record Bottom Die Details</string>
     <string name="progress_dialog_message_video_preview">Please wait .. Processing video may take some time.</string>
     <string name="video_preview_alert_message">Do you want to navigate to Dashboard?</string>
-    <string name="video_preview_ratake">Do you want to Retake the Video?</string>
+    <string name="video_preview_retake">Do you want to Retake the Video?</string>
     <string name="video_record_message_1">Top Die video is available. Please select an action below.</string>
     <string name="video_record_message_2">Bottom Die video is available. Please select an action below.</string>
     <string name="video_record_option_1">Record Top Video</string>
@@ -146,6 +125,23 @@
     <string name="correct"><b>Correct : </b></string>
     <string name="label"><b>Label : </b></string>
     <string name="ground_truth"><b>Ground Truth : </b></string>
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
+
+
+
+    <string name="image_size"><b>Image Size:</b></string>
+    <string name="frame_rate"><b>Frame Rate:</b></string>
+    <string name="level_of_blurriness"><b>Level of Blurriness:</b></string>
+    <string name="search_enter_here"><b>Search/Enter here</b></string>
+    <string name="select"><b>Select</b></string>
+    <string name="rightMenu"><b>rightMenu</b></string>
+
+    <string name="dash"><b>-</b></string>
+
+
+
+
 
 
 </resources>

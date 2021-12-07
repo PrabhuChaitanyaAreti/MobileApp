@@ -9,16 +9,8 @@ import retrofit2.http.*
 interface RetrofitApiInterface {
 
 
-    /**
-     * The return type is important here
-     * The class structure that you've defined in Call<T>
-     * should exactly match with your json response
-     * If you are not using another api, and using the same as mine
-     * then no need to worry, but if you have your own API, make sure
-     * you change the return type appropriately
-    </T> */
-    @GET("/placeholder/api/predictions")
-    fun getPunchData(): Call<PunchResponse?>?
+    @GET("/operatorlist")
+    fun getOperatorsList(): Call<OperatorList?>?
     @GET("/getDieId")
     fun doGetListDieDetails(): Call<DieIdDetailsModel?>?
     @Multipart

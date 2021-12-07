@@ -6,7 +6,7 @@
     <corners android:radius="15dp" />
 
     <gradient android:angle="270"
-        android:centerColor="@color/black"
-        android:endColor="@color/black"
-        android:startColor="#90150517" />
+        android:centerColor="@color/new_daikin_blue_color"
+        android:endColor="@color/new_daikin_blue_color"
+        android:startColor="@color/new_daikin_blue_color" />
 </shape>
