@@ -1,4 +1,4 @@
-package com.cumulocitydemo
+package com.vsoft.goodmankotlin.cumulocity
 
 import android.app.DownloadManager
 import android.content.*
@@ -10,7 +10,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.vsoft.goodmankotlin.BuildConfig
-import com.vsoft.goodmankotlin.cumulocity.ApkDownloaderCallBack
 import com.vsoft.goodmankotlin.utils.SharedPref
 
 import java.io.File

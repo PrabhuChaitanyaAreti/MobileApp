@@ -8,53 +8,56 @@
     tools:context=".VideoPreviewActivity">
 
     <LinearLayout
-        android:id="@+id/topll"
+        android:id="@+id/topLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
         android:orientation="horizontal">
-
 
 
         <TextView
             android:id="@+id/dieIdTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginStart="10dp"
-            android:text="DieID: hgfhfhg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/red"
+            android:padding="10dp"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             android:visibility="visible" />
+
         <TextView
             android:id="@+id/partIdTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginStart="10dp"
-            android:text="PartID: hgfhfhg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/red"
+            android:padding="10dp"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             android:visibility="visible" />
+
         <TextView
             android:id="@+id/dieTypeTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginStart="10dp"
-            android:text="DieType: hgfhfhg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/red"
+            android:padding="10dp"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             android:visibility="visible" />
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/relative"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/showProgress"
-       android:layout_below="@+id/topll"
+       android:layout_below="@+id/topLL"
         android:layout_marginBottom="5dp">
 
         <com.google.android.exoplayer2.ui.PlayerView
@@ -69,10 +72,11 @@
 
         <ImageView
             android:id="@+id/pause"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:layout_centerInParent="true"
-            android:src="@drawable/video_record_play" />
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/new_video_record_play" />
 
     </RelativeLayout>
 
@@ -80,7 +84,7 @@
         android:id="@+id/showProgress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/botoomll"
+        android:layout_above="@+id/bottomLL"
         android:layout_marginBottom="5dp"
         android:clickable="true"
         android:focusable="true"
@@ -94,14 +98,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
-            android:text="00:00"
+            android:text=""
             android:textColor="@color/white"
-            android:textSize="10dp" />
+            android:textSize="11sp" />
 
         <SeekBar
             android:id="@+id/seekbar"
             style="@style/Base.Widget.AppCompat.SeekBar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
@@ -117,14 +121,14 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="2dp"
             android:gravity="center_vertical"
-            android:text="00:00"
+            android:text=""
             android:textColor="@color/white"
-            android:textSize="10dp" />
+            android:textSize="11sp" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/botoomll"
+        android:id="@+id/bottomLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -135,53 +139,6 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         android:weightSum="100">
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="30"-->
-<!--            android:layout_marginStart="10dp"-->
-<!--            android:orientation="vertical">-->
-<!--            <TextView-->
-<!--                android:id="@+id/dieIdTxt"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:padding="2dp"-->
-<!--                android:text="DieID: hgfhfhg"-->
-<!--                android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:visibility="visible" />-->
-<!--            <TextView-->
-<!--                android:id="@+id/partIdTxt"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:padding="2dp"-->
-<!--                android:text="PartID: hgfhfhg"-->
-<!--                android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:visibility="visible" />-->
-<!--            <TextView-->
-<!--                android:id="@+id/dieTypeTxt"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:padding="2dp"-->
-<!--                android:text="DieType: hgfhfhg"-->
-<!--                android:textAppearance="@style/TextAppearance.AppCompat.Small"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:visibility="visible" />-->
-<!--        </LinearLayout>-->
-
-<!--        <TextView-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginBottom="5dp"-->
-<!--            android:layout_weight="5"-->
-<!--            android:gravity="center"-->
-<!--            android:padding="10dp"-->
-<!--            android:text=""-->
-<!--            android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textStyle="bold" />-->
         <TextView
             android:id="@+id/retakeVideo"
             android:layout_width="0dp"

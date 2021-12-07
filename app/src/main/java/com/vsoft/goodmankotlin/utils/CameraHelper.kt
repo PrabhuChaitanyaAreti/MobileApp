@@ -1,6 +1,7 @@
+@file:Suppress("LocalVariableName")
+
 package com.vsoft.goodmankotlin.utils
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.hardware.Camera
 import android.os.Build
@@ -8,6 +9,7 @@ import android.util.Log
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 
 /**
@@ -16,8 +18,8 @@ import java.util.*
 class CameraHelper {
     companion object {
 
-        val MEDIA_TYPE_IMAGE = 1
-        val MEDIA_TYPE_VIDEO = 2
+        private const val MEDIA_TYPE_IMAGE = 1
+        const val MEDIA_TYPE_VIDEO = 2
 
         /**
          * Iterate over supported camera video sizes to see which one best fits the
@@ -35,17 +37,12 @@ class CameraHelper {
             previewSizes: List<Camera.Size>, w: Int, h: Int
         ): Camera.Size? {
             // Use a very small tolerance because we want an exact match.
-            val ASPECT_TOLERANCE = 0.1
+            val ASPECTTOLERANCE = 0.1
             val targetRatio = w.toDouble() / h
 
             // Supported video sizes list might be null, it means that we are allowed to use the preview
             // sizes
-            val videoSizes: List<Camera.Size>
-            if (supportedVideoSizes != null) {
-                videoSizes = supportedVideoSizes
-            } else {
-                videoSizes = previewSizes
-            }
+            val videoSizes: List<Camera.Size> = supportedVideoSizes ?: previewSizes
             var optimalSize: Camera.Size? = null
 
             // Start with max value and refine as we iterate over available video sizes. This is the
@@ -53,17 +50,16 @@ class CameraHelper {
             var minDiff = Double.MAX_VALUE
 
             // Target view height
-            val targetHeight = h
 
             // Try to find a video size that matches aspect ratio and the target view size.
             // Iterate over all available sizes and pick the largest size that can fit in the view and
             // still maintain the aspect ratio.
             for (size: Camera.Size in videoSizes) {
                 val ratio = size.width.toDouble() / size.height
-                if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue
-                if (Math.abs(size.height - targetHeight) < minDiff && previewSizes.contains(size)) {
+                if (abs(ratio - targetRatio) > ASPECTTOLERANCE) continue
+                if (abs(size.height - h) < minDiff && previewSizes.contains(size)) {
                     optimalSize = size
-                    minDiff = Math.abs(size.height - targetHeight).toDouble()
+                    minDiff = abs(size.height - h).toDouble()
                 }
             }
 
@@ -71,9 +67,9 @@ class CameraHelper {
             if (optimalSize == null) {
                 minDiff = Double.MAX_VALUE
                 for (size: Camera.Size in videoSizes) {
-                    if (Math.abs(size.height - targetHeight) < minDiff && previewSizes.contains(size)) {
+                    if (abs(size.height - h) < minDiff && previewSizes.contains(size)) {
                         optimalSize = size
-                        minDiff = Math.abs(size.height - targetHeight).toDouble()
+                        minDiff = abs(size.height - h).toDouble()
                     }
                 }
             }
@@ -88,28 +84,6 @@ class CameraHelper {
         }
 
         /**
-         *
-         * @param position Physical position of the camera i.e Camera.CameraInfo.CAMERA_FACING_FRONT
-         * or Camera.CameraInfo.CAMERA_FACING_BACK.
-         * @return the default camera on the device. Returns null if camera is not available.
-         */
-        @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-        private fun getDefaultCamera(position: Int): Camera? {
-            // Find the total number of cameras available
-            val mNumberOfCameras = Camera.getNumberOfCameras()
-
-            // Find the ID of the back-facing ("default") camera
-            val cameraInfo = Camera.CameraInfo()
-            for (i in 0 until mNumberOfCameras) {
-                Camera.getCameraInfo(i, cameraInfo)
-                if (cameraInfo.facing == position) {
-                    return Camera.open(i)
-                }
-            }
-            return null
-        }
-
-        /**
          * Creates a media file in the `Environment.DIRECTORY_PICTURES` directory. The directory
          * is persistent and available to other applications like gallery.
          *
@@ -118,21 +92,20 @@ class CameraHelper {
          */
         fun getOutputMediaFile(type: Int,context: Context): File? {
 
-          var  sharedPreferences = context.getSharedPreferences(
+          val sharedPreferences = context.getSharedPreferences(
                 CommonUtils.SHARED_PREF_FILE,
                 Context.MODE_PRIVATE
             )
-            var dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
-            var partIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_PART_ID, "").toString()
-            var dieTypeStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
-            var userId=    sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
-            var opeartorId=    sharedPreferences!!.getString(CommonUtils.SAVE_OPERATOR_ID, "").toString()
+            val dieIdStr = sharedPreferences!!.getString(CommonUtils.SAVE_DIE_ID, "").toString()
+            val partIdStr = sharedPreferences.getString(CommonUtils.SAVE_PART_ID, "").toString()
+            val dieTypeStr = sharedPreferences.getString(CommonUtils.SAVE_DIE_TYPE, "").toString()
+            val userId=    sharedPreferences.getString(CommonUtils.LOGIN_USER_ID, "").toString()
+            var operatorId=    sharedPreferences.getString(CommonUtils.SAVE_OPERATOR_ID, "").toString()
 
-            val mediaStorageDir: File
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                mediaStorageDir = context.getExternalFilesDir(null)!!
+            val mediaStorageDir: File = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                context.getExternalFilesDir(null)!!
             } else {
-                mediaStorageDir = context.getExternalFilesDir(null)!!
+                context.getExternalFilesDir(null)!!
             }
             // This location works best if you want the created images to be shared
             // between applications and persist after your app has been uninstalled.
@@ -148,24 +121,28 @@ class CameraHelper {
             // Create a media file name
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
             val mediaFile: File
-            if (type == MEDIA_TYPE_IMAGE) {
-                mediaFile = File(
-                    mediaStorageDir.path + File.separator +
-                            "IMG_" + timeStamp + ".jpg"
-                )
-            } else if (type == MEDIA_TYPE_VIDEO) {
-//                mediaFile = File(
-//                    (mediaStorageDir.path + File.separator +
-//                            userId+"_"+opeartorId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "VID_" + timeStamp + ".mp4")
-//                )
+            when (type) {
+                MEDIA_TYPE_IMAGE -> {
+                    mediaFile = File(
+                        mediaStorageDir.path + File.separator +
+                                "IMG_" + timeStamp + ".jpg"
+                    )
+                }
+                MEDIA_TYPE_VIDEO -> {
+        //                mediaFile = File(
+        //                    (mediaStorageDir.path + File.separator +
+        //                            userId+"_"+operatorId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "VID_" + timeStamp + ".mp4")
+        //                )
 
-                mediaFile = File(
-                    (mediaStorageDir.path + File.separator +
-                            userId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "VID_" + timeStamp + ".mp4")
-                )
+                    mediaFile = File(
+                        (mediaStorageDir.path + File.separator +
+                                userId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "VID_" + timeStamp + ".mp4")
+                    )
 
-            } else {
-                return null
+                }
+                else -> {
+                    return null
+                }
             }
             return mediaFile
         }

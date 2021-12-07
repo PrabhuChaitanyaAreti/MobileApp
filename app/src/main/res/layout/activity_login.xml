@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:orientation="vertical"
-    android:background="@drawable/bg_scr"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
         android:layout_gravity="center"
+        android:layout_marginStart="@dimen/white_border_margin_start"
+        android:layout_marginTop="@dimen/white_border_margin_top"
+        android:layout_marginEnd="@dimen/white_border_margin_end"
+        android:layout_marginBottom="@dimen/white_border_margin_top"
+        android:background="@drawable/border_operator"
         android:gravity="center"
-        android:paddingLeft="50dp"
-        android:paddingRight="50dp"
-        android:layout_marginLeft="120dp"
-        android:layout_marginRight="120dp"
-        android:background="@drawable/border_operator">
+        android:orientation="vertical"
+        android:paddingStart="@dimen/white_border_padding_start"
+        android:paddingEnd="@dimen/white_border_padding_end">
 
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="30dp"
-            android:scaleType="fitXY"
+            android:layout_width="@dimen/app_logo_width"
+            android:layout_height="@dimen/app_logo_height"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/goodman"/>
+            android:layout_marginTop="@dimen/app_logo_margin_top"
+            android:background="@drawable/app_logo"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitXY" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginStart="@dimen/options_layout_margin_start"
+            android:layout_marginTop="@dimen/options_layout_margin_top"
+            android:layout_marginEnd="@dimen/options_layout_margin_end"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -39,68 +41,70 @@
                 android:id="@+id/empIdEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:hint="@string/enter_user_name"
                 android:background="@drawable/background"
+                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:gravity="center_vertical"
+                android:autofillHints="username"
+                android:hint="@string/enter_user_name"
                 android:inputType="textNoSuggestions"
-                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
                 android:longClickable="false"
                 android:maxLength="8"
                 android:maxLines="1"
-                android:paddingEnd="5dp"
-                android:paddingStart="5dp"
+                android:padding="@dimen/edit_padding"
+                android:paddingStart="@dimen/edit_padding_start"
+                android:paddingEnd="@dimen/edit_padding_end"
                 android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
-                android:textCursorDrawable="@drawable/color_cursor"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small">
+                android:textCursorDrawable="@drawable/color_cursor">
 
                 <requestFocus />
             </EditText>
+
             <EditText
                 android:id="@+id/pinEditText"
-                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:hint="@string/enter_pin"
+                android:layout_marginTop="@dimen/edit_margin_top"
                 android:background="@drawable/background"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:gravity="center_vertical"
+                android:hint="@string/enter_pin"
+                android:autofillHints="password"
                 android:inputType="numberPassword"
                 android:longClickable="false"
                 android:maxLength="4"
                 android:maxLines="1"
-                android:paddingEnd="5dp"
-                android:paddingStart="5dp"
+                android:padding="@dimen/edit_padding"
+                android:paddingStart="@dimen/edit_padding_start"
+                android:paddingEnd="@dimen/edit_padding_end"
                 android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
-                android:textCursorDrawable="@drawable/color_cursor"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small">
+                android:textCursorDrawable="@drawable/color_cursor">
 
                 <requestFocus />
             </EditText>
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/login_margin_top"
+                android:background="@drawable/button_bg"
+                android:paddingTop="@dimen/login_padding_top"
+                android:paddingBottom="@dimen/login_padding_top"
+                android:text="@string/login"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/white" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/loginButton"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/button_bg"
-            android:text="@string/login"
-            android:layout_marginTop="20dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/white" />
 
     </LinearLayout>
 </LinearLayout>

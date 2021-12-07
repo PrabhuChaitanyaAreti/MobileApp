@@ -1,5 +1,6 @@
 package com.vsoft.goodmankotlin.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +34,7 @@ class LeftMenuAdapter(var context:Context,val leftMenuItemList: ArrayList<LeftMe
     //the class is holding the list view
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        @SuppressLint("UseSwitchCompatOrMaterialCode", "SetTextI18n")
         fun bindItems(leftMenuDataItem: LeftMenuDataModel) {
             val ivPunchColor = itemView.findViewById(R.id.leftMenuRecycler) as ImageView
             val punchTypeTitle = itemView.findViewById(R.id.punchTypeImage) as TextView
@@ -48,56 +50,61 @@ class LeftMenuAdapter(var context:Context,val leftMenuItemList: ArrayList<LeftMe
             toggleMenu.setOnCheckedChangeListener { _, isChecked ->
                 // do whatever you need to do when the switch is toggled here
                 if (isChecked) {
-                    if (adapterPosition == 0) {
-                        (recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.findViewById(
-                            R.id.togglePunchType
-                        ) as Switch).isChecked = true
-                        if ((recyclerView.findViewHolderForAdapterPosition(1)?.itemView?.findViewById(
+                    when (adapterPosition) {
+                        0 -> {
+                            (recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.findViewById(
                                 R.id.togglePunchType
-                            ) as Switch).isChecked
-                        ) {
-                            (recyclerView.findViewHolderForAdapterPosition(1)?.itemView?.findViewById(
+                            ) as Switch).isChecked = true
+                            if ((recyclerView.findViewHolderForAdapterPosition(1)?.itemView?.findViewById(
+                                    R.id.togglePunchType
+                                ) as Switch).isChecked
+                            ) {
+                                (recyclerView.findViewHolderForAdapterPosition(1)?.itemView?.findViewById(
+                                    R.id.togglePunchType
+                                ) as Switch).isChecked = false
+                            }
+                            if ((recyclerView.findViewHolderForAdapterPosition(2)?.itemView?.findViewById(
+                                    R.id.togglePunchType
+                                ) as Switch).isChecked
+                            ) {
+                                (recyclerView.findViewHolderForAdapterPosition(2)?.itemView?.findViewById(
+                                    R.id.togglePunchType
+                                ) as Switch).isChecked = false
+                            }
+                            if ((recyclerView.findViewHolderForAdapterPosition(3)?.itemView?.findViewById(
+                                    R.id.togglePunchType
+                                ) as Switch).isChecked
+                            ) {
+                                (recyclerView.findViewHolderForAdapterPosition(3)?.itemView?.findViewById(
+                                    R.id.togglePunchType
+                                ) as Switch).isChecked = false
+                            }
+                            leftMenuItemList[0].toggleMenu = true
+                            leftMenuItemList[1].toggleMenu = false
+                            leftMenuItemList[2].toggleMenu = false
+                            leftMenuItemList[3].toggleMenu = false
+                        }
+                        1 -> {
+                            (recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.findViewById(
                                 R.id.togglePunchType
                             ) as Switch).isChecked = false
+                            leftMenuItemList[0].toggleMenu = false
+                            leftMenuItemList[1].toggleMenu = true
                         }
-                        if ((recyclerView.findViewHolderForAdapterPosition(2)?.itemView?.findViewById(
-                                R.id.togglePunchType
-                            ) as Switch).isChecked
-                        ) {
-                            (recyclerView.findViewHolderForAdapterPosition(2)?.itemView?.findViewById(
+                        2 -> {
+                            (recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.findViewById(
                                 R.id.togglePunchType
                             ) as Switch).isChecked = false
+                            leftMenuItemList[0].toggleMenu = false
+                            leftMenuItemList[2].toggleMenu = true
                         }
-                        if ((recyclerView.findViewHolderForAdapterPosition(3)?.itemView?.findViewById(
-                                R.id.togglePunchType
-                            ) as Switch).isChecked
-                        ) {
-                            (recyclerView.findViewHolderForAdapterPosition(3)?.itemView?.findViewById(
+                        3 -> {
+                            (recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.findViewById(
                                 R.id.togglePunchType
                             ) as Switch).isChecked = false
+                            leftMenuItemList[0].toggleMenu = false
+                            leftMenuItemList[3].toggleMenu = true
                         }
-                        leftMenuItemList[0].toggleMenu = true
-                        leftMenuItemList[1].toggleMenu = false
-                        leftMenuItemList[2].toggleMenu = false
-                        leftMenuItemList[3].toggleMenu = false
-                    } else if (adapterPosition == 1) {
-                        (recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.findViewById(
-                            R.id.togglePunchType
-                        ) as Switch).isChecked = false
-                        leftMenuItemList[0].toggleMenu = false
-                        leftMenuItemList[1].toggleMenu = true
-                    } else if (adapterPosition == 2) {
-                        (recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.findViewById(
-                            R.id.togglePunchType
-                        ) as Switch).isChecked = false
-                        leftMenuItemList[0].toggleMenu = false
-                        leftMenuItemList[2].toggleMenu = true
-                    } else if (adapterPosition == 3) {
-                        (recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.findViewById(
-                            R.id.togglePunchType
-                        ) as Switch).isChecked = false
-                        leftMenuItemList[0].toggleMenu = false
-                        leftMenuItemList[3].toggleMenu = true
                     }
                 } else {
                     if (adapterPosition == 1) {

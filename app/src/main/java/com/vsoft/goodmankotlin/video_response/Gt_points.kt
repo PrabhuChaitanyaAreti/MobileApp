@@ -1,3 +1,5 @@
+@file:Suppress("ClassName")
+
 package com.vsoft.goodmankotlin.video_response
 import com.google.gson.annotations.SerializedName
 

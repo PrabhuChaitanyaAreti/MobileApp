@@ -22,7 +22,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -42,7 +42,8 @@
         <activity
             android:name=".SplashScreen"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -52,35 +53,41 @@
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true"/>
         <activity
             android:name=".CameraActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar1"
+            android:exported="true"/>
         <activity
             android:name=".VideoRecordActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar1"
+            android:exported="true"/>
         <activity
             android:name=".VideoPreviewActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar1"
+            android:exported="true"/>
         <activity
             android:name=".MaskingActivity"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.GoodManKotlin" />
+            android:theme="@style/Theme.GoodManKotlin"
+            android:exported="true"/>
         <activity
             android:name=".DashBoardActivity"
-            android:exported="true"
-            android:turnScreenOn="true"
+            android:launchMode="singleTask"
             android:screenOrientation="userLandscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar1"
+            android:exported="true"/>
         <activity
             android:name=".OperatorSelectActivity"
-            android:exported="true"
             android:screenOrientation="userLandscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:exported="true"
+            />
         <activity
             android:name=".AddDieOperatorSelectActivity"
             android:exported="true"
@@ -99,6 +106,7 @@
         </provider>
 
         <service android:name=".cumulocity.MqttService"/>
+
     </application>
 
 </manifest>

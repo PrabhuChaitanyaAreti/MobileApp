@@ -11,7 +11,6 @@
         android:layout_height="match_parent" />
 
     <RelativeLayout
-        android:id="@+id/recordll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -40,6 +39,7 @@
                 android:id="@+id/videoOnlineImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
                 android:src="@drawable/video_record_start_new"
                 android:visibility="visible" />
 
@@ -47,77 +47,114 @@
                 android:id="@+id/videoRecordPlayPause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/video_record_play"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/new_video_record_pause"
                 android:visibility="visible" />
 
         </LinearLayout>
 
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/topRL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/flashImgIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
+                android:padding="10dp"
+                android:src="@drawable/flash_off"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/timeLeftText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="#ff0000"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dieIdTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:padding="10dp"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/partIdTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:padding="10dp"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/dieTypeTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:padding="10dp"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/infoIconImgRL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:orientation="horizontal">
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_below="@+id/topRL"
+        android:visibility="visible">
 
         <ImageView
-            android:id="@+id/flashImgIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/infoIconImg"
+            android:layout_width="200dp"
+            android:layout_height="120dp"
+            android:visibility="visible"
             android:contentDescription="@string/app_name"
-            android:padding="10dp"
-            android:src="@drawable/flash_off"
-            android:visibility="visible" />
+            android:src="@mipmap/ic_launcher"/>
 
-        <TextView
-            android:id="@+id/timeleftTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="00"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="#ff0000"
-            android:visibility="visible" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:orientation="horizontal">
+    </RelativeLayout>
 
-        <TextView
-            android:id="@+id/dieIdTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_marginStart="10dp"
-            android:text="DieID: hgfhfhg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/red"
-            android:visibility="visible" />
-        <TextView
-            android:id="@+id/partIdTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_marginStart="10dp"
-            android:text="PartID: hgfhfhg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/red"
-            android:visibility="visible" />
-        <TextView
-            android:id="@+id/dieTypeTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_marginStart="10dp"
-            android:text="DieType: hgfhfhg"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/red"
-            android:visibility="visible" />
-    </LinearLayout>
 
 </RelativeLayout>
 

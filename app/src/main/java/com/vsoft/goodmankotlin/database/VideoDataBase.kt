@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [VideoModel::class], version = 3, exportSchema = true)
+@Database(entities = [VideoModel::class], version = 3, exportSchema = false)
 abstract class VideoDataBase : RoomDatabase() {
 
     abstract fun videoDao(): VideoDao
@@ -62,18 +62,4 @@ abstract class VideoDataBase : RoomDatabase() {
 
     }
 
-    /*
- * This is used for Room Database migration 3 to 4
- */
-    private val MIGRATION_3_4: Migration = object : Migration(2, 3) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            try {
-                Log.e("MIGRATION_3_4", "start")
-                database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'user_id' TEXT NOT NULL DEFAULT 'Unknown'")
-                database.execSQL("ALTER TABLE 'video_table' ADD COLUMN 'operator_id' TEXT NOT NULL DEFAULT 'Unknown'")
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 }
