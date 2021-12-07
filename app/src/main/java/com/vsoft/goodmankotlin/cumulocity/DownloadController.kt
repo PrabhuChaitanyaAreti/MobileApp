@@ -9,9 +9,9 @@ import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
-import com.vsoft.goodmankotlin.BuildConfig
 import com.vsoft.goodmankotlin.cumulocity.ApkDownloaderCallBack
 import com.vsoft.goodmankotlin.utils.SharedPref
+import org.eclipse.paho.android.service.BuildConfig
 
 import java.io.File
 
@@ -167,6 +167,12 @@ class DownloadController(
             install.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
             install.data = contentUri
             context.startActivity(install)
+            SharedPref.init(context)
+            SharedPref.write(SharedPref.URI, "");
+            SharedPref.write(SharedPref.DESTINATION, "");
+            SharedPref.write(SharedPref.IS_DOWNLOADED, false);
+            SharedPref.write(SharedPref.URI, "");
+
 
 
             // finish()
@@ -179,6 +185,11 @@ class DownloadController(
                 APP_INSTALL_PATH
             )
             context.startActivity(install)
+            SharedPref.init(context)
+            SharedPref.write(SharedPref.URI, "");
+            SharedPref.write(SharedPref.DESTINATION, "");
+            SharedPref.write(SharedPref.IS_DOWNLOADED, false);
+            SharedPref.write(SharedPref.URI, "");
             // finish()
         }
 
