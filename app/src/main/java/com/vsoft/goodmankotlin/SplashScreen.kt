@@ -72,32 +72,44 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
         builder.setItems(instances, DialogInterface.OnClickListener { dialog, which ->
             // the user clicked on colors[which]
             if(instances[which].equals("Local",true)){
-                NetworkSniffTask(this,this).execute()
+                    NetworkSniffTask(this, this).execute()
             }
             if(instances[which].equals("Remote",true)){
-                sharedPreferences!!.edit().putString("BaseUrl","http://111.93.3.148:16808")
-                handleNavigation()
+                    sharedPreferences!!.edit().putString("BaseUrl", "http://111.93.3.148:16808")
+                    handleNavigation("Remote")
             }
         })
         builder.show()
-
     }
-private fun handleNavigation(){
-    Handler(Looper.getMainLooper()).postDelayed({
-        if (CameraUtils.checkPermissions(applicationContext)) {
-            if (sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS, false)) {
-                if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
-                    navigateToDashBoard()
+    private fun logout(){
+            val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
+            editor.remove(CommonUtils.LOGIN_STATUS)
+            //editor.clear()
+            editor.apply()
+            navigateToLogin()
+    }
+private fun handleNavigation(instance:String){
+    if(!sharedPreferences!!.getString("instance","").equals(instance,true)) {
+        sharedPreferences!!.edit().putString("instance", instance).apply()
+        logout()
+    }else{
+        sharedPreferences!!.edit().putString("instance", instance).apply()
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (CameraUtils.checkPermissions(applicationContext)) {
+                    if (sharedPreferences!!.getBoolean(CommonUtils.LOGIN_STATUS, false)) {
+                        if (userId.isNotEmpty() && !TextUtils.isEmpty(userId) && userId != "null") {
+                            navigateToDashBoard()
+                        } else {
+                            navigateToLogin()
+                        }
+                    } else {
+                        navigateToLogin()
+                    }
                 } else {
-                    navigateToLogin()
+                    requestCameraPermission()
                 }
-            } else {
-                navigateToLogin()
-            }
-        } else {
-            requestCameraPermission()
+            }, CommonUtils.SPLASH_DURATION.toLong())
         }
-    }, CommonUtils.SPLASH_DURATION.toLong())
 }
     private fun navigateToDashBoard() {
         val i = Intent(this, DashBoardActivity::class.java)
@@ -195,7 +207,7 @@ private fun handleNavigation(){
         }
     }
     override fun configureServerResponse(response: String?) {
-        handleNavigation()
+        handleNavigation("Local")
     }
 
 }

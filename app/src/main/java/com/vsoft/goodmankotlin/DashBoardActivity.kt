@@ -14,6 +14,7 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.ViewModelProviders
@@ -635,9 +636,9 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     response: Response<DieIdDetailsModel?>
                 ) {
                     val resourceData = response.body()
-                    if (progressDialog.isShowing) {
-                        progressDialog.dismiss()
-                    }
+//                    if (progressDialog.isShowing) {
+//                        progressDialog.dismiss()
+//                    }
                     isDieDataAvailable = true
 
                     val gson = Gson()
@@ -649,7 +650,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     editor.putString(CommonUtils.DIE_DATA, dieIdDetailsModelStr)
                     editor.putString(CommonUtils.DIE_DATA_SYNC_TIME, timeStamp)
                     editor.apply()
-
+                    Toast.makeText(this@DashBoardActivity,"Die and part list updated successfully",Toast.LENGTH_LONG).show()
                      getOperatorsListData()
                 }
 
@@ -683,8 +684,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
     private fun getOperatorsListData() {
         if (NetworkUtils.isNetworkAvailable(this)) {
-            progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_operators))
-            progressDialog.show()
+//            progressDialog.setMessage(this@DashBoardActivity.resources.getString(R.string.progress_dialog_message_operators))
+//            progressDialog.show()
             val call = RetrofitClient!!.getInstance(this)!!.getMyApi()!!.getOperatorsList()
             call!!.enqueue(object : Callback<OperatorList?> {
                 override fun onResponse(
@@ -706,6 +707,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
                     editor.putString(CommonUtils.OPERATORS_DATA, dieIdDetailsModelStr)
                     editor.putString(CommonUtils.DIE_DATA_SYNC_TIME, timeStamp)
                     editor.apply()
+                    Toast.makeText(this@DashBoardActivity,"Operators list updated successfully",Toast.LENGTH_LONG).show()
                 }
 
                 override fun onFailure(call: Call<OperatorList?>, t: Throwable) {
