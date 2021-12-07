@@ -11,7 +11,6 @@
         android:layout_height="match_parent" />
 
     <RelativeLayout
-        android:id="@+id/recordll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -78,11 +77,11 @@
                 android:visibility="visible" />
 
             <TextView
-                android:id="@+id/timeleftTxt"
+                android:id="@+id/timeLeftText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="00"
+                android:text=""
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="#ff0000"
                 android:visibility="visible" />
@@ -102,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:padding="10dp"
-                android:text="DieID: hgfhfhg"
+                android:text=""
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"
                 android:textStyle="bold"
@@ -114,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:padding="10dp"
-                android:text="PartID: hgfhfhg"
+                android:text=""
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"
                 android:textStyle="bold"
@@ -126,7 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:padding="10dp"
-                android:text="DieType: hgfhfhg"
+                android:text=""
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@color/white"
                 android:textStyle="bold"
@@ -152,7 +151,7 @@
             android:layout_height="120dp"
             android:visibility="visible"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/dieimage1"/>
+            android:src="@mipmap/ic_launcher"/>
 
     </RelativeLayout>
 

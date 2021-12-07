@@ -9,7 +9,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.google.gson.Gson
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
@@ -151,17 +150,5 @@ class OperatorSelectActivity : Activity(), CustomDialogCallback {
     }
 
 
-    companion object {
-        fun hideSoftKeyboard(activity: Activity) {
-            val inputMethodManager = activity.getSystemService(
-                INPUT_METHOD_SERVICE
-            ) as InputMethodManager
-            if (inputMethodManager.isAcceptingText) {
-                inputMethodManager.hideSoftInputFromWindow(
-                    activity.currentFocus!!.windowToken,
-                    0
-                )
-            }
-        }
-    }
+    companion object
 }

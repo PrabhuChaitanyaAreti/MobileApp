@@ -4,7 +4,6 @@
 
     <!-- Login Screen dimensions -->
     <dimen name="white_border_margin_top">45dp</dimen>
-    <dimen name="white_border_margin_bottom">45dp</dimen>
     <dimen name="white_border_margin_start">50dp</dimen>
     <dimen name="white_border_margin_end">50dp</dimen>
     <dimen name="white_border_padding_start">50dp</dimen>
@@ -17,7 +16,6 @@
     <dimen name="options_layout_margin_start">50dp</dimen>
     <dimen name="options_layout_margin_end">50dp</dimen>
     <dimen name="options_layout_margin_top">35dp</dimen>
-    <dimen name="options_layout_margin_bottom">0dp</dimen>
 
     <dimen name="edit_padding">10dp</dimen>
     <dimen name="edit_padding_start">5dp</dimen>
@@ -26,7 +24,6 @@
 
     <dimen name="login_margin_top">35dp</dimen>
     <dimen name="login_padding_top">10dp</dimen>
-    <dimen name="login_padding_bottom">10dp</dimen>
 
 
     <!--Dashboard  dimensions -->

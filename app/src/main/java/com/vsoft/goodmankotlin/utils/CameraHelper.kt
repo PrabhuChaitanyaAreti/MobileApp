@@ -1,3 +1,5 @@
+@file:Suppress("LocalVariableName")
+
 package com.vsoft.goodmankotlin.utils
 
 import android.content.Context
@@ -129,7 +131,7 @@ class CameraHelper {
                 MEDIA_TYPE_VIDEO -> {
         //                mediaFile = File(
         //                    (mediaStorageDir.path + File.separator +
-        //                            userId+"_"+opeartorId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "VID_" + timeStamp + ".mp4")
+        //                            userId+"_"+operatorId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "VID_" + timeStamp + ".mp4")
         //                )
 
                     mediaFile = File(

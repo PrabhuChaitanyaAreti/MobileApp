@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent"
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fillViewport="true">
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/backgroung_img"
+    android:background="@drawable/background_img"
     android:gravity="center">
     <GridLayout
         android:layout_width="match_parent"
@@ -107,7 +108,8 @@
                     android:layout_centerInParent="true"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    tools:ignore="UseCompoundDrawables">
               <ImageView
                     app:tint="@color/daikin_fill"
                     android:layout_width="match_parent"
@@ -141,7 +143,8 @@
                     android:textStyle="bold"
                     android:text=""
                     android:textColor="@color/white"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    tools:ignore="RelativeOverlap" />
             </RelativeLayout>
         </LinearLayout>
         <LinearLayout
@@ -250,7 +253,7 @@
     <TextView
         android:id="@+id/versionDetails"
         android:textColor="@color/black"
-        android:text="** ALPHA RELEASE: UI Design in Progress"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textStyle="bold"
         android:visibility="visible"

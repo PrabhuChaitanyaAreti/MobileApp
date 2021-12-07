@@ -45,12 +45,13 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private var isRecording = false
     private var isPauseResume = false
 
+
     private var parameters: Camera.Parameters? = null
     private var profile: CamcorderProfile? = null
 
-    private val CAMERAPERMISSIONOPTION = Manifest.permission.CAMERA
+    private val cameraPermissionOption = Manifest.permission.CAMERA
 
-    private val CAMERAPERMISSIONCODE = 101
+    private val cameraPermissionCode = 101
     private lateinit var progressDialog: ProgressDialog
 
     /**
@@ -231,7 +232,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
         videoOnlineImageButton = findViewById(R.id.videoOnlineImageButton)
         videoRecordPlayPause = findViewById(R.id.videoRecordPlayPause)
         flashImgIcon = findViewById(R.id.flashImgIcon)
-        timeLeftTxt = findViewById(R.id.timeleftTxt)
+        timeLeftTxt = findViewById(R.id.timeLeftText)
         partIdTxt = findViewById(R.id.partIdTxt)
         dieIdTxt = findViewById(R.id.dieIdTxt)
         dieTypeTxt = findViewById(R.id.dieTypeTxt)
@@ -440,6 +441,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
                             stopRecording()
                         }
 
+                        @SuppressLint("SetTextI18n")
                         override fun onTick(millisUntilFinished: Long) {
 
                             recordSecondsLeft =
@@ -452,7 +454,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
             }
             customDialog.dismiss()
         }
-        imageSingle!!.setImageResource(R.drawable.dieimage1)
+        imageSingle!!.setImageResource(R.mipmap.ic_launcher)
 
        /* Glide.with(this@VideoRecordActivity)
             .load("https://sample-videos.com/img/Sample-jpg-image-50kb.jpg")
@@ -514,19 +516,19 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(CAMERAPERMISSIONOPTION),
-            CAMERAPERMISSIONCODE
+            arrayOf(cameraPermissionOption),
+            cameraPermissionCode
         )
     }
 
     private fun checkPermissions(): Boolean {
         return ((ActivityCompat.checkSelfPermission(
             this,
-            CAMERAPERMISSIONOPTION
+            cameraPermissionOption
         )) == PackageManager.PERMISSION_GRANTED
                 && (ActivityCompat.checkSelfPermission(
             this,
-            CAMERAPERMISSIONOPTION
+            cameraPermissionOption
         )) == PackageManager.PERMISSION_GRANTED)
     }
 
@@ -537,7 +539,7 @@ class VideoRecordActivity : AppCompatActivity(), TextureView.SurfaceTextureListe
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            CAMERAPERMISSIONCODE -> {
+            cameraPermissionCode -> {
                 var allPermissionsGranted = false
                 for (result in grantResults) {
                     if (result != PackageManager.PERMISSION_GRANTED) {

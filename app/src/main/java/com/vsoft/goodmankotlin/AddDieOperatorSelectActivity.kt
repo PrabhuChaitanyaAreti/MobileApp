@@ -443,15 +443,20 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 true
             )
         ) {
-            if (functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true)) {
-                //No action required. Just exit dialog.
-            } else if (functionality.equals(CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG, true)) {
-                //No action required. Just exit dialog.
-            } else if (functionality == CommonUtils.VALIDATION_ALERT_DIE_ID_SELECT_DIALOG_NOT_AVAILABLE) {
-                dieBT.text = ""
-                partBT.text = ""
-            } else if (functionality == CommonUtils.VALIDATION_ALERT_PART_ID_SELECT_DIALOG_NOT_AVAILABLE) {
-                partBT.text = ""
+            when {
+                functionality.equals(CommonUtils.INTERNET_CONNECTION_ERROR_DIALOG, true) -> {
+                    //No action required. Just exit dialog.
+                }
+                functionality.equals(CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG, true) -> {
+                    //No action required. Just exit dialog.
+                }
+                functionality == CommonUtils.VALIDATION_ALERT_DIE_ID_SELECT_DIALOG_NOT_AVAILABLE -> {
+                    dieBT.text = ""
+                    partBT.text = ""
+                }
+                functionality == CommonUtils.VALIDATION_ALERT_PART_ID_SELECT_DIALOG_NOT_AVAILABLE -> {
+                    partBT.text = ""
+                }
             }
         }
         if (buttonName.equals(resources.getString(R.string.WarningDialogAddDie), true)) {

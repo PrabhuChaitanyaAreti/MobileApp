@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -32,7 +32,7 @@
             android:background="@drawable/image_background_drawable"
             android:layout_width="0dp"
             android:layout_weight="50"
-            android:src="@drawable/noimage"
+            android:src="@drawable/no_image"
             android:contentDescription="@string/app_name"
             android:layout_height="match_parent"
             android:padding="5dp" />
@@ -40,7 +40,7 @@
             android:id="@+id/iv_original_die"
             android:scaleType="fitXY"
             android:layout_marginStart="10dp"
-            android:src="@drawable/noimage"
+            android:src="@drawable/no_image"
             android:background="@drawable/image_background_drawable"
             android:layout_width="0dp"
             android:layout_weight="50"
@@ -88,7 +88,7 @@
             android:textAllCaps="false"
             android:padding="10dp"
             android:layout_weight="50"
-            android:text="Accept"
+            android:text="@string/accept"
             android:textColor="@color/white" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -101,7 +101,7 @@
             android:padding="10dp"
             android:textAllCaps="false"
             android:layout_marginStart="20dp"
-            android:text="Reject"
+            android:text="@string/reject"
             android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>

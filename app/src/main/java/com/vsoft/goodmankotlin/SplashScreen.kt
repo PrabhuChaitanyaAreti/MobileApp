@@ -31,8 +31,8 @@ import com.vsoft.goodmankotlin.utils.DialogUtils
 @SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity(), CustomDialogCallback {
 
-    var screenWidth:Int = 0
-    var screenHeight:Int = 0
+    private var screenWidth:Int = 0
+    private var screenHeight:Int = 0
 
     private var sharedPreferences: SharedPreferences? = null
     private var userId = ""
@@ -42,7 +42,7 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback {
         setContentView(R.layout.activity_splash_screen)
 
         val displayMetrics = DisplayMetrics()
-        this@SplashScreen.windowManager.getDefaultDisplay().getMetrics(displayMetrics)
+        this@SplashScreen.windowManager.defaultDisplay.getMetrics(displayMetrics)
         screenHeight = displayMetrics.heightPixels
         screenWidth = displayMetrics.widthPixels
 
