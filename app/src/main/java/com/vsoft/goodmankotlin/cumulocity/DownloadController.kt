@@ -167,10 +167,8 @@ class DownloadController(
             install.data = contentUri
             context.startActivity(install)
             SharedPref.init(context)
-            SharedPref.write(SharedPref.URI, "");
-            SharedPref.write(SharedPref.DESTINATION, "");
+
             SharedPref.write(SharedPref.IS_DOWNLOADED, false);
-            SharedPref.write(SharedPref.URI, "");
 
 
 
@@ -185,10 +183,9 @@ class DownloadController(
             )
             context.startActivity(install)
             SharedPref.init(context)
-            SharedPref.write(SharedPref.URI, "");
-            SharedPref.write(SharedPref.DESTINATION, "");
+
             SharedPref.write(SharedPref.IS_DOWNLOADED, false);
-            SharedPref.write(SharedPref.URI, "");
+
             // finish()
         }
 

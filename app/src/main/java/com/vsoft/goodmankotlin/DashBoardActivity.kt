@@ -804,5 +804,4 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
             )
         }
     }
-
 }
