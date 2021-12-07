@@ -109,8 +109,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
             SharedPref.init(getApplicationContext());
             val isApkDonwloaded = SharedPref.read(SharedPref.IS_DOWNLOADED, false)
-            val apkVersion = SharedPref.read(SharedPref.APP_VERSION, null)
-            val versionCode = BuildConfig.VERSION_CODE
+//            val apkVersion = SharedPref.read(SharedPref.APP_VERSION, null)
+//            val versionCode = BuildConfig.VERSION_CODE
 //            val showInstallorNot = apkVersion.toInt() > versionCode
 
 //       var isDownload = MqttService.getDownloader()
@@ -209,8 +209,8 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
 
             SharedPref.init(getApplicationContext());
             val isApkDonwloaded = SharedPref.read(SharedPref.IS_DOWNLOADED, false)
-            val apkVersion = SharedPref.read(SharedPref.APP_VERSION, null)
-            val versionCode = BuildConfig.VERSION_CODE
+//            val apkVersion = SharedPref.read(SharedPref.APP_VERSION, null)
+//            val versionCode = BuildConfig.VERSION_CODE
 //            val showInstallorNot = apkVersion.toInt() > versionCode
 
 //       var isDownload = MqttService.getDownloader()

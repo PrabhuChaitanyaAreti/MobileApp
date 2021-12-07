@@ -19,7 +19,6 @@ import com.vsoft.goodmankotlin.utils.CommonUtils;
 import com.vsoft.goodmankotlin.utils.DialogUtils;
 import com.vsoft.goodmankotlin.utils.SharedPref;
 
-import org.eclipse.paho.android.service.BuildConfig;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
