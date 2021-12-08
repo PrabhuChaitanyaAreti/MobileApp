@@ -64,6 +64,9 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
         )
 
         userId = sharedPreferences!!.getString(CommonUtils.LOGIN_USER_ID, "").toString()
+        showInstanceDialog()
+    }
+    private fun showInstanceDialog(){
         val instances = arrayOf("Local", "Remote")
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
@@ -72,11 +75,11 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
         builder.setItems(instances, DialogInterface.OnClickListener { dialog, which ->
             // the user clicked on colors[which]
             if(instances[which].equals("Local",true)){
-                    NetworkSniffTask(this, this).execute()
+                NetworkSniffTask(this, this).execute()
             }
             if(instances[which].equals("Remote",true)){
-                    sharedPreferences!!.edit().putString("BaseUrl", "http://111.93.3.148:16808")
-                    handleNavigation("Remote")
+                sharedPreferences!!.edit().putString("BaseUrl", "http://111.93.3.148:16808")
+                handleNavigation("Remote")
             }
         })
         builder.show()
@@ -186,15 +189,20 @@ private fun handleNavigation(instance:String){
                 //No action required, just display
                 super.onBackPressed()
             }
+            if (functionality.equals(CommonUtils.PERMISSIONS_DIALOG, true)) {
+                //No action required, just display
+                super.onBackPressed()
+            }
+            if (functionality.equals("ServerNotDetected", true)) {
+                showInstanceDialog()
+            }
         }
         if (buttonName.equals(
                         this@SplashScreen.resources.getString(R.string.settings_option),
                         true
                 )
         ) {
-            if (functionality.equals(CommonUtils.PERMISSIONS_DIALOG, true)) {
-                CameraUtils.openSettings(this@SplashScreen)
-            }
+            //No Action Needed.
         }
     }
     override fun networkSniffResponse(response: String?,ipAddressList:ArrayList<String>?) {
@@ -207,7 +215,17 @@ private fun handleNavigation(instance:String){
         }
     }
     override fun configureServerResponse(response: String?) {
-        handleNavigation("Local")
+        if(response!!.equals("success",true))
+            handleNavigation("Local")
+        else
+        {
+            // Show error dialog
+            Handler(Looper.getMainLooper()).post {
+                DialogUtils.showCustomAlert(this,
+                    CustomDialogModel("Error","Unable to detect server,Make sure connected to correct network",null,
+                        listOf(this@SplashScreen.resources.getString(R.string.alert_ok))),this,"ServerNotDetected")
+            }
+        }
     }
 
 }
