@@ -77,7 +77,7 @@ public class MqttService extends Service {
     }
 
     public void getLocation(){
-       /* gpsTracker = new GpsTracker(getApplicationContext());
+        gpsTracker = new GpsTracker(getApplicationContext());
         if(gpsTracker.canGetLocation()){
             latitude = gpsTracker.getLatitude();
             longitude = gpsTracker.getLongitude();
@@ -85,7 +85,7 @@ public class MqttService extends Service {
 
         }else{
             gpsTracker.showSettingsAlert();
-        }*/
+        }
     }
 
     private void init() throws MqttException {
@@ -299,6 +299,7 @@ public class MqttService extends Service {
             public void run() {
                 try {
                     String message = "112,"+latitude+","+longitude+","+"80";
+                    Log.e("BATTLocation", "latitude longitude  : " + message);
                     String locationVal = "401,";
                     client.publish("s/us", message.getBytes(), QOS, false);// Tracking
 

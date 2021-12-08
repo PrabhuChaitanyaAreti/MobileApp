@@ -133,7 +133,9 @@ private fun handleNavigation(instance:String){
                 .withPermissions(
                         Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.RECORD_AUDIO
+                        Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
                 )
                 .withListener(object : MultiplePermissionsListener {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
