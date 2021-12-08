@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.microsoft.appcenter.analytics.Analytics
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.microsoft.appcenter.analytics.BuildConfig
 import com.vsoft.goodmankotlin.cumulocity.MqttService
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
@@ -100,7 +101,7 @@ class DashBoardActivity : AppCompatActivity(), View.OnClickListener, CustomDialo
         downloadLatestVersion.setOnClickListener(this)
         syncDie.setOnClickListener(this)
         versionDetails=findViewById(R.id.versionDetails)
-        versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+BuildConfig.VERSION_CODE+"("+ BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
+        versionDetails.text = HtmlCompat.fromHtml("<B>Version:</B>"+ BuildConfig.VERSION_CODE+"("+ BuildConfig.VERSION_NAME+")", HtmlCompat.FROM_HTML_MODE_LEGACY)
 
 
 
