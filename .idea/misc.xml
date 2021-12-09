@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/drawable/border_operator.xml" value="0.198828125" />
         <entry key="app/src/main/res/drawable/button_bg.xml" value="0.16796875" />
         <entry key="app/src/main/res/drawable/button_bg_red.xml" value="0.16375" />
+        <entry key="app/src/main/res/drawable/button_selection.xml" value="0.1859375" />
         <entry key="app/src/main/res/drawable/circular_background.xml" value="0.16328125" />
         <entry key="app/src/main/res/drawable/circular_background_blue.xml" value="0.15375" />
         <entry key="app/src/main/res/drawable/color_cursor.xml" value="0.16375" />
@@ -18,6 +19,7 @@
         <entry key="app/src/main/res/drawable/hamburg_menu_icon.xml" value="0.198828125" />
         <entry key="app/src/main/res/drawable/ic_baseline_arrow.xml" value="0.16375" />
         <entry key="app/src/main/res/drawable/ic_clear_black_24dp.xml" value="0.16796875" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/image_background_drawable.xml" value="0.16375" />
         <entry key="app/src/main/res/drawable/new_circular_background.xml" value="0.151875" />
         <entry key="app/src/main/res/drawable/red_rounded_corner_shape.xml" value="0.16796875" />
@@ -49,6 +51,7 @@
         <entry key="app/src/main/res/layout/camera_settings_dialog.xml" value="0.14375" />
         <entry key="app/src/main/res/layout/camera_settings_dialog_new.xml" value="0.14375" />
         <entry key="app/src/main/res/layout/custom_dialog_info.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/custom_dialog_instance_selection_layout.xml" value="0.1973694214243272" />
         <entry key="app/src/main/res/layout/custom_dialog_layout.xml" value="0.1" />
         <entry key="app/src/main/res/layout/die_detail_dialog.xml" value="0.11271529888551166" />
         <entry key="app/src/main/res/layout/left_menu_list_layout.xml" value="0.12869458128078817" />
@@ -62,7 +65,6 @@
       </map>
     </option>
   </component>
-  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="EntryPointsManager">
     <list size="1">
       <item index="0" class="java.lang.String" itemvalue="com.google.gson.annotations.SerializedName" />

@@ -2,6 +2,7 @@ package com.vsoft.goodmankotlin.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
@@ -35,6 +36,12 @@ public class NetworkSniffTask extends AsyncTask<Void, Void, Void> {
         pd = new ProgressDialog(mContextRef.get());
         pd.setMessage("Checking server availability...");
         pd.setCancelable(false);
+        pd.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                pd.dismiss();//dismiss dialog
+            }
+        });
         pd.show();
     }
 
