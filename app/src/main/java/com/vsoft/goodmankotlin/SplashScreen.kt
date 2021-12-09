@@ -25,23 +25,34 @@ import com.microsoft.appcenter.crashes.Crashes
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
 import android.content.DialogInterface
+import android.graphics.Color
+import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.vsoft.goodmankotlin.interfaces.NetworkSniffTaskProgressCancelClickCallBack
 import com.vsoft.goodmankotlin.utils.*
 import java.util.ArrayList
 
 
 @SuppressLint("CustomSplashScreen")
-class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallBack,ConfigureServerTaskCallback {
+class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallBack,ConfigureServerTaskCallback,
+    NetworkSniffTaskProgressCancelClickCallBack {
 
     private var screenWidth:Int = 0
     private var screenHeight:Int = 0
 
     private var sharedPreferences: SharedPreferences? = null
     private var userId = ""
+    var task:NetworkSniffTask?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         val displayMetrics = DisplayMetrics()
         this@SplashScreen.windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -67,7 +78,32 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
         showInstanceDialog()
     }
     private fun showInstanceDialog(){
-        val instances = arrayOf("Local", "Remote")
+        val factory = LayoutInflater.from(this@SplashScreen)
+        val customDialogView: View = factory.inflate(R.layout.custom_dialog_instance_selection_layout, null)
+        val customDialog = android.app.AlertDialog.Builder(this@SplashScreen).create()
+        val alertInstanceSelectionLocal=customDialogView.findViewById<TextView>(R.id.alertInstanceSelectionLocal)
+        val alertInstanceSelectionRemote=customDialogView.findViewById<TextView>(R.id.alertInstanceSelectionRemote)
+       // val alertInstanceSelectionCancel=customDialogView.findViewById<TextView>(R.id.alertInstanceSelectionCancel)
+        customDialog.setCancelable(false)
+        alertInstanceSelectionLocal.setOnClickListener {
+            customDialog.dismiss()
+            task= NetworkSniffTask(this,this,this)
+            task!!.execute()
+            //NetworkSniffTask(this, this).execute()
+        }
+        alertInstanceSelectionRemote.setOnClickListener {
+            customDialog.dismiss()
+            sharedPreferences!!.edit().putString("BaseUrl", "http://111.93.3.148:16808")
+            handleNavigation("Remote")
+        }
+       /* alertInstanceSelectionCancel.setOnClickListener {
+            customDialog.dismiss()
+        }*/
+
+
+        customDialog.setView(customDialogView)
+        customDialog.show()
+      /*  val instances = arrayOf("Local", "Remote")
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle("Select an instance")
@@ -82,7 +118,7 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
                 handleNavigation("Remote")
             }
         })
-        builder.show()
+        builder.show()*/
     }
     private fun logout(){
             val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
@@ -226,6 +262,11 @@ private fun handleNavigation(instance:String){
                         listOf(this@SplashScreen.resources.getString(R.string.alert_ok))),this,"ServerNotDetected")
             }
         }
+    }
+
+    override fun onProgressCancelClickCallBack() {
+        task?.cancel(true)
+        showInstanceDialog()
     }
 
 }

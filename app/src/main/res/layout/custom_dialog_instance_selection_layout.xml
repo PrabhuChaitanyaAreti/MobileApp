@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/alertInstanceSelectionTitle"
+        android:background="@color/new_daikin_blue_color"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:text="Select an instance"
+        android:textColor="@color/white"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        android:textStyle="bold"/>
+    <LinearLayout
+        android:id="@+id/alertInstanceSelectionLLButtons"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/alertInstanceSelectionLocal"
+            android:layout_width="match_parent"
+            android:text="Local"
+            android:padding="15dp"
+            android:background="@drawable/button_selection"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="normal"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/new_daikin_blue_color"/>
+
+
+        <TextView
+            android:id="@+id/alertInstanceSelectionRemote"
+            android:layout_width="match_parent"
+            android:text="Remote"
+            android:background="@drawable/button_selection"
+            android:padding="15dp"
+            android:textColor="@color/black"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="normal"/>
+       <!-- <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/new_daikin_blue_color"/>
+
+
+
+        <TextView
+            android:id="@+id/alertInstanceSelectionCancel"
+            android:layout_width="match_parent"
+            android:text="Cancel"
+            android:background="@drawable/button_selection"
+            android:textColor="@color/black"
+            android:padding="15dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="normal"/>-->
+
+    </LinearLayout>
+
+</LinearLayout>

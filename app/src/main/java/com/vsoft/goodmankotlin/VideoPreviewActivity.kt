@@ -494,9 +494,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                                 val json: String = gson.toJson(response.body())
                                 myEdit.putString(CommonUtils.RESPONSE, json)
                                 myEdit.apply()
+
                                 val intent = Intent(
                                     this@VideoPreviewActivity,
-                                    MaskingActivity::class.java
+                                    MaskingActivityNew::class.java
                                 )
                                 startActivity(intent)
                                 finish()
