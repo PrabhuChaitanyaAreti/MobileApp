@@ -66,10 +66,11 @@ public class ConfigureServerTask extends AsyncTask<Void, Void, Void> {
                     }
                 }  catch (IOException e) {
                     //TODO Handle problems..
+                    e.printStackTrace();
                 }
             }
         }
-        if(responseString==null || !responseString.equalsIgnoreCase("success")){
+        if(responseString!=null && responseString.equalsIgnoreCase("failure")){
             String ipAddress="http://111.93.3.148:16808";
             Context context=mContextRef.get();
             var prefs = context.getSharedPreferences(context.getPackageName(), context.MODE_PRIVATE);
