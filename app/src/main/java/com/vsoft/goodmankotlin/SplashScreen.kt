@@ -24,15 +24,10 @@ import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
-import android.content.DialogInterface
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import com.vsoft.goodmankotlin.interfaces.NetworkSniffTaskProgressCancelClickCallBack
 import com.vsoft.goodmankotlin.utils.*
 import java.util.ArrayList
@@ -44,10 +39,9 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
 
     private var screenWidth:Int = 0
     private var screenHeight:Int = 0
-
     private var sharedPreferences: SharedPreferences? = null
     private var userId = ""
-    var task:NetworkSniffTask?=null
+    var networkSniffTask:NetworkSniffTask?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,42 +77,19 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
         val customDialog = android.app.AlertDialog.Builder(this@SplashScreen).create()
         val alertInstanceSelectionLocal=customDialogView.findViewById<TextView>(R.id.alertInstanceSelectionLocal)
         val alertInstanceSelectionRemote=customDialogView.findViewById<TextView>(R.id.alertInstanceSelectionRemote)
-       // val alertInstanceSelectionCancel=customDialogView.findViewById<TextView>(R.id.alertInstanceSelectionCancel)
         customDialog.setCancelable(false)
         alertInstanceSelectionLocal.setOnClickListener {
             customDialog.dismiss()
-            task= NetworkSniffTask(this,this,this)
-            task!!.execute()
-            //NetworkSniffTask(this, this).execute()
+            networkSniffTask= NetworkSniffTask(this,this,this)
+            networkSniffTask!!.execute()
         }
         alertInstanceSelectionRemote.setOnClickListener {
             customDialog.dismiss()
             sharedPreferences!!.edit().putString("BaseUrl", "http://111.93.3.148:16808")
             handleNavigation("Remote")
         }
-       /* alertInstanceSelectionCancel.setOnClickListener {
-            customDialog.dismiss()
-        }*/
-
-
         customDialog.setView(customDialogView)
         customDialog.show()
-      /*  val instances = arrayOf("Local", "Remote")
-
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle("Select an instance")
-        builder.setCancelable(false)
-        builder.setItems(instances, DialogInterface.OnClickListener { dialog, which ->
-            // the user clicked on colors[which]
-            if(instances[which].equals("Local",true)){
-                NetworkSniffTask(this, this).execute()
-            }
-            if(instances[which].equals("Remote",true)){
-                sharedPreferences!!.edit().putString("BaseUrl", "http://111.93.3.148:16808")
-                handleNavigation("Remote")
-            }
-        })
-        builder.show()*/
     }
     private fun logout(){
             val editor: SharedPreferences.Editor = sharedPreferences!!.edit()
@@ -253,7 +224,7 @@ private fun handleNavigation(instance:String){
     override fun configureServerResponse(response: String?) {
         if(response!!.equals("success",true))
             handleNavigation("Local")
-        else
+        else if(response!!.equals("failure",true))
         {
             // Show error dialog
             Handler(Looper.getMainLooper()).post {
@@ -265,7 +236,7 @@ private fun handleNavigation(instance:String){
     }
 
     override fun onProgressCancelClickCallBack() {
-        task?.cancel(true)
+        networkSniffTask?.cancel(true)
         showInstanceDialog()
     }
 

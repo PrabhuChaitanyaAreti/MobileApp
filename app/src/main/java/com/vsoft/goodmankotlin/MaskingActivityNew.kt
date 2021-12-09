@@ -61,7 +61,6 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
         val shapesToBeDisplayed= arrayListOf<Shapes>()
         val xArray= arrayListOf<Double>()
         val yArray= arrayListOf<Double>()
-        //val firstObject=inferencingObject.getJSONObject("36")
         val keys: Iterator<String> = inferencingObject.keys()
         while (keys.hasNext()) {
             val key = keys.next()
@@ -74,12 +73,11 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
                         val pointArray = segmentation.getJSONArray(i)
                         xArray.add(pointArray[0] as Double)
                         yArray.add(pointArray[1] as Double)
+                        shapesToBeDisplayed.add(Shapes(key, Gt_points(xArray, yArray)))
                     }
-                    shapesToBeDisplayed.add(Shapes(key, Gt_points(xArray, yArray)))
                 }
             }
         }
-
         populateImageView(groundTruthBase64,groundTruthWidth,groundTruthHeight, shapesToBeDisplayed)
     }
 
@@ -108,16 +106,16 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
     private fun drawInferencing(shapesToBeDisplayed:ArrayList<Shapes>){
         if (shapesToBeDisplayed.size > 0) {
             regionArrayList = ArrayList()
-            val canvas = Canvas(bitmap)
-//            groundTruthImageView.setImageBitmap(bitmap)
+            groundTruthImageView.setImageBitmap(bitmap)
             for (i in 0 until shapesToBeDisplayed.size) {
+                val canvas = Canvas(bitmap)
                 val path = Path()
                 val paintLine = Paint()
                 val paintFill = Paint()
                 val paintLabel = Paint()
                 paintLine.color = Color.BLUE
                 paintLine.style = Paint.Style.STROKE
-                paintLabel.strokeWidth = 2f
+                paintLabel.strokeWidth = 6f
                 paintLabel.textSize = 40f
                 paintLabel.color = Color.WHITE
                 paintLabel.isFakeBoldText = true
@@ -128,6 +126,8 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
                 val y = shapesToBeDisplayed[i].gt_points.y
                 if (x.size == y.size) {
                     for (j in x.indices) {
+//                        System.out.println("x:"+x[j])
+//                        System.out.println("y:"+y[j])
                         when (j) {
                             0 -> {
                                 path.moveTo(x[0].toFloat(), y[0].toFloat())
@@ -136,7 +136,7 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
                                 path.lineTo(x[j].toFloat(), y[j].toFloat())
                                 path.close()
                                 canvas.drawPath(path, paintLine)
-                                //canvas.drawPath(path,paintFill)
+                                canvas.drawPath(path,paintFill)
                                 val rectF = RectF()
                                 path.computeBounds(rectF, true)
                                 val r = Region()
@@ -146,23 +146,24 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
                                         rectF.top.toInt(), rectF.right.toInt(), rectF.bottom.toInt()
                                     )
                                 )
-                                regionArrayList.add(r)
                                 canvas.drawText(
                                     shapesToBeDisplayed[i].label_id,
                                     rectF.centerX(),
                                     rectF.centerY(),
                                     paintLabel
                                 )
+                                regionArrayList.add(r)
                             }
                             else -> {
                                 path.lineTo(x[j].toFloat(), y[j].toFloat())
                             }
                         }
-                        groundTruthImageView.invalidate()
                     }
                 }
             }
         }
+        groundTruthImageView.invalidate()
+        System.out.println(regionArrayList.size)
     }
 
     override fun onBackPressed() {

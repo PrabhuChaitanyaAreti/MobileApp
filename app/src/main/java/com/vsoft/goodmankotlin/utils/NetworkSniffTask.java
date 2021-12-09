@@ -96,7 +96,7 @@ public class NetworkSniffTask extends AsyncTask<Void, Void, Void> {
         {
             e1.printStackTrace();
         }
-        System.out.println(connections);
+        if(!isCancelled())
         networkSniffCallBack.networkSniffResponse("success",connections);
         return null;
     }
