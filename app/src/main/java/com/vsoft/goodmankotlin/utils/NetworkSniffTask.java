@@ -12,6 +12,8 @@ import android.os.AsyncTask;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.vsoft.goodmankotlin.interfaces.NetworkSniffTaskProgressCancelClickCallBack;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
@@ -22,12 +24,14 @@ public class NetworkSniffTask extends AsyncTask<Void, Void, Void> {
 
     private static final String TAG = "TestIntranetIP's" + "nstask";
     private ProgressDialog pd;
-    private WeakReference<Context> mContextRef;
-    private NetworkSniffCallBack networkSniffCallBack;
+    private final WeakReference<Context> mContextRef;
+    private final NetworkSniffCallBack networkSniffCallBack;
+    private final NetworkSniffTaskProgressCancelClickCallBack networkSniffTaskProgressCancelClickCallBack;
 
-    public NetworkSniffTask(Context context,NetworkSniffCallBack networkSniffCallBack1) {
+    public NetworkSniffTask(Context context, NetworkSniffCallBack networkSniffCallBack1, NetworkSniffTaskProgressCancelClickCallBack networkSniffTaskProgressCancelClickCallBack1) {
         mContextRef = new WeakReference<Context>(context);
         networkSniffCallBack=networkSniffCallBack1;
+        networkSniffTaskProgressCancelClickCallBack=networkSniffTaskProgressCancelClickCallBack1;
     }
 
     @Override
@@ -40,6 +44,7 @@ public class NetworkSniffTask extends AsyncTask<Void, Void, Void> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 pd.dismiss();//dismiss dialog
+                networkSniffTaskProgressCancelClickCallBack.onProgressCancelClickCallBack();
             }
         });
         pd.show();
@@ -55,6 +60,7 @@ public class NetworkSniffTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
         System.out.println("Let's sniff the network");
         DhcpInfo d;
         WifiManager wifii;
@@ -81,16 +87,14 @@ public class NetworkSniffTask extends AsyncTask<Void, Void, Void> {
                 {
                     System.out.println(address + " machine is known in a DNS lookup");
                 }
+                if(isCancelled()){
+                    break;
+                }
 
             }
-        }
-        catch(UnknownHostException e1)
+        } catch(Exception e1)
         {
             e1.printStackTrace();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
         }
         System.out.println(connections);
         networkSniffCallBack.networkSniffResponse("success",connections);

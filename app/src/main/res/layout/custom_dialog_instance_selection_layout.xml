@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:textStyle="normal"/>
-        <View
+       <!-- <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/new_daikin_blue_color"/>
@@ -61,7 +61,7 @@
             android:padding="15dp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:textStyle="normal"/>
+            android:textStyle="normal"/>-->
 
     </LinearLayout>
 
