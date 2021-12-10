@@ -136,7 +136,7 @@ class CameraHelper {
 
                     mediaFile = File(
                         (mediaStorageDir.path + File.separator +
-                                userId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "VID_" + timeStamp + ".mp4")
+                                userId+"_"+dieIdStr+"_"+partIdStr+"_"+dieTypeStr+"_"+ "INF_" + timeStamp + ".mp4")
                     )
 
                 }

@@ -91,7 +91,15 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
             dieTypeSpinner.adapter = langAdapter1
 
         } else {
-            dieTypeSpinner.visibility = View.GONE
+           // dieTypeSpinner.visibility = View.GONE
+            dieTypeSpinner.visibility = View.VISIBLE
+            val langAdapter1 = ArrayAdapter<CharSequence>(
+                this@AddDieOperatorSelectActivity,
+                R.layout.spinner_text,
+                dieTypeArray
+            )
+            langAdapter1.setDropDownViewResource(R.layout.simple_spinner_dropdown)
+            dieTypeSpinner.adapter = langAdapter1
         }
 
         mainLyt.setOnClickListener { hideSoftKeyboard(this@AddDieOperatorSelectActivity) }
@@ -188,12 +196,22 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                     )
                 }
             } else {
+                dieTypeStr = dieTypeSpinner.selectedItem.toString()
+                if (dieTypeStr.isNotEmpty() && !TextUtils.isEmpty(dieTypeStr) && dieTypeStr != "null") {
+                    if (dieTypeStr.contains(CommonUtils.ADD_DIE_SELECT)) {
+                        showCustomAlert(
+                            this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
+                            this@AddDieOperatorSelectActivity.resources.getString(R.string.add_die_alert_die_type_select),
+                            CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
+                            listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok))
+                        )
+                    } else {
                 val editor: SharedPreferences.Editor = sharedPreferences.edit()
                 editor.putString(CommonUtils.SAVE_OPERATOR_ID, operatorStr)
                 editor.putString(CommonUtils.SAVE_DIE_ID, dieIdStr)
                 editor.putString(CommonUtils.SAVE_PART_ID, partIdStr)
                 editor.putBoolean(CommonUtils.SAVE_IS_NEW_DIE, false)
-                editor.putString(CommonUtils.SAVE_DIE_TYPE, "")
+                editor.putString(CommonUtils.SAVE_DIE_TYPE, dieTypeStr)
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP, false)
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_BOTTOM, false)
                 editor.putBoolean(CommonUtils.SAVE_IS_DIE_TOP_DETAILS, false)
@@ -205,6 +223,15 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                     Intent(this@AddDieOperatorSelectActivity, VideoRecordActivity::class.java)
                 startActivity(mainIntent)
                 //finish();
+                    }
+                } else {
+                    showCustomAlert(
+                        this@AddDieOperatorSelectActivity.resources.getString(R.string.app_name),
+                        this@AddDieOperatorSelectActivity.resources.getString(R.string.add_die_alert_die_type_select),
+                        CommonUtils.VALIDATION_OPERATOR_SELECT_DIALOG,
+                        listOf(this@AddDieOperatorSelectActivity.resources.getString(R.string.alert_ok))
+                    )
+                }
             }
         }
     }
@@ -224,7 +251,9 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 val iterator = responses.listIterator()
                 while (iterator.hasNext()) {
                     val item = iterator.next()
-                    dataModels.add(ChoiceListOperator(item.dieId!!))
+                    if(item.dieId!! == "G00667C3") {
+                        dataModels.add(ChoiceListOperator(item.dieId!!))
+                    }
                 }
             } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_PART_ID)) {
                 if (dieBT.text.isNotEmpty()) {

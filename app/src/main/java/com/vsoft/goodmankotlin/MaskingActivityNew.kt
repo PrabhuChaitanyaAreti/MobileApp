@@ -1,6 +1,7 @@
 package com.vsoft.goodmankotlin
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.*
 import android.os.Bundle
@@ -8,14 +9,17 @@ import android.util.Base64
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
+import com.vsoft.goodmankotlin.model.CustomDialogModel
 import com.vsoft.goodmankotlin.utils.CommonUtils
+import com.vsoft.goodmankotlin.utils.DialogUtils
 import com.vsoft.goodmankotlin.video_response.Gt_points
 import com.vsoft.goodmankotlin.video_response.Shapes
 import org.json.JSONObject
 import java.io.InputStream
 
 
-class MaskingActivityNew : AppCompatActivity(){
+class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
     private lateinit var groundTruthImageView:ImageView
     private lateinit var bitmap:Bitmap
     private lateinit var regionArrayList: ArrayList<Region>
@@ -160,5 +164,35 @@ class MaskingActivityNew : AppCompatActivity(){
         }
         groundTruthImageView.invalidate()
         System.out.println(regionArrayList.size)
+    }
+
+    override fun onBackPressed() {
+        DialogUtils.showCustomAlert(
+            this, CustomDialogModel(
+                this.resources.getString(R.string.app_name),
+                this.resources.getString(R.string.dashboard_navigation_alert_message),
+                null,
+                listOf(
+                    this.resources.getString(R.string.alert_yes),
+                    this.resources.getString(R.string.alert_no)
+                )
+            ), this, CommonUtils.BACK_PRESSED_DIALOG
+        )
+    }
+
+    override fun onCustomDialogButtonClicked(buttonName: String, functionality: String) {
+        if (buttonName.equals(this.resources.getString(R.string.alert_yes), true)) {
+            if (functionality.equals(CommonUtils.BACK_PRESSED_DIALOG, true)) {
+                navigateToDashBoard()
+            }
+        } else if (buttonName.equals(this.resources.getString(R.string.alert_no), true)) {
+            //No action required. Just exit dialog.
+        }
+    }
+
+    private fun navigateToDashBoard() {
+        val mainIntent = Intent(this, DashBoardActivity::class.java)
+        mainIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(mainIntent)
     }
 }
