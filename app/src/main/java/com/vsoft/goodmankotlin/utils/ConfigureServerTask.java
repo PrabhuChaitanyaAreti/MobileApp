@@ -66,6 +66,7 @@ public class ConfigureServerTask extends AsyncTask<Void, Void, Void> {
                     }
                 }  catch (IOException e) {
                     //TODO Handle problems..
+                    responseString = "failure";
                     e.printStackTrace();
                     responseString = "failure"; // See documentation for more info on response handling
                 }

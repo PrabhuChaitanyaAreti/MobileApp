@@ -3,7 +3,7 @@
     <dimen name="dashboard_icon_radius">130dp</dimen>
 
     <!-- Login Screen dimensions -->
-    <dimen name="white_border_margin_top">45dp</dimen>
+    <dimen name="white_border_margin_top">40dp</dimen>
     <dimen name="white_border_margin_start">50dp</dimen>
     <dimen name="white_border_margin_end">50dp</dimen>
     <dimen name="white_border_padding_start">50dp</dimen>
@@ -15,9 +15,9 @@
 
     <dimen name="options_layout_margin_start">50dp</dimen>
     <dimen name="options_layout_margin_end">50dp</dimen>
-    <dimen name="options_layout_margin_top">35dp</dimen>
+    <dimen name="options_layout_margin_top">30dp</dimen>
 
-    <dimen name="edit_padding">10dp</dimen>
+    <dimen name="edit_padding">8dp</dimen>
     <dimen name="edit_padding_start">5dp</dimen>
     <dimen name="edit_padding_end">5dp</dimen>
     <dimen name="edit_margin_top">25dp</dimen>
@@ -43,7 +43,7 @@
 
 
     <!--AddDieIDPartID screen dimensions -->
-    <dimen name="option_margin_top">15dp</dimen>
+    <dimen name="option_margin_top">10dp</dimen>
 
 
 
