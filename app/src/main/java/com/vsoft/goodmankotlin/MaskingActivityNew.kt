@@ -166,12 +166,12 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
                                         rectF.top.toInt(), rectF.right.toInt(), rectF.bottom.toInt()
                                     )
                                 )
-//                                canvas.drawText(
-//                                    shapesToBeDisplayed[i].label_id,
-//                                    rectF.centerX(),
-//                                    rectF.centerY(),
-//                                    paintLabel
-//                                )
+                                canvas.drawText(
+                                    shapesToBeDisplayed[i].label_id,
+                                    rectF.centerX(),
+                                    rectF.centerY(),
+                                    paintLabel
+                                )
                                 regionArrayList.add(r)
                             }
                             else -> {
