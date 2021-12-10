@@ -55,7 +55,7 @@ public class ConfigureServerTask extends AsyncTask<Void, Void, Void> {
                         ipAddress="http:/"+ipAddress+":16808";
                         Context context=mContextRef.get();
                         var prefs = context.getSharedPreferences(context.getPackageName(), context.MODE_PRIVATE);
-                        prefs.edit().putString("EdgeServerIp", ipAddress).apply();
+                        prefs.edit().putString("BaseUrl", ipAddress).apply();
                         System.out.println("ServerAddress:"+ipAddress);
                         responseString="success";
                         configureServerTaskCallback.configureServerResponse("success");

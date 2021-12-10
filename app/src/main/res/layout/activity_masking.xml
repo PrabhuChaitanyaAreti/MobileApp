@@ -42,6 +42,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:weightSum="100"
+                        android:layout_marginTop="10dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -50,22 +51,25 @@
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
                             android:layout_weight="70"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                            android:text="Correct:"/>
+                            android:text="CORRECT:"/>
                         <ImageView
                             android:layout_width="0dp"
-                            android:src="@drawable/tealcolorimage"
+                            android:background="@drawable/tealcolorimage"
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
                             android:layout_weight="30"
-                            android:minHeight="100dp"
-                            android:minWidth="100dp"
+                            android:minHeight="30dp"
+                            android:minWidth="30dp"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:weightSum="100"
+                        android:layout_marginTop="10dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -74,42 +78,48 @@
                             android:layout_weight="70"
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                             android:text="CAUTION:"/>
                         <ImageView
                             android:layout_width="0dp"
-                            android:src="@drawable/yellowcolorimage"
+                            android:background="@drawable/yellowcolorimage"
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
                             android:layout_weight="30"
-                            android:minHeight="100dp"
-                            android:minWidth="100dp"
+                            android:minHeight="30dp"
+                            android:minWidth="30dp"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:weightSum="100"
+                        android:layout_marginTop="10dp"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="70"
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
-                            android:layout_weight="70"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                             android:text="ERROR:"/>
                         <ImageView
                             android:layout_width="0dp"
-                            android:src="@drawable/redcolorimage"
+                            android:background="@drawable/redcolorimage"
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
                             android:layout_weight="30"
-                            android:minHeight="100dp"
-                            android:minWidth="100dp"
+                            android:minHeight="30dp"
+                            android:minWidth="30dp"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
+
 
 
                 </LinearLayout>

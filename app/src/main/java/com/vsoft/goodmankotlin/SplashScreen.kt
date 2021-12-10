@@ -31,6 +31,12 @@ import android.widget.TextView
 import com.vsoft.goodmankotlin.interfaces.NetworkSniffTaskProgressCancelClickCallBack
 import com.vsoft.goodmankotlin.utils.*
 import java.util.ArrayList
+import android.net.ConnectivityManager
+
+import android.net.NetworkInfo
+
+
+
 
 
 @SuppressLint("CustomSplashScreen")
@@ -79,9 +85,20 @@ class SplashScreen : AppCompatActivity(), CustomDialogCallback,NetworkSniffCallB
         val alertInstanceSelectionRemote=customDialogView.findViewById<TextView>(R.id.alertInstanceSelectionRemote)
         customDialog.setCancelable(false)
         alertInstanceSelectionLocal.setOnClickListener {
-            customDialog.dismiss()
-            networkSniffTask= NetworkSniffTask(this,this,this)
-            networkSniffTask!!.execute()
+            val connManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+            val mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+
+            if (mWifi!!.isConnected) {
+                customDialog.dismiss()
+                networkSniffTask = NetworkSniffTask(this, this, this)
+                networkSniffTask!!.execute()
+            }else{
+                Handler(Looper.getMainLooper()).post {
+                    DialogUtils.showCustomAlert(this,
+                        CustomDialogModel("Error","Seems like you are not connected to the desired network.Try selecting another option.",null,
+                            listOf(this@SplashScreen.resources.getString(R.string.alert_ok))),this,"Not in Wifi")
+                }
+            }
         }
         alertInstanceSelectionRemote.setOnClickListener {
             customDialog.dismiss()
@@ -201,6 +218,9 @@ private fun handleNavigation(instance:String){
                 super.onBackPressed()
             }
             if (functionality.equals("ServerNotDetected", true)) {
+                showInstanceDialog()
+            }
+            if (functionality.equals("Not in Wifi", true)) {
                 showInstanceDialog()
             }
         }
