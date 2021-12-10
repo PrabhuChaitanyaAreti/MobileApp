@@ -16,5 +16,6 @@ For support, please feel free to contact me at https://www.linkedin.com/in/syeda
 data class Shapes (
 
 	@SerializedName("label_id") val label_id : String,
-	@SerializedName("gt_points") val gt_points : Gt_points
+	@SerializedName("gt_points") val gt_points : Gt_points,
+	@SerializedName("result") val result : String
 )

@@ -41,6 +41,8 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
             if (sharedPreferences!!.contains(CommonUtils.RESPONSE)) {
                 val json = sharedPreferences!!.getString(CommonUtils.RESPONSE, "")
                 parseResponse(json!!)
+//                val assetResponse: String? = readJSONFromAsset("response_video.json")
+//                parseResponse(assetResponse!!)
             } else {
                 val assetResponse: String? = readJSONFromAsset("response_video.json")
                 parseResponse(assetResponse!!)
@@ -59,13 +61,13 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
         val groundTruthWidth:Int=groundTruthObject.getInt("width")
         val groundTruthHeight:Int=groundTruthObject.getInt("height")
         val shapesToBeDisplayed= arrayListOf<Shapes>()
-        val xArray= arrayListOf<Double>()
-        val yArray= arrayListOf<Double>()
         val keys: Iterator<String> = inferencingObject.keys()
         while (keys.hasNext()) {
             val key = keys.next()
             if (inferencingObject.get(key) is JSONObject) {
                 // do something with jsonObject here
+                val xArray= arrayListOf<Double>()
+                val yArray= arrayListOf<Double>()
                 if((inferencingObject.get(key) as JSONObject).has("segmentation")) {
                     val segmentation =
                         (inferencingObject.get(key) as JSONObject).getJSONArray("segmentation")
@@ -73,7 +75,8 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
                         val pointArray = segmentation.getJSONArray(i)
                         xArray.add(pointArray[0] as Double)
                         yArray.add(pointArray[1] as Double)
-                        shapesToBeDisplayed.add(Shapes(key, Gt_points(xArray, yArray)))
+                        if(i==segmentation.length()-1)
+                        shapesToBeDisplayed.add(Shapes(key, Gt_points(xArray, yArray),(inferencingObject.get(key) as JSONObject).getString("result")))
                     }
                 }
             }
@@ -113,21 +116,38 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
                 val paintLine = Paint()
                 val paintFill = Paint()
                 val paintLabel = Paint()
-                paintLine.color = Color.BLUE
+                when {
+                    shapesToBeDisplayed[i].result.equals("CORRECT",true) -> {
+                        paintLine.color = Color.parseColor("#008080")
+                        paintFill.color = Color.parseColor("#008080")
+                    }
+                    shapesToBeDisplayed[i].result.equals("CAUTION",true) -> {
+                        paintLine.color = Color.YELLOW
+                        paintFill.color = Color.YELLOW
+                    }
+                    shapesToBeDisplayed[i].result.equals("ERROR",true) -> {
+                        paintLine.color = Color.RED
+                        paintFill.color = Color.RED
+                    }
+                    else -> {
+                        paintLine.color = Color.BLACK
+                        paintFill.color = Color.BLACK
+                    }
+                }
                 paintLine.style = Paint.Style.STROKE
-                paintLabel.strokeWidth = 6f
+                paintLine.strokeWidth = 8f
                 paintLabel.textSize = 40f
                 paintLabel.color = Color.WHITE
                 paintLabel.isFakeBoldText = true
                 paintLabel.textAlign = Paint.Align.CENTER
-                paintFill.color = Color.GREEN
+
                 paintFill.style = Paint.Style.FILL
                 val x = shapesToBeDisplayed[i].gt_points.x
                 val y = shapesToBeDisplayed[i].gt_points.y
+                System.out.println("xSize:"+x.size)
+                System.out.println("ySize:"+y.size)
                 if (x.size == y.size) {
                     for (j in x.indices) {
-//                        System.out.println("x:"+x[j])
-//                        System.out.println("y:"+y[j])
                         when (j) {
                             0 -> {
                                 path.moveTo(x[0].toFloat(), y[0].toFloat())
@@ -136,7 +156,7 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
                                 path.lineTo(x[j].toFloat(), y[j].toFloat())
                                 path.close()
                                 canvas.drawPath(path, paintLine)
-                                canvas.drawPath(path,paintFill)
+                                //canvas.drawPath(path,paintFill)
                                 val rectF = RectF()
                                 path.computeBounds(rectF, true)
                                 val r = Region()
@@ -146,12 +166,12 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
                                         rectF.top.toInt(), rectF.right.toInt(), rectF.bottom.toInt()
                                     )
                                 )
-                                canvas.drawText(
-                                    shapesToBeDisplayed[i].label_id,
-                                    rectF.centerX(),
-                                    rectF.centerY(),
-                                    paintLabel
-                                )
+//                                canvas.drawText(
+//                                    shapesToBeDisplayed[i].label_id,
+//                                    rectF.centerX(),
+//                                    rectF.centerY(),
+//                                    paintLabel
+//                                )
                                 regionArrayList.add(r)
                             }
                             else -> {
