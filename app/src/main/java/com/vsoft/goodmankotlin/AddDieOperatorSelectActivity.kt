@@ -251,8 +251,12 @@ class AddDieOperatorSelectActivity : Activity(), CustomDialogCallback {
                 val iterator = responses.listIterator()
                 while (iterator.hasNext()) {
                     val item = iterator.next()
-                    if(item.dieId!! == "G00667C3") {
+                    if(isNewDie){
                         dataModels.add(ChoiceListOperator(item.dieId!!))
+                    }else{
+                        if (item.dieId!! == "G00667C3") {
+                            dataModels.add(ChoiceListOperator(item.dieId!!))
+                        }
                     }
                 }
             } else if (dataFrom.contains(CommonUtils.OPERATOR_SELECTION_PART_ID)) {
