@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.vsoft.goodmankotlin.database.VideoModel
 import com.vsoft.goodmankotlin.database.VideoViewModel
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
@@ -42,6 +43,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import okhttp3.*
+import java.io.FileWriter
 
 class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnClickListener {
 
@@ -445,14 +447,45 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
             Handler(Looper.getMainLooper()).post {
                 progressDialog!!.show()
             }
+            var metaDataFilePart:MultipartBody.Part?=null
+            val fileSize = File(path)
+            if (fileSize.length() > 0) {
+
+                val jsonObject = JsonObject()
+                val gson = Gson()
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_ID, dieIdStr)
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_PART_ID, partIdStr)
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_DIE_TOP_BOTTOM,dieTypeStr)
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_OPERATOR_ID,operatorStr)
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_USER_ID,userId)
+
+
+                val filename: String = path.substring(path.lastIndexOf("/") + 1)
+                jsonObject.addProperty(CommonUtils.SYNC_VIDEO_API_FILE_NAME, filename)
+
+                val jsonString = gson.toJson(jsonObject)
+
+                val fileSizeKB = fileSize.length() / 1024
+                val fileSizeMB = (fileSize.length() / 1024) / 1024
+                val rootFolder: File? = getExternalFilesDir(null)
+                val jsonFile = File(rootFolder, "post.json")
+                val writer = FileWriter(jsonFile)
+                writer.write(jsonString)
+                writer.close()
+                 metaDataFilePart = MultipartBody.Part.createFormData(
+                    CommonUtils.SYNC_VIDEO_API_META_DATA,
+                    jsonFile.name,
+                    RequestBody.create(MediaType.parse("*/*"), jsonFile)
+                )
+            }
             val file = File(path) // initialize file here
             val filePart = MultipartBody.Part.createFormData(
                 "video",
                 file.name,
-                RequestBody.create(MediaType.parse("video/*"), file)
+                RequestBody.create(MediaType.parse("*/*"), file)
             )
-            val call: Call<VideoAnnotationResponse?>? =
-                RetrofitClient.getInstance(this)!!.getMyApi()!!.uploadDyeVideo(filePart)
+            val call: Call<JsonObject>? =
+                RetrofitClient.getInstance(this)!!.getMyApi()!!.uploadDyeVideo(metaDataFilePart,filePart)
 
             val thread = Thread {
                 try {
@@ -466,10 +499,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                 }
             }
             thread.start()
-            call!!.enqueue(object : Callback<VideoAnnotationResponse?> {
+            call!!.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(
-                    call: Call<VideoAnnotationResponse?>,
-                    response: Response<VideoAnnotationResponse?>
+                    call: Call<JsonObject>,
+                    response: Response<JsonObject>
                 ) {
                     try {
                         if (progressDialog!!.isShowing) {
@@ -477,49 +510,28 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                         }
 
                         if (response.code() == 200) {
-                            if (response.body()?.gt != null) {
-                                // Storing data into SharedPreferences
-                                val sharedPreferences =
-                                    getSharedPreferences(
-                                        CommonUtils.SHARED_PREF_FILE,
-                                        MODE_PRIVATE
-                                    )
-                                // Creating an Editor object to edit(write to the file)
-                                val myEdit = sharedPreferences.edit()
-                                // Storing the key and its value as the data fetched from edittext
-                                // Once the changes have been made,
-                                // we need to commit to apply those changes made,
-                                // otherwise, it will throw an error
-                                val gson = Gson()
-                                val json: String = gson.toJson(response.body())
-                                myEdit.putString(CommonUtils.RESPONSE, json)
-                                myEdit.apply()
-
-                                val intent = Intent(
-                                    this@VideoPreviewActivity,
-                                    MaskingActivityNew::class.java
+                            val sharedPreferences =
+                                getSharedPreferences(
+                                    CommonUtils.SHARED_PREF_FILE,
+                                    MODE_PRIVATE
                                 )
-                                startActivity(intent)
-                                finish()
-                            } else {
-                                if (progressDialog!!.isShowing) {
-                                    progressDialog!!.dismiss()
-                                }
-                                DialogUtils.showCustomAlert(
-                                    this@VideoPreviewActivity,
-                                    CustomDialogModel(
-                                        this@VideoPreviewActivity.resources.getString(R.string.app_name),
-                                        "Empty data, Contact Admin.",
-                                        null,
-                                        listOf(
-                                            this@VideoPreviewActivity.resources.getString(
-                                                R.string.alert_ok
-                                            )
-                                        )
-                                    ), this@VideoPreviewActivity, "invalidResponse"
-                                )
+                            // Creating an Editor object to edit(write to the file)
+                            val myEdit = sharedPreferences.edit()
+                            // Storing the key and its value as the data fetched from edittext
+                            // Once the changes have been made,
+                            // we need to commit to apply those changes made,
+                            // otherwise, it will throw an error
+                            val gson = Gson()
+                            val json: String = gson.toJson(response.body())
+                            myEdit.putString(CommonUtils.RESPONSE,json)
+                            myEdit.apply()
 
-                            }
+                            val intent = Intent(
+                                this@VideoPreviewActivity,
+                                MaskingActivityNew::class.java
+                            )
+                            startActivity(intent)
+                            finish()
                         } else if (response.code() == 404) {
                             if (progressDialog!!.isShowing) {
                                 progressDialog!!.dismiss()
@@ -547,10 +559,10 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     }
                 }
 
-                override fun onFailure(call: Call<VideoAnnotationResponse?>, t: Throwable) {
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                     // DialogUtils.showNormalAlert(VideoPreviewActivity.this, "Alert!!", "" + t);
                     val intent =
-                        Intent(this@VideoPreviewActivity, MaskingActivity::class.java)
+                        Intent(this@VideoPreviewActivity, MaskingActivityNew::class.java)
                     startActivity(intent)
                     finish()
                     if (progressDialog!!.isShowing) {

@@ -51,6 +51,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="userLandscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true"/>
         <activity
             android:name=".CameraActivity"
             android:screenOrientation="userLandscape"

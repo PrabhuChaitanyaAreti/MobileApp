@@ -1,7 +1,7 @@
 package com.vsoft.goodmankotlin.utils
 
+import com.google.gson.JsonObject
 import com.vsoft.goodmankotlin.model.*
-import com.vsoft.goodmankotlin.video_response.VideoAnnotationResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -11,14 +11,22 @@ interface RetrofitApiInterface {
 
     @GET("/operatorlist")
     fun getOperatorsList(): Call<OperatorList?>?
+
     @GET("/getDieId")
     fun doGetListDieDetails(): Call<DieIdDetailsModel?>?
+
     @Multipart
     @POST("/placeholder/api/upload")
     fun uploadDyeImage(@Part filePart: MultipartBody.Part?): Call<PunchResponse?>?
+
+ /*   @Multipart
+    @POST("/placeholder/api/video")
+    fun uploadDyeVideo(@Part file: MultipartBody.Part?): Call<VideoAnnotationResponse?>?*/
+
+    @Headers("Connection:close")
     @Multipart
     @POST("/placeholder/api/video")
-    fun uploadDyeVideo(@Part file: MultipartBody.Part?): Call<VideoAnnotationResponse?>?
+    fun uploadDyeVideo(@Part meta_data:MultipartBody.Part?, @Part video: MultipartBody.Part?): Call<JsonObject>?
 
     @Headers("Connection:close")
     @Multipart
