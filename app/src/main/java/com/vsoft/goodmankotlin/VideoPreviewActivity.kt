@@ -487,7 +487,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
             val call: Call<JsonObject>? =
                 RetrofitClient.getInstance(this)!!.getMyApi()!!.uploadDyeVideo(metaDataFilePart,filePart)
 
-            val thread = Thread {
+           /* val thread = Thread {
                 try {
                     //Your code goes here
                     val request: Request = call!!.clone().request()
@@ -498,7 +498,7 @@ class VideoPreviewActivity : AppCompatActivity(), CustomDialogCallback, View.OnC
                     e.printStackTrace()
                 }
             }
-            thread.start()
+            thread.start()*/
             call!!.enqueue(object : Callback<JsonObject> {
                 override fun onResponse(
                     call: Call<JsonObject>,

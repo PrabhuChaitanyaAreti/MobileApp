@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Base64
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.vsoft.goodmankotlin.interfaces.CustomDialogCallback
 import com.vsoft.goodmankotlin.model.CustomDialogModel
@@ -94,7 +95,7 @@ class MaskingActivityNew : AppCompatActivity(), CustomDialogCallback {
     }
 
     private fun populateImageView(base64Image: String, imageWidth: Int, imageHeight: Int, shapesToBeDisplayed: ArrayList<Shapes>) {
-        val layoutParams = FrameLayout.LayoutParams(imageWidth, imageHeight)
+        val layoutParams = LinearLayout.LayoutParams(imageWidth, imageHeight)
         groundTruthImageView.layoutParams = layoutParams
         //groundTruthImageView.setOnTouchListener(this)
         val decodedString: ByteArray = Base64.decode(base64Image, Base64.DEFAULT)
